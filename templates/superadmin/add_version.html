@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>addversion</title>
+</head>
+<body>
+	addversion:
+	<form action="{{url_for('superadmin.add_version_post')}}" method="post">
+	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+		<input type="text" name="number" placeholder="上一个版本号：{{version.number}}"> <br>
+		<input type="text" name="title" placeholder="上一个版本号：{{version.title}}"> <br>
+		<input type="text" name="summary" placeholder="上一个版本号：{{version.summary}}"> <br>
+		<input type="text" name="context" placeholder="上一个版本号：{{version.context}}"> <br>
+		<input type="submit" value="提交">
+	</form>
+</body>
+</html>
+

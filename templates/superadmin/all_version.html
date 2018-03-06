@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>version</title>
+</head>
+<body>
+{%for message in get_flashed_messages(category_filter=['success'])%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+<a href="{{url_for('superadmin.add_version')}}">添加版本</a>
+	version: <br>	
+	{%for i in version%}
+	{{i.number}},{{i.title}},{{i.summary}},{{i.context}},{{i.created_at}}<br>
+	{%endfor%}
+</body>
+</html>
