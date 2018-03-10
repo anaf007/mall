@@ -3,8 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from sqlalchemy import desc
 from .models import SystemVersion
 
-blueprint = Blueprint('superadmin', __name__, url_prefix='/superadmin')
-
+from . import blueprint
 
 @blueprint.route('/')
 def home():

@@ -42,11 +42,29 @@ class Seller(SurrogatePK, Model):
 	seller_banner_id = relationship('SellerBanner', backref='seller')
 	#订单
 	user_order_id = relationship('UserOrder', backref='seller')
+	#进货单
+	receipt_id = relationship('Receipt', backref='seller')
 
 	seller_info_id = relationship('SellerInfo', backref='seller')
 	sale_id = relationship('Sale', backref='seller')
 	#申请店铺默认不启用，管理员同意
 	enable = Column(db.Boolean,default=False)
+
+	#每日最大订单
+	max_order = Column(db.Integer,default=10)
+	#每日最大交易额
+	max_price = Column(db.Integer,default=500)
+	#最大仓库
+	max_warehouse = Column(db.Integer,default=1)
+	#最大货位
+	max_goods_location = Column(db.Integer,default=2)
+	#商品数量
+	max_goods_count = Column(db.Integer,default=20)
+	#level等级
+	level = Column(db.String(20),default=u'免费会员')
+
+	
+
     
 
 
@@ -126,12 +144,75 @@ class SellerInfo(SurrogatePK, Model):
 class Sale(SurrogatePK,Model):
 
 	__tablename__ = 'sales'
-
+	#店铺
 	seller_id = reference_col('sellers')
+	#商品
 	goods_id = reference_col('goodsed')
+	#货位
 	goods_allocation_id = reference_col('goods_allocation')
+	#订单
 	UserOrder_id = reference_col('user_order')
+	#剩余数量
+	residue_count = Column(db.Integer)
 
+	#创建时间
+	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
+
+
+#入库单
+class Receipt(SurrogatePK,Model):
+	__tablename__ = 'receipts'
+
+	#供应商
+	supplier = Column(db.String(100))
+
+	#卖家
+	seller_id = reference_col('sellers')
+
+	#订单号
+	number = db.Column(db.String(100)) 
+	#下单时间
+	buy_time = Column(db.DateTime,default=dt.datetime.now)
+    
+	#送货时间
+	send_time =  db.Column(db.DateTime) 
+	#配送费
+	freight = db.Column(db.Numeric(15,2),default=0)
+
+	#优惠金额
+	discount = db.Column(db.Numeric(15,2))
+	#支付金额
+	pay_price = db.Column(db.Numeric(15,2))
+	#支付时间
+	pay_time =  db.Column(db.DateTime) 
+	#支付类型
+	pay_type = db.Column(db.String(100)) 
+
+	#备注
+	note = db.Column(db.String(255)) 
+
+	#状态默认0
+	order_state = db.Column(db.Integer(),default=1)
+
+	#进货的商品
+	stock_id = relationship('Stock', backref='receipts')
+    
+
+
+#进货
+class Stock(SurrogatePK,Model):
+
+	__tablename__ = 'stocks'
+	#店铺
+	seller_id = reference_col('sellers')
+	#商品
+	goods_id = reference_col('goodsed')
+	#货位
+	goods_allocation_id = reference_col('goods_allocation')
+	#订单
+	receipts_id = reference_col('receipts')
+	#数量
+	residue_count = Column(db.Integer)
 
 	#创建时间
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)

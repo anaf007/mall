@@ -14,7 +14,6 @@ class Config(object):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    WEBPACK_MANIFEST_PATH = 'webpack/manifest.json'
 
 
 class ProdConfig(Config):

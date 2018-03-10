@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
+	superadmin/store/home.html所有店铺 <br>	
+{%for i in all_seller%}
+店铺名称：{{i.name}},创建时间：{{i.created_at}},是否启用:{{i.enable}},
+{%if not i.enable%}
+<a href="{{url_for('superadmin.change_store_enable',id=i.id)}}">启用</a>
+{%endif%}
+{%endfor%}
+</body>
+</html>

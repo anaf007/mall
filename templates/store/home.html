@@ -5,11 +5,36 @@
 	<title>store</title>
 </head>
 <body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
 	store home <br>
 	{%if current_user.seller_id%}
-ok
+店铺主页<br>
+店铺信息： <br>	
+每日最大订单:{{store.max_order}} 单<br>
+每日最大交易额:{{store.max_price}}元 <br>
+最大仓库:{{store.max_warehouse}}个 <br>
+最大货位:{{store.max_goods_location}}个 <br>
+最大商品数量:{{store.max_goods_count}}个 <br>
+当前等级:{{store.level}} <br>
+
+<a href="">商品管理</a> <br>	
+<a href="">商品数据管理</a> <br>	
+<a href="">交易管理</a> <br>
+<a href="">货位管理</a> <br>	
+<a href="">店铺信息设置</a> <br>
+<a href="">店铺横幅设置</a> <br>
+
 	{%else%}
-	没有店铺 申请
+	没有店铺 <a href="{{url_for('store.create_store')}}">申请</a>
 	{%endif%}
 </body>
 </html>

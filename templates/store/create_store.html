@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>create_store</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
+	create_store:
+	<form method="POST" >
+         {{ form.hidden_tag() }}
+         {{ form.name.label }} {{ form.name() }} <br>	
+         {{ form.address.label }} {{ form.address() }}<br>	
+         {{ form.note.label }} {{ form.note() }}<br>	
+         {{ form.contact.label }} {{ form.contact() }}<br>	
+         <input type="submit" value="提交">
+	</form>
+</body>
+</html>

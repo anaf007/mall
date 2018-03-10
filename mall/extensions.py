@@ -18,7 +18,6 @@ debug_toolbar = DebugToolbarExtension()
 
 
 login_manager.session_protection ='strong'
-#自动注册
 login_manager.login_view = 'user.autologin'
 login_manager.login_message = u"请登录后访问该页面."
-login_manager.refresh_view = 'auth.autorlogin'
+login_manager.refresh_view = 'auth.autologin'
