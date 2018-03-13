@@ -7,6 +7,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from flask_ckeditor import CKEditor
 
 bcrypt = Bcrypt()
 csrf_protect = CSRFProtect()
@@ -15,7 +16,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 cache = Cache()
 debug_toolbar = DebugToolbarExtension()
-
+ckeditor = CKEditor()
 
 login_manager.session_protection ='strong'
 login_manager.login_view = 'user.autologin'

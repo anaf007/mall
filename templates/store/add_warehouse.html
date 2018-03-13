@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>add_warehouse</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+<br>
+	add_warehouse添加仓库
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
+         {{ form.name.label }} {{ form.name() }} <br>	
+         {{ form.state.label }} {{ form.state() }}<br>	
+         {{ form.nickname.label }} {{ form.nickname() }}<br>	
+         
+         <input type="submit" value="tijiao">
+	</form>
+</body>
+</html>
+
+
+
+

@@ -5,6 +5,11 @@
 	<title>store</title>
 </head>
 <body>
-	store商品管理
+	store商品管理  <br>
+	<a href="{{url_for('store.commodity_data')}}">添加商品数据</a><br>
+	商品数据： <br>	
+	{%for i in goodsed%}
+	id:{{i.id}},名称：{{i.title}} <br>
+	{%endfor%}
 </body>
 </html>

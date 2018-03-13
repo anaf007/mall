@@ -38,12 +38,16 @@ class Seller(SurrogatePK, Model):
 	#联系方式 
 	contact = Column(db.String(255)) 
     
-
+	#店铺横幅
 	seller_banner_id = relationship('SellerBanner', backref='seller')
+	#仓库
+	warehouse_id = relationship('Warehouse', backref='seller')
+
 	#订单
 	user_order_id = relationship('UserOrder', backref='seller')
 	#进货单
 	receipt_id = relationship('Receipt', backref='seller')
+	goods_id = relationship('Goods', backref='seller')
 
 	seller_info_id = relationship('SellerInfo', backref='seller')
 	sale_id = relationship('Sale', backref='seller')
@@ -63,9 +67,6 @@ class Seller(SurrogatePK, Model):
 	#level等级
 	level = Column(db.String(20),default=u'免费会员')
 
-	
-
-    
 
 
 #横幅
@@ -84,11 +85,12 @@ class SellerBanner(SurrogatePK, Model):
 
 
 
-#商品
+#商品数据
 class Goods(SurrogatePK, Model):
 	__tablename__ = 'goodsed'
-
+	#店铺分类
 	sellers_id = reference_col('sellers')
+	#产品分类
 	category_id = reference_col('categorys')
 
 	#商品名称
@@ -101,10 +103,10 @@ class Goods(SurrogatePK, Model):
 		asdecimal=True, decimal_return_scale=None))
 	#详情
 	note =  Column(db.UnicodeText())
-	#数量
-	count = Column(db.Integer(),default=0)
+	# 数量
+	# count = Column(db.Integer(),default=0)
 	#发布时间
-	create_time =  Column(db.DateTime,default=dt.datetime.now) 
+	# create_time =  Column(db.DateTime,default=dt.datetime.now) 
 	#商品状态
 	active = Column(db.Boolean(),default=True)
 	#是否出售
@@ -113,16 +115,19 @@ class Goods(SurrogatePK, Model):
 	hot = Column(db.Boolean(),default=True)
 	#查看次数
 	click_count = Column(db.Integer(),default=0)
-	#购买总数
+	#累计购买总数
 	buy_count = Column(db.Integer(),default=0)
-	#排序
-	sort = Column(db.Integer(),default=100)
+	# 排序
+	# sort = Column(db.Integer(),default=100)
+	#条码
+	ean = Column(db.String(50))
+	#规格
+	unit = Column(db.Integer,default=1)
 	#创建时间
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
-
+	#出售记录
 	sale_id = relationship('Sale', backref='goodsed')
     
-
 	
 
 #卖家订单中心 每日信息
@@ -140,7 +145,7 @@ class SellerInfo(SurrogatePK, Model):
 	order = db.Column(db.Integer(),default=0)
 
 
-#出售的商品
+#出售的商品记录
 class Sale(SurrogatePK,Model):
 
 	__tablename__ = 'sales'
@@ -234,6 +239,8 @@ class Warehouse(SurrogatePK,Model):
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
 
 	goods_allocation_id = relationship('GoodsAllocation', backref='warehouse')
+
+	sellers_id = reference_col('sellers')
     
 
 
@@ -242,7 +249,7 @@ class GoodsAllocation(SurrogatePK,Model):
 
 	__tablename__ = 'goods_allocation'
 	#货位名称
-	title = Column(db.String(50)) 
+	name = Column(db.String(50)) 
 	#排序
 	sort = Column(db.Integer,default=100)
 	#货位备注
@@ -252,6 +259,18 @@ class GoodsAllocation(SurrogatePK,Model):
 
 	sale_id = relationship('Sale', backref='goodsed_allocation')
     
+
+
+#库存
+class Inventory(SurrogatePK,Model):
+
+	__tablename__ = 'inventory'
+	#商品
+	good_id = reference_col('goodsed')
+	#货位
+	goods_allocation_id = reference_col('goods_allocation')
+
+	count = Column(db.Integer,default=0)
 
 
 

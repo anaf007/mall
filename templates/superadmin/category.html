@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>category</title>
+</head>
+<body>
+	category商品分类 <br>
+	<a href="{{url_for('superadmin.add_category')}}">添加分类</a>	
+	<br>
+	{%for i in categorys%}
+	{%if i.parent_id%}
+	┗
+	{%endif%}
+	id:{{i.id}}，名称：{{i.name}}，排序{{i.sort}},下级：{{i.children}} <br>
+	{%endfor%}
+</body>
+</html>

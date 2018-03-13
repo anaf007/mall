@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 
 from mall import commands, public, user, superadmin, store
-from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
+from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, ckeditor
 from mall.settings import ProdConfig
 
 
@@ -31,6 +31,7 @@ def register_extensions(app):
     csrf_protect.init_app(app)
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
+    ckeditor.init_app(app)
     migrate.init_app(app, db)
     return None
 

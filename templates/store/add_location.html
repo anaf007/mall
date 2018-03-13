@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>add_location</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+add_location
+	添加货位
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
+         {{ form.name.label }} {{ form.name() }} <br>	
+         {{ form.sort.label }} {{ form.sort() }}<br>	
+         {{ form.note.label }} {{ form.note() }}<br>	
+         {{ form.warehouse.label }} {{ form.warehouse() }}<br>	
+         
+         <input type="submit" value="tijiao">
+	</form>
+</body>
+</html>
+

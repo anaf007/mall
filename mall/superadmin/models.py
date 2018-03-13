@@ -17,8 +17,7 @@ class SystemVersion(SurrogatePK,Model):
 	context = Column(db.UnicodeText)
 
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
-
-
+	
 
 #基础的商品数据，当输入名称自动查找关联，省去了店家的输入，管理员操作
 class BaseProducts(SurrogatePK, Model):

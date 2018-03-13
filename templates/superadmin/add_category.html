@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>add_category</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+	add_category添加分类 <br>
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
+         {{ form.name.label }} {{ form.name() }} <br>	
+         {{ form.ico.label }} {{ form.ico() }}<br>	
+         {{ form.sort.label }} {{ form.sort() }}<br>	
+         {{ form.active.label }} {{ form.active() }}<br>
+         {{ form.pid.label }} {{ form.pid() }}<br>       
+
+         <input type="submit" value="tijiao">
+	</form>	
+</body>
+</html>

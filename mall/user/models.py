@@ -49,7 +49,7 @@ class User(UserMixin, SurrogatePK, Model):
 
     role = relationship('Role', backref='roles')
     #店铺一对一
-    seller_id = relationship('Seller', backref='users',uselist='False')
+    seller_id = relationship('Seller', backref='users',uselist='False',lazy='select')
     user_address_id = relationship('UserAddress', backref='users')
     user_order_id = relationship('UserOrder', backref='users_buy')
     # car_session_id = relationship('CarSession', backref='users')

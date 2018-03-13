@@ -1,0 +1,35 @@
+{{ ckeditor.load() }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>data</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+	添加商品数据：
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
+         {{ form.title.label }} {{ form.title() }} <br>	
+         {{ form.ean.label }} {{ form.ean() }}<br>	
+         {{ form.unit.label }} {{ form.unit() }}<br>	
+         {{ form.original_price.label }} {{ form.original_price() }}<br>
+         {{ form.special_price.label }} {{ form.special_price() }}<br>
+         {{ form.is_sell.label }} {{ form.is_sell() }}<br>
+         {{ form.hot.label }} {{ form.hot() }}<br>
+         {{ form.category.label }} {{ form.category() }}<br>
+         {{ form.note.label }} {{ form.note() }}<br>
+         
+         {{ ckeditor.config(name='note') }}
+         <input type="submit" value="tijiao">
+	</form>
+</body>
+</html>
