@@ -2,7 +2,7 @@
 """Stroe forms."""
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField,DecimalField, BooleanField, SelectField
+from wtforms import StringField,DecimalField, BooleanField, SelectField, DecimalField
 from wtforms.validators import DataRequired
 
 from flask_ckeditor import CKEditorField
@@ -25,12 +25,12 @@ class CommodityDataForm(FlaskForm):
 	title = StringField(u'商品标题', validators=[DataRequired()])
 	ean = StringField(u'商品条码', validators=[DataRequired()])
 	unit = StringField(u'商品规格', validators=[DataRequired()])
-	original_price = DecimalField(u'原价', validators=[DataRequired()])
-	special_price = DecimalField(u'优惠价', validators=[DataRequired()])
+	original_price = DecimalField(u'销售价', validators=[DataRequired()])
+	special_price = DecimalField(u'进货价', validators=[DataRequired()])
 	
 	is_sell = BooleanField(u'是否出售',default=True)
 	hot = BooleanField(u'热门商品',default=False)
-	category = SelectField(u'上级栏目',choices=[(-1,u'请选择分类')],coerce=int)
+	category = SelectField(u'所属栏目',choices=[(-1,u'请选择分类')],coerce=int)
 
 	note = CKEditorField(u'详情')
 
@@ -47,8 +47,6 @@ class AddWarehouseForm(FlaskForm):
 	nickname = StringField(u'仓库别名', validators=[DataRequired()])
 	
 
-
-
 #添加货位
 class AddLocationForm(FlaskForm):
 	name = StringField(u'货位名称', validators=[DataRequired()])
@@ -62,6 +60,18 @@ class AddLocationForm(FlaskForm):
 		self.warehouse.choices = self.warehouse.choices+[(obj.id, obj.name) for obj in Warehouse.query.filter_by(seller=current_user.seller_id[0]).all()]
     
 
+#进货form
+class StockForm(FlaskForm):
+	supplier = StringField(u'供应商', validators=[DataRequired()])
+	buy_time = StringField(u'下单时间')
+	send_time = StringField(u'送货时间')
+	freight = StringField(u'配送费')
+	discount = StringField(u'优惠金额')
+	pay_price = StringField(u'支付金额')
+	pay_time = StringField(u'支付时间')
+	pay_type = SelectField(u'支付类型',choices=[(u'微信',u'微信'),(u'现金',u'现金'),(u'银行卡',u'银行卡'),(u'其他',u'其他')])
+	note = StringField(u'备注')
+	
 
 
 
@@ -73,3 +83,6 @@ class AddLocationForm(FlaskForm):
 
 
     
+
+
+

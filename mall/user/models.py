@@ -50,9 +50,20 @@ class User(UserMixin, SurrogatePK, Model):
     role = relationship('Role', backref='roles')
     #店铺一对一
     seller_id = relationship('Seller', backref='users',uselist='False',lazy='select')
+    #用户收货地址
     user_address_id = relationship('UserAddress', backref='users')
+    #订单
     user_order_id = relationship('UserOrder', backref='users_buy')
-    # car_session_id = relationship('CarSession', backref='users')
+    #货位
+    goods_allocation_id = relationship('GoodsAllocation', backref='users')
+    #库存
+    inventory_id = relationship('Inventory', backref='users')
+    #进货单
+    receipt_id = relationship('Receipt', backref='users')
+    stock_id = relationship('Stock', backref='users')
+    buys_car_id = relationship('BuysCar', backref='users')
+    follows_id = relationship('Follow', backref='users')
+    
 
     
     

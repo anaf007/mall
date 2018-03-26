@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Helper utilities and decorators."""
-from flask import flash, request, render_template
+from flask import flash, request, render_template, current_app
 from functools import wraps
 
 import sys
@@ -31,4 +31,14 @@ def templated(template=None):
             return render_template(template_name, **ctx)
         return decorated_function
     return decorator
+
+
+
+def allowed_file(filename,config_name):
+    if '.' in filename and \
+        filename.rsplit('.', 1)[1] in current_app.config['{}'.format(config_name)] :
+        return True
+    else:
+        return False
+
 

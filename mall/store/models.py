@@ -5,6 +5,7 @@ from mall.database import Column, Model, SurrogatePK, db, reference_col, relatio
 import datetime as dt
 import time
 
+
 #卖家
 class Seller(SurrogatePK, Model):
 
@@ -34,23 +35,8 @@ class Seller(SurrogatePK, Model):
 	note = Column(db.String(255)) 
 	#创建时间
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
-
 	#联系方式 
 	contact = Column(db.String(255)) 
-    
-	#店铺横幅
-	seller_banner_id = relationship('SellerBanner', backref='seller')
-	#仓库
-	warehouse_id = relationship('Warehouse', backref='seller')
-
-	#订单
-	user_order_id = relationship('UserOrder', backref='seller')
-	#进货单
-	receipt_id = relationship('Receipt', backref='seller')
-	goods_id = relationship('Goods', backref='seller')
-
-	seller_info_id = relationship('SellerInfo', backref='seller')
-	sale_id = relationship('Sale', backref='seller')
 	#申请店铺默认不启用，管理员同意
 	enable = Column(db.Boolean,default=False)
 
@@ -67,6 +53,26 @@ class Seller(SurrogatePK, Model):
 	#level等级
 	level = Column(db.String(20),default=u'免费会员')
 
+
+	#运费
+	freight = Column(db.Numeric(precision=10,scale=2,\
+		asdecimal=True, decimal_return_scale=None),default=0)
+	#满多少免运费
+	max_price_no_freight = Column(db.Numeric(precision=10,scale=2,\
+		asdecimal=True, decimal_return_scale=None),default=0)
+
+	#店铺横幅
+	seller_banner_id = relationship('SellerBanner', backref='seller')
+	#仓库
+	warehouse_id = relationship('Warehouse', backref='seller')
+
+	#订单
+	user_order_id = relationship('UserOrder', backref='seller')
+	goods_id = relationship('Goods', backref='seller')
+
+	seller_info_id = relationship('SellerInfo', backref='seller')
+	sale_id = relationship('Sale', backref='seller')
+	follow_id = relationship('Follow', backref='seller')
 
 
 #横幅
@@ -87,7 +93,9 @@ class SellerBanner(SurrogatePK, Model):
 
 #商品数据
 class Goods(SurrogatePK, Model):
+
 	__tablename__ = 'goodsed'
+
 	#店铺分类
 	sellers_id = reference_col('sellers')
 	#产品分类
@@ -95,18 +103,18 @@ class Goods(SurrogatePK, Model):
 
 	#商品名称
 	title = Column(db.String(100)) 
-	#原价
+	#原价，销售价
 	original_price = Column(db.Numeric(precision=10,scale=2,\
 		asdecimal=True, decimal_return_scale=None))
-	#优惠价
+	#优惠价进货价
 	special_price = Column(db.Numeric(precision=10,scale=2,\
 		asdecimal=True, decimal_return_scale=None))
 	#详情
 	note =  Column(db.UnicodeText())
-	# 数量
-	# count = Column(db.Integer(),default=0)
-	#发布时间
-	# create_time =  Column(db.DateTime,default=dt.datetime.now) 
+	# 附加字段
+	attach_key = Column(db.String(500))
+	#附加值
+	attach_value = Column(db.String(500))
 	#商品状态
 	active = Column(db.Boolean(),default=True)
 	#是否出售
@@ -117,18 +125,21 @@ class Goods(SurrogatePK, Model):
 	click_count = Column(db.Integer(),default=0)
 	#累计购买总数
 	buy_count = Column(db.Integer(),default=0)
-	# 排序
-	# sort = Column(db.Integer(),default=100)
 	#条码
 	ean = Column(db.String(50))
 	#规格
 	unit = Column(db.Integer,default=1)
 	#创建时间
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
+	
 	#出售记录
 	sale_id = relationship('Sale', backref='goodsed')
+	#库存
+	inventory_id = relationship('Inventory', backref='goodsed')
+	#进货的商品
+	stock_id = relationship('Stock', backref='goodsed')
+	buys_car_id = relationship('BuysCar', backref='goodsed')
     
-	
 
 #卖家订单中心 每日信息
 class SellerInfo(SurrogatePK, Model):
@@ -136,13 +147,13 @@ class SellerInfo(SurrogatePK, Model):
 
 	seller_id = reference_col('sellers')
 	#计算时间
-	Date =  db.Column(db.Date,default=time.strftime('%Y%m%d')) 
+	Date =  Column(db.Date,default=time.strftime('%Y%m%d')) 
 	#访客
-	visitor = db.Column(db.Integer(),default=1)
+	visitor = Column(db.Integer(),default=1)
 	#成交额
-	price = db.Column(db.Numeric(15,4))
+	price = Column(db.Numeric(15,4))
 	#订单数量
-	order = db.Column(db.Integer(),default=0)
+	order = Column(db.Integer(),default=0)
 
 
 #出售的商品记录
@@ -157,7 +168,9 @@ class Sale(SurrogatePK,Model):
 	goods_allocation_id = reference_col('goods_allocation')
 	#订单
 	UserOrder_id = reference_col('user_order')
-	#剩余数量
+	#出售数量
+	count = Column(db.Integer)
+	#货位剩余数量
 	residue_count = Column(db.Integer)
 
 	#创建时间
@@ -172,51 +185,58 @@ class Receipt(SurrogatePK,Model):
 	supplier = Column(db.String(100))
 
 	#卖家
-	seller_id = reference_col('sellers')
+	user_id = reference_col('users')
 
 	#订单号
-	number = db.Column(db.String(100)) 
+	number = Column(db.String(100),unique=True) 
 	#下单时间
 	buy_time = Column(db.DateTime,default=dt.datetime.now)
     
 	#送货时间
-	send_time =  db.Column(db.DateTime) 
+	send_time =  Column(db.DateTime) 
 	#配送费
-	freight = db.Column(db.Numeric(15,2),default=0)
+	freight = Column(db.Numeric(15,2),default=0)
 
 	#优惠金额
-	discount = db.Column(db.Numeric(15,2))
+	discount = Column(db.Numeric(15,2))
 	#支付金额
-	pay_price = db.Column(db.Numeric(15,2))
+	pay_price = Column(db.Numeric(15,2))
 	#支付时间
-	pay_time =  db.Column(db.DateTime) 
-	#支付类型
-	pay_type = db.Column(db.String(100)) 
+	pay_time =  Column(db.DateTime) 
+	#支付类型 微信 现金  银行卡 其他
+	pay_type = Column(db.String(100)) 
 
 	#备注
-	note = db.Column(db.String(255)) 
+	note = Column(db.String(255)) 
 
 	#状态默认0
-	order_state = db.Column(db.Integer(),default=1)
+	order_state = Column(db.Integer(),default=1)
+	#商品种类
+	variety = Column(db.Integer)
+	#商品总数量
+	goods_sum =  Column(db.Integer)
+	#总价
+	price_sum = Column(db.Numeric(15,2),default=0)
 
 	#进货的商品
 	stock_id = relationship('Stock', backref='receipts')
     
 
-
 #进货
 class Stock(SurrogatePK,Model):
 
 	__tablename__ = 'stocks'
-	#店铺
-	seller_id = reference_col('sellers')
+	#用户
+	user_id = reference_col('users')
 	#商品
 	goods_id = reference_col('goodsed')
 	#货位
 	goods_allocation_id = reference_col('goods_allocation')
 	#订单
 	receipts_id = reference_col('receipts')
-	#数量
+	#进货数量
+	stock_count = Column(db.Integer)
+	#仓库数量
 	residue_count = Column(db.Integer)
 
 	#创建时间
@@ -243,7 +263,6 @@ class Warehouse(SurrogatePK,Model):
 	sellers_id = reference_col('sellers')
     
 
-
 #货位
 class GoodsAllocation(SurrogatePK,Model):
 
@@ -254,10 +273,20 @@ class GoodsAllocation(SurrogatePK,Model):
 	sort = Column(db.Integer,default=100)
 	#货位备注
 	note = Column(db.String(100))
-
+	#所属仓库
 	warehouse_id = reference_col('warehouses')
+	#所属用户，不然每次查询都要join很多关联
+	user_id = reference_col('users')
 
 	sale_id = relationship('Sale', backref='goodsed_allocation')
+	#库存
+	inventory_id = relationship('Inventory', backref='goods_allocation')
+	#出售的商品
+	stock_id = relationship('Stock', backref='goods_allocation')
+	
+
+	# def to_dict(self):
+	# 	return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
     
 
 
@@ -266,11 +295,15 @@ class Inventory(SurrogatePK,Model):
 
 	__tablename__ = 'inventory'
 	#商品
-	good_id = reference_col('goodsed')
+	goods_id = reference_col('goodsed')
 	#货位
 	goods_allocation_id = reference_col('goods_allocation')
 
 	count = Column(db.Integer,default=0)
+
+	note = Column(db.String(200))
+
+	user_id = reference_col('users')
 
 
 

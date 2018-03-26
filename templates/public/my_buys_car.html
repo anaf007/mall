@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	my_buys_car: <br>
+	{%for i in buys_car%}
+		商品：{{i.goods_id}}:count:{{i.count}} <br>	
+	{%endfor%}
+
+	<a href="{{url_for('public.submit_order')}}">结算</a>
+</body>
+</html>

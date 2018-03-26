@@ -52,5 +52,6 @@ env/
 /mall/static/build/
 /mall/webpack/manifest.json
 
+data/
 
-/data
+

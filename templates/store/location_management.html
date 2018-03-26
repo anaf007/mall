@@ -8,6 +8,10 @@
 	location_management货位管理
 	<a href="{{url_for('store.add_warehouse')}}">添加仓库</a>
 	<a href="{{url_for('store.add_location')}}">添加货位</a>
-	<a href=""></a>
+	<br>
+	<a href="{{url_for('store.toexcel_location')}}" target="_blank">导出数据</a> <br>
+	{%for i in goods_allocation%}
+		{{i.id}},{{i.name}} <br>
+	{%endfor%}
 </body>
 </html>

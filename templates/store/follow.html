@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	follow关注：
+	{%for i in guanzhu%}
+		用户名：{{i.users.username}}
+		时间：{{i.timestamp}}
+	{%endfor%}
+</body>
+</html>

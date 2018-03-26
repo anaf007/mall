@@ -26,13 +26,16 @@
 最大商品数量:{{store.max_goods_count}}个 <br>
 当前等级:{{store.level}} <br>
 
-<a href="">进货数据</a> <br>
+<a href="{{url_for('store.stock')}}">进货数据</a> <br>
 <a href="">出售数据</a> <br><br>
-<a href="">库存管理</a> <br>	<br>
+<a href="{{url_for('store.inventory')}}">库存管理</a> <br>	<br>
 <a href="{{url_for('store.location_management')}}">货位管理</a> <br>	
 <a href="{{url_for('store.commodity_management')}}">商品管理</a> <br>	<br>
 <a href="">店铺信息设置</a> <br><br>
+<a href="{{url_for('store.follow')}}">关注我的用户</a> <br><br>
 
+
+<h1>我的关注地址：{{url_for('store.guanzhu',id=current_user.seller_id[0].id)}}</h1>
 	{%else%}
 	没有店铺 <a href="{{url_for('store.create_store')}}">申请</a>
 	{%endif%}

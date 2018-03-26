@@ -5,7 +5,7 @@
 	<title>version</title>
 </head>
 <body>
-{%for message in get_flashed_messages(category_filter=['success'])%}
+{%for message in get_flashed_messages()%}
         
 <div class="ui-tooltips ui-tooltips-guide">
     <div class="ui-tooltips-cnt ui-border-b">
@@ -17,7 +17,7 @@
 <a href="{{url_for('superadmin.add_version')}}">添加版本</a>
 	version: <br>	
 	{%for i in version%}
-	{{i.number}},{{i.title}},{{i.summary}},{{i.context}},{{i.created_at}}<br>
+	{{i.number}},{{i.title}},{{i.summary}},{{i.created_at}},{{i.context}}<br>
 	{%endfor%}
 </body>
 </html>

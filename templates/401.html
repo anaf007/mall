@@ -5,6 +5,16 @@
 	<title>401</title>
 </head>
 <body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+<a href="javascript:history.back(-1)">返回上一页</a>
 	401
 </body>
 </html>

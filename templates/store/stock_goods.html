@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	stock_goods <br>
+	{%for j in stock%}
+            商品名称：{{j.goodsed.title}},
+            货位名称：{{j.goods_allocation.name}},
+            进货数据：{{j.stock_count}},
+            仓库数量：{{j.residue_count}},
+            创建时间：{{j.created_at}},<br>
+    {%endfor%}
+</body>
+</html>

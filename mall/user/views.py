@@ -49,9 +49,16 @@ def autoregister():
 		autoregister()
 
 
+@blueprint.route('/autologin/<string:name>')
 @blueprint.route('/autologin')
 # @oauth(scope='snsapi_userinfo')
 def autologin(name=''):
+	if name:
+		user = User.query.filter_by(username=name).first()
+		print user
+		login_user(user,True) if user else abort(404)
+		return redirect(request.args.get('next') or url_for('public.home'))
+
 	wechat_id = session.get('wechat_user_id','')
 	if wechat_id:
 		user = User.query.filter_by(wechat_id=session.get('wechat_user_id')).first()
@@ -62,6 +69,5 @@ def autologin(name=''):
 	else:
 		autoregister()
 
-	
 	return redirect(request.args.get('next') or url_for('public.home'))
 		

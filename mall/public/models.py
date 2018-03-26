@@ -12,34 +12,27 @@ class UserAddress(SurrogatePK, Model):
 	user_id = reference_col('users')
 
 	#姓名
-	username = Column(db.String(20)) 
+	name = Column(db.String(20)) 
 	#地址
 	address = Column(db.String(255)) 
 	#电话
 	phone = Column(db.String(20)) 
-	#状态  1为默认  默认0  
-	state = Column(db.Integer())
+	#状态  0为默认收货地址  默认为1
+	state = Column(db.Integer(),default=1)
 
 	user_order_id = relationship('UserOrder', backref='users_address')
     
 
 
-"""
 #用户购物车商品列表
-class CarSession(SurrogatePK, Model):
+class BuysCar(SurrogatePK, Model):
 
-	__tablename__ = 'car_session'
+	__tablename__ = 'buys_car'
 
 	user_id = reference_col('users')
+	goods_id = reference_col('goodsed')
 
-	
-	#数量
-	count = db.Column(db.Numeric(precision=10,scale=2,\
-		asdecimal=True, decimal_return_scale=None))
-"""
-
-
-
+	count = Column(db.Integer,default=1)
 
 
 
@@ -57,7 +50,7 @@ class UserOrder(SurrogatePK,Model):
 	seller_id = reference_col('sellers')
 
 	#订单号
-	number = db.Column(db.String(100)) 
+	number = db.Column(db.String(100),unique=True) 
 	#下单时间
 	buy_time = Column(db.DateTime,default=dt.datetime.now)
     
@@ -100,5 +93,13 @@ class UserOrder(SurrogatePK,Model):
     
 
 
+#用户关注的店铺
+class Follow(SurrogatePK,Model):
+	__tablename__ = 'follows'
+
+	user_id = reference_col('users')
+	seller_id = reference_col('sellers')
+	
+	timestamp = db.Column(db.DateTime, default=dt.datetime.utcnow)
 
 

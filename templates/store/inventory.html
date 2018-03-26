@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	库存： <hr>
+	{%for i in kucun%}
+	名称： {{i.goodsed.title}};数量{{i.count}} ;货位:{{i.goods_allocation.name}} <br>
+	{%endfor%}
+</body>
+</html>

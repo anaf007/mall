@@ -37,3 +37,16 @@ class LoginForm(FlaskForm):
             self.username.errors.append('User not activated')
             return False
         return True
+
+
+#添加用户收货地址
+class AddUserAddressForm(FlaskForm):
+    name = StringField(u'姓名', validators=[DataRequired()])
+    phone = StringField(u'手机号码', validators=[DataRequired()])
+    address = StringField(u'收货地址', validators=[DataRequired()])
+
+
+
+
+
+

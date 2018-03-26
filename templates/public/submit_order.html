@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>sublimt_order</title>
+</head>
+<body>
+{%for message in get_flashed_messages()%}        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
+	sublimt_order请确认您的商品： <br>
+	
+	{%for i in buys_car%}
+
+	
+
+	
+
+	{%if loop.first%}
+
+	店铺：{{i.goodsed.seller.name}}  <br>
+	{%endif%}
+
+
+	
+	商品：{{i.goods_id}}:数量:{{i.count}}，价格：{{i.goodsed.original_price}} <br>	
+	{%endfor%}
+	<br>
+	<form action="{{url_for('public.confirm_order')}}" method="post">
+	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+	收货地址：
+	<select name="user_address" id="">
+		{%for i in user_address%}
+		<option value="{{i.id}}">{{i.name}},{{i.phone}},{{i.address}}</option>
+		{%endfor%}
+	</select> 
+	订单留言：<input type="text" name="note" id=""><br>
+	<a href="{{url_for('public.add_user_address')}}">添加收货地址</a>
+	<input type="submit" value="确认下单">
+	</form>
+</body>
+</html>

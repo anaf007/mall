@@ -7,9 +7,10 @@
 <body>
 	store商品管理  <br>
 	<a href="{{url_for('store.commodity_data')}}">添加商品数据</a><br>
+	<a href="{{url_for('store.toexcel_commodity_data')}}">导出商品数据</a><br>
 	商品数据： <br>	
 	{%for i in goodsed%}
-	id:{{i.id}},名称：{{i.title}} <br>
+	id:{{i.id}},名称：{{i.title}},是否出售：{{i.is_sell}} <br>
 	{%endfor%}
 </body>
 </html>
