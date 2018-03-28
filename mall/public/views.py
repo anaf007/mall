@@ -10,7 +10,7 @@ from mall.user.models import User
 from mall.store.models import Seller,Goods,Inventory,GoodsAllocation,Sale
 from mall.utils import flash_errors,templated
 from .models import Follow,BuysCar,UserAddress,UserOrder
-from .forms import AddUserAddressForm
+
 
 import random,time
 
@@ -25,18 +25,21 @@ def load_user(user_id):
 
 
 @blueprint.route('/')
-@templated('public/home.html')
+@templated()
 def home():
     """Home page."""
     follow = Follow.query.filter_by(users=current_user).all()
-    if len(follow)<=1:
+    len_follow = len(follow)
+    if len_follow>0 and len_follow<=1:
     	return redirect(url_for('.show_store',id=follow[0].id))
+    if len_follow<1:
+    	return u'您还未关注店铺。'
     return dict()
 
 
 #显示店铺
 @blueprint.route('/show_store/<int:id>')
-@templated('public/show_store.html')
+@templated()
 def show_store(id=0):
     follow = Follow.query.get_or_404(id)
     seller = Seller.query.get_or_404(follow.seller_id)
@@ -46,7 +49,7 @@ def show_store(id=0):
 
 #添加购物车
 @blueprint.route('/add_car/<int:id>')
-@templated('public/add_car.html')
+@templated()
 def add_car(id=0):
 	goodsed = Goods.query.get_or_404(id)
 	is_goods = BuysCar.query.filter_by(users=current_user).filter_by(goodsed=goodsed).first()
@@ -60,7 +63,7 @@ def add_car(id=0):
 
 #显示商品详情
 @blueprint.route('/show_goods/<int:id>')
-@templated('public/show_goods.html')
+@templated()
 def show_goods(id=0):
 	goods = Goods.query.get_or_404(id)
 	goods.update(click_count=goods.click_count+1)
@@ -77,20 +80,6 @@ def logout():
     return redirect(url_for('public.home'))
 
 
-#显示购物车
-@blueprint.route('/my_buys_car')
-@templated('public/my_buys_car.html')
-def my_buys_car():
-	buys_car = BuysCar.query.filter_by(users=current_user).all()
-	return dict(buys_car=buys_car)
-
-
-#添加收货地址
-@blueprint.route('/add_user_address')
-@templated('public/add_user_address.html')
-def add_user_address():
-	form = AddUserAddressForm()
-	return dict(form=form)
 
 @blueprint.route('/add_user_address',methods=['POST'])
 def add_user_address_post():
@@ -115,7 +104,7 @@ def add_user_address_post():
 
 #购物车提交订单
 @blueprint.route('/submit_order')
-@templated('public/submit_order.html')
+@templated()
 def submit_order():
 	#购物车信息
 	buys_car = BuysCar.query.filter_by(users=current_user).all()
@@ -251,7 +240,6 @@ def confirm_order():
 	except Exception, e:
 		db.session.rollback()
 		return str(e)
-
 
 	return redirect(url_for('.submit_order'))
 

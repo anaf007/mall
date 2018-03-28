@@ -23,7 +23,6 @@ class UserAddress(SurrogatePK, Model):
 	user_order_id = relationship('UserOrder', backref='users_address')
     
 
-
 #用户购物车商品列表
 class BuysCar(SurrogatePK, Model):
 
@@ -33,7 +32,6 @@ class BuysCar(SurrogatePK, Model):
 	goods_id = reference_col('goodsed')
 
 	count = Column(db.Integer,default=1)
-
 
 
 #用户订单
@@ -85,7 +83,7 @@ class UserOrder(SurrogatePK,Model):
 	#评价内容
 	evaluate_seller_note = db.Column(db.UnicodeText())
 	
-	#状态默认0
+	#状态默认0 0提交 1付款 2完成 3关闭
 	order_state = db.Column(db.Integer(),default=0)
 
 	#出售的商品

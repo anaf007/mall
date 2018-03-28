@@ -11,7 +11,7 @@ from collections import defaultdict
 from .forms import *
 from .models import Seller,Goods,GoodsAllocation,Inventory,Receipt,Stock
 from mall.user.models import User
-from mall.public.models import Follow
+from mall.public.models import Follow,UserOrder
 from mall.extensions import db
 from mall.utils import allowed_file
 import datetime as dt
@@ -25,7 +25,7 @@ sys.setdefaultencoding('utf8')
 
 
 @blueprint.route('/')
-@templated('store/home.html')
+@templated()
 @login_required
 def home():
 	# current_app.logger.info("store_info")
@@ -38,14 +38,14 @@ def home():
 
 #店铺申请
 @blueprint.route('/create_store')
-@templated('store/create_store.html')
+@templated()
 @login_required
 def create_store():
     return dict(form=CreateStoreForm())
 
 
 @blueprint.route('/create_store',methods=['POST'])
-@templated('store/create_store.html')
+@templated()
 @login_required
 def create_store_post():
 	form = CreateStoreForm()
@@ -66,7 +66,7 @@ def create_store_post():
 
 #商品管理
 @blueprint.route('/commodity_management')
-@templated('store/commodity_management.html')
+@templated()
 @login_required
 def commodity_management():
     return dict(goodsed=Goods.query.filter_by(seller=current_user.seller_id[0]).all())
@@ -74,7 +74,7 @@ def commodity_management():
 
 #商品数据
 @blueprint.route('/commodity_data')
-@templated('store/commodity_data.html')
+@templated()
 @login_required
 def commodity_data():
     return dict(form=CommodityDataForm())
@@ -108,7 +108,7 @@ def commodity_data_post():
 
 #商品管理
 @blueprint.route('/location_management')
-@templated('store/location_management.html')
+@templated()
 @login_required
 def location_management():
 	goods_allocation = GoodsAllocation.query.filter_by(users=current_user).order_by('sort').all()
@@ -117,7 +117,7 @@ def location_management():
 
 #添加仓库
 @blueprint.route('/add_warehouse')
-@templated('store/add_warehouse.html')
+@templated()
 @login_required
 def add_warehouse():
     return dict(form=AddWarehouseForm())
@@ -161,7 +161,7 @@ def add_warehouse_post():
 
 #添加货位
 @blueprint.route('/add_location')
-@templated('store/add_location.html')
+@templated()
 @login_required
 def add_location():
     return dict(form=AddLocationForm())
@@ -254,7 +254,6 @@ def toexcel_location():
         return str(e)
 
     
-
 #导出商品基础数据
 @blueprint.route('/toexcel_commodity_data')
 @login_required
@@ -325,7 +324,7 @@ def toexcel_commodity_data():
     
 #进货入库
 @blueprint.route('/stock')
-@templated('store/stock.html')
+@templated()
 @login_required
 def stock():
 	form=StockForm()
@@ -597,7 +596,7 @@ def toexcel_stock_template():
 
 #进货单商品详细
 @blueprint.route('/stock_goods/<int:id>')
-@templated('store/stock_goods.html')
+@templated()
 @login_required
 def stock_goods(id=0):
 	stock = Stock.query.filter_by(receipts_id=id).filter_by(users=current_user).all()
@@ -606,15 +605,15 @@ def stock_goods(id=0):
 
 #库存
 @blueprint.route('/inventory')
-@templated('store/inventory.html')
+@templated()
 @login_required
 def inventory(id=0):
 	kucun = Inventory.query.filter_by(users=current_user).order_by('count').all()
 	return dict(kucun=kucun)
 
-#库存
+
 @blueprint.route('/follow')
-@templated('store/follow.html')
+@templated()
 @login_required
 def follow(id=0):
 	guanzhu = Follow.query.filter_by(seller=current_user.seller_id[0]).all()
@@ -623,7 +622,7 @@ def follow(id=0):
 
 #关注
 @blueprint.route('/guanzhu/<int:id>')
-# @templated('store/guanzhu.html')
+@templated()
 @login_required
 def guanzhu(id=0):
 	seller = Seller.query.get_or_404(id)
@@ -637,6 +636,14 @@ def guanzhu(id=0):
 
 	return redirect(url_for('public.home'))
 
+
+#出售记录
+@blueprint.route('/sell')
+@templated()
+@login_required
+def sell(id=0):
+	buy_users = UserOrder.query.filter_by(seller=current_user.seller_id[0]).all()
+	return dict(buy_users=buy_users)
 
 
 

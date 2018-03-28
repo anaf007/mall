@@ -289,7 +289,6 @@ class GoodsAllocation(SurrogatePK,Model):
 	# 	return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
     
 
-
 #库存
 class Inventory(SurrogatePK,Model):
 

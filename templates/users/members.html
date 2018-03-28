@@ -1,7 +1,14 @@
-
-{% extends "layout.html" %}
-{% block content %}
-    <h1>Welcome {{ current_user.username }}</h1>
-    <h3>This is the members-only page.</h3>
-{% endblock %}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>users</title>
+</head>
+<body>
+	users home用户中心<br>
+	<a href="{{url_for('user.my_follow')}}">关注的店铺</a> <br>	
+	<a href="{{url_for('user.my_order')}}">我的订单</a> <br>	
+	<a href="{{url_for('user.my_buys_car')}}">我的购物车</a> <br>	
+	<a href="{{url_for('user.add_user_address')}}">添加收货地址</a> <br>	
+</body>
+</html>

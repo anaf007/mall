@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>order</title>
+</head>
+<body>
+	我的订单：  <br>	
+	{%for i in order%}
+	id:{{i.id}},订单号：{{i.number}}状态:{{i.order_state}}<br>
+	{%endfor%}
+</body>
+</html>

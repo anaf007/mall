@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>我的关注</title>
+</head>
+<body>
+	我关注的店铺：
+	{%for i in current_user.follows_id%}
+		{{i.seller.name}}
+	{%endfor%}
+</body>
+</html>

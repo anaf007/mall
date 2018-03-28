@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 """User views."""
 from flask import Blueprint, render_template,session,redirect,url_for,request
-from flask_login import login_required,login_user
+from flask_login import login_required,login_user,current_user
 
 import time,random
 
 from mall.user.models import User
+from mall.public.models import BuysCar,UserOrder
+from mall.utils import templated
+from .forms import AddUserAddressForm
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -16,6 +19,36 @@ def members():
     """List members."""
     return render_template('users/members.html')
 
+
+#显示购物车
+@blueprint.route('/my_buys_car')
+@templated('users/my_buys_car.html')
+def my_buys_car():
+	buys_car = BuysCar.query.filter_by(users=current_user).all()
+	return dict(buys_car=buys_car)
+
+
+#显示我的订单
+@blueprint.route('/my_order')
+@templated('users/my_order.html')
+def my_order():
+	user_order = UserOrder.query.filter_by(users_buy=current_user).all()
+	return dict(order=user_order)
+
+
+#显示我的订单
+@blueprint.route('/my_follow')
+@templated('users/my_follow.html')
+def my_follow():
+	return dict()
+
+
+#添加收货地址
+@blueprint.route('/add_user_address')
+@templated('users/add_user_address.html')
+def add_user_address():
+	form = AddUserAddressForm()
+	return dict(form=form)
 
 
 #自动注册 

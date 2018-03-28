@@ -7,6 +7,15 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length
 from .models import User
 
 
+#添加用户收货地址
+class AddUserAddressForm(FlaskForm):
+    name = StringField(u'姓名', validators=[DataRequired()])
+    phone = StringField(u'手机号码', validators=[DataRequired()])
+    address = StringField(u'收货地址', validators=[DataRequired()])
+
+
+
+
 class RegisterForm(FlaskForm):
     """Register form."""
 
