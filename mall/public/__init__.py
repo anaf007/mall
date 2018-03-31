@@ -1,3 +1,8 @@
 # -*- coding: utf-8 -*-
 """The public module, including the homepage and user auth."""
-from . import views, models  # noqa
+
+from flask import Blueprint
+
+blueprint = Blueprint('public', __name__, static_folder='../static')
+
+from . import views, models, context_process # noqa

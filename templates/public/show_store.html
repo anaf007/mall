@@ -1,26 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>show_store</title>
-</head>
-<body>
-	show_store<br>
-	店铺名称：{{seller.name}}<br>
-	店铺地址：{{seller.address}}<br>
-	店铺备注{{seller.note}}<br>
-	联系方式{{seller.contact}}  <br>
-	商品： <br>{%for i in goods%}
-	{%if i.is_sell%}
-	名称：<a href="{{url_for('public.show_goods',id=i.id)}}">{{i.title}}</a> ,价格：{{i.original_price}},<a href="{{url_for('public.add_car',id=i.id)}}">添加购物车</a><br>
-	{%endif%}	
-	{%endfor%}
+<html>
 
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,minimum-scale=1,user-scalable=no">
+		<title>产品列表</title>
 
-	<a href="{{url_for('user.my_buys_car')}}">我的购物车</a>
-	<a href="{{url_for('user.members')}}">用户中心</a>
-</body>
+		<link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}" />
+		<script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.2.4.min.js')}}"></script>
+		<script type="text/javascript" src="{{url_for('static',filename='js/common.js')}}"></script>
+	</head>
+
+	<body>
+		<div class="main">
+
+		<div class="goodsListTitle">
+			<div class="nametit">{{seller[0]}}</div>
+			<div class="jiage">{{seller[1]}} </div>
+		</div>
+
+			<div class="goodsListBox border_lr">
+
+				<ul class="goodsListLeft">
+				{%for v in goods%}
+					<li><a class="GLindex">{{goods[v][0][7]}}</a></li>
+				{%endfor%}
+	
+									
+				</ul>
+
+				<!--单个模板-->
+				<div class="goodsListRight">
+
+					{%for i in goods%}
+					<ul class="goodsList">
+						{%for  j in goods[i]%}
+
+						<li>
+							<div class="goodimg">
+								<img src="{{url_for('static',filename='images/nav.jpg')}}">
+							</div>
+							<div class="jieshao">
+								<div class="sku">
+									{{j[1]}}								
+								</div>
+								<div class="attr">
+									<div class="money price">
+										<span class="intPrice">{{j[2]}}元</span>
+										<div class="attr_ope">
+											<span class='add' onclick='add("{{j[0]}}")'></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+
+						{%endfor%}
+
+						
+					</ul>
+					{%endfor%}
+					
+
+					
+
+				</div>
+				<!--单个模板 end-->
+
+			</div>
+			<div class="clear"></div>
+
+			<!--底部-->
+			<div class="operationBox">
+				<div class="operation">
+					<a class="ShopDetailsLink  goShoppingcartBtn" href="javascript:;"></a>
+					<div class="moneybox">￥178 </div>
+					<input class="goBuyBtn" type="button" value="去结算">
+				</div>
+			</div>
+
+			<!--加入购物车-->
+
+			<div class="layerBox GWC">
+				<div class="mackbg"></div>
+				<div class="cartbox">
+					<div class="goShoppingcartlist">
+						<div class="baoliao_title"><span>购物车</span><em><a href="#"><img src="{{url_for('static',filename='images/del.png')}}">清空购物车</a></em></div>
+						<ul class="cartlist">
+							<li>
+								<h3>新焕真皙美白精粹化妆露</h3>
+								<div class="right_box">
+									<span class="danjia">￥178</span>
+									<span class="control-num">
+									<span class="minus"></span>
+									<input type="text" class="count" value="0">
+									<span class="add"></span>
+									</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+		<script>
+			$(function() {
+
+				//价格选择
+				$(".jiantou li").click(function() {
+						$(this).addClass('caret-on').siblings().removeClass('caret-on');
+
+					})
+					//加
+				$(".add").click(function() {
+						var t = $(this).parent().find('input[class*=count]');
+						t.val(parseInt(t.val()) + 1);
+					})
+					//减
+				$(".minus").click(function() {
+					var t = $(this).parent().find('input[class*=count]');
+					t.val(parseInt(t.val()) - 1);
+					if(parseInt(t.val()) < 0) {
+						t.val(0);
+					}
+
+				})
+
+			})
+		function add(id){
+			alert(id);
+		}
+		</script>
+	</body>
+
 </html>
+
+
 
 
     

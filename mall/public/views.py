@@ -4,18 +4,20 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for,
 from flask_login import login_required, login_user, logout_user,current_user
 from sqlalchemy import desc
 
+from collections import OrderedDict
+
 from mall.extensions import login_manager,db
 from mall.user.forms import RegisterForm
 from mall.user.models import User
+from mall.superadmin.models import Category
 from mall.store.models import Seller,Goods,Inventory,GoodsAllocation,Sale
 from mall.utils import flash_errors,templated
 from .models import Follow,BuysCar,UserAddress,UserOrder
-
+from  . import blueprint
 
 import random,time
 
 
-blueprint = Blueprint('public', __name__, static_folder='../static')
 
 
 @login_manager.user_loader
@@ -38,13 +40,40 @@ def home():
 
 
 #显示店铺
-@blueprint.route('/show_store/<int:id>')
+@blueprint.route('/show_store/<int:seller_id>')
 @templated()
-def show_store(id=0):
-    follow = Follow.query.get_or_404(id)
-    seller = Seller.query.get_or_404(follow.seller_id)
-    goods = seller.goods_id
-    return dict(seller=seller,goods=goods)
+def show_store(seller_id=0):
+    
+    goodsed = Goods.query\
+    	.with_entities(Goods.id,Goods.title,Goods.original_price,\
+    			Goods.category_id,Category.sort,Seller.name,\
+    			Seller.contact,Category.name)\
+    	.join(Category,Goods.category_id==Category.id)\
+    	.join(Seller,Seller.id==Goods.sellers_id)\
+    	.join(Follow,Follow.seller_id==Seller.id)\
+    	.filter(Seller.id==seller_id)\
+    	.order_by(Category.sort)\
+    	.all()
+
+    goodsed_dic = {}
+    seller_name =  goodsed[0][5]
+    seller_phone=  goodsed[0][6]
+
+    for i in goodsed:
+    	value_list = [i.id,i.title,i.original_price,i.category_id,i.name]
+    	if goodsed_dic.has_key(str(i.sort)+'_'+str(i.category_id)):
+
+    		goodsed_dic[str(i.sort)+'_'+str(i.category_id)].append(value_list)
+    		# pass
+    	else:
+    		goodsed_dic[str(i.sort)+'_'+str(i.category_id)] = [value_list]
+    	# print goodsed_dic[str(i.category_id)]
+    	print  'end---------'
+    #字典排序
+    print '====end'
+    print goodsed_dic
+    # return dict(seller=[seller_name,seller_phone],goods=goodsed_dic)
+    return dict(seller=[],goods=[])
 
 
 #添加购物车

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>show_store</title>
+</head>
+<body>
+	show_store<br>
+	店铺名称：<br>
+	店铺地址：{{seller.address}}<br>
+	店铺备注{{seller.note}}<br>
+	联系方式 <br>
+	商品： <br>{%for i in goods%}
+	{%if i.is_sell%}
+	名称：<a href="{{url_for('public.show_goods',id=i.id)}}">{{i.title}}</a> ,价格：{{i.original_price}},<a href="{{url_for('public.add_car',id=i.id)}}">添加购物车</a><br>
+	{%endif%}	
+	{%endfor%}
+
+
+	<a href="{{url_for('user.my_buys_car')}}">我的购物车</a>
+	<a href="{{url_for('user.members')}}">用户中心</a>
+</body>
+</html>
