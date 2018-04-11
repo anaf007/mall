@@ -132,7 +132,6 @@ def autoregister():
 def autologin(name=''):
 	if name:
 		user = User.query.filter_by(username=name).first()
-		print user
 		login_user(user,True) if user else abort(404)
 		return redirect(request.args.get('next') or url_for('public.home'))
 

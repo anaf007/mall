@@ -1,13 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
-	库存： <hr>
-	{%for i in kucun%}
-	名称： {{i.goodsed.title}};数量{{i.count}} ;货位:{{i.goods_allocation.name}} <br>
-	{%endfor%}
-</body>
-</html>
+{%extends 'store/base.html'%}
+{% block title %} 库存 {%endblock%}
+{% block body %} 
+
+<!--宝贝管理-->
+<div class="Order_list">
+	<!--出售中-->
+  	<div class="tabconent">
+  		{%for i in kucun%}
+    	<dl>
+	      	<dt><img src="images/goods.png"></dt>
+	      	<dd><a href="#">{{i.goodsed.title}}</a>
+	      	<span>数量：{{i.count}},货位：{{i.goods_allocation.name}} </span>
+	        <!-- <p><font>商品编号：{{i.id}}</font> <font>是否出售：{{i.is_sell}} </font></p> -->
+      		</dd>
+    	</dl>
+    	{%endfor%}
+
+    	
+    
+    
+    
+  </div>
+  
+</div>
+
+<!-- end -->
+
+
+<div class="blank4"></div>
+<!--按钮-->
+<div class="Baby_Box">
+  <!-- <input type="button" value="添加商品数据" onclick="window.location = '{{url_for('store.commodity_data')}}'"> -->
+  <input type="button" value="导出库存数据" onclick="window.location = '#'" style="width:100%">
+</div>
+
+
+ {%endblock%}
+
+
+
