@@ -32,6 +32,10 @@
 	})
 </script>
 
+<style>
+	li>a{color: #010101;}
+	.wddd-total-tit>a{color: #010101;}
+</style>
 
 <div class="qiehuan-con">
 	<!-- <div class="wddd_tab"> -->
@@ -46,17 +50,18 @@
 	<div class="wddd">
 		<ul class="wddd_con">
 			{%for i in order%}
-			<li>
+			
+			<li><a href="{{url_for('user.show_my_order',id=i[0])}}">
 				<div class="dhm">订单号：<b>{{i[1]}}</b></div>
-				
-
 				<div class="wddd-total">
 					<div class="wddd-total-tit"><b>共{{i[5]}}件商品 </b> <b>合计：￥{{i[3]}}</b>
 						<a class="wddd-total-btn btn-bg" href="#">{%if i.order_state==0%}待送货{%endif%} </a>
 					</div>
 
 				</div>
+				</a>
 			</li>
+
 			{%endfor%}
 			
 

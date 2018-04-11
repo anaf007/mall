@@ -1,0 +1,61 @@
+{%extends 'public/base.html'%}
+{% block title %}订单详情{% endblock %}
+{% block body %}
+
+
+<div class="qiehuan-con">
+	
+	<div class="wddd">
+
+		{%for k,i in order.iteritems()%}
+		<ul class="wddd_con">
+			
+			
+			
+			<li><a href="#">
+				<div class="dhm">订单号：<b>{{i[0][1].number}}</b></div>
+
+				<div class="wddd_info">
+					{%for j in i%}
+					<img class="photo" src="images/nav.jpg">
+					{%endfor%}
+					
+				</div>
+
+
+				
+				</a>
+			</li>
+
+
+		</ul>
+
+		<table class="mytable">
+			
+			<tbody>
+				<tr>
+					<td>下单时间：</td>
+					<td>{{i[0][1].buy_time}}</td>
+				</tr>
+
+				<tr>
+					<td>实付费用：</td>
+					<td>￥{{i[0][1].pay_price}}元</td>
+				</tr>
+
+				<tr>
+					<td>订单状态：</td>
+					<td>{%if i[0][1].order_state==0%}待送货{%endif%} </td>
+				</tr>
+
+				
+			</tbody>
+		</table>
+		{%endfor%}
+
+
+
+	</div>
+</div>
+
+{% endblock %}

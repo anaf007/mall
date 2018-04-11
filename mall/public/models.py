@@ -48,50 +48,52 @@ class UserOrder(SurrogatePK,Model):
 	#卖家
 	seller_id = reference_col('sellers')
 	#收货人信息
-	receive_name = db.Column(db.String(100)) 
-	receive_phone = db.Column(db.String(100)) 
-	receive_address = db.Column(db.String(100)) 
+	receive_name = Column(db.String(100)) 
+	receive_phone = Column(db.String(100)) 
+	receive_address = Column(db.String(100)) 
 
 	#订单号
-	number = db.Column(db.String(100),unique=True) 
+	number = Column(db.String(100),unique=True) 
 	#下单时间
 	buy_time = Column(db.DateTime,default=dt.datetime.now)
     
 	#发货时间
-	send_time =  db.Column(db.DateTime) 
+	send_time =  Column(db.DateTime) 
 	#配送费
-	freight = db.Column(db.Numeric(15,2),default=0)
+	freight = Column(db.Numeric(15,2),default=0)
 
 	#优惠金额
-	discount = db.Column(db.Numeric(15,2))
+	discount = Column(db.Numeric(15,2))
 	#支付金额
-	pay_price = db.Column(db.Numeric(15,2))
+	pay_price = Column(db.Numeric(15,2))
 	#支付时间
-	pay_time =  db.Column(db.DateTime) 
+	pay_time =  Column(db.DateTime) 
+	#支付类型
+	pay_type =  Column(db.String(100))
 
 	#积分
-	integral = db.Column(db.Integer())
+	integral = Column(db.Integer())
 	#备注
-	note = db.Column(db.String(255)) 
+	note = Column(db.String(255)) 
 
 	#买家是否评价
 	evaluate_buyers = Column(db.Boolean(),default=False)
 	#买家评价时间
-	evaluate_buyers_time = db.Column(db.DateTime) 
+	evaluate_buyers_time = Column(db.DateTime) 
 	#评价内容
-	evaluate_buyers_note = db.Column(db.UnicodeText())
+	evaluate_buyers_note = Column(db.UnicodeText())
 
 	#卖家是否评价
 	evaluate_seller = Column(db.Boolean(),default=False)
 	#评价时间
-	evaluate_seller_time = db.Column(db.DateTime) 
+	evaluate_seller_time = Column(db.DateTime) 
 	#评价内容
-	evaluate_seller_note = db.Column(db.UnicodeText())
+	evaluate_seller_note = Column(db.UnicodeText())
 	#商品总类数量
-	goods_number = db.Column(db.Integer())
+	goods_number = Column(db.Integer())
 	
 	#状态默认0 0提交 1付款 2完成 3关闭
-	order_state = db.Column(db.Integer(),default=0)
+	order_state = Column(db.Integer(),default=0)
 
 	#出售的商品
 	sale_id = relationship('Sale', backref='user_order')
@@ -105,6 +107,6 @@ class Follow(SurrogatePK,Model):
 	user_id = reference_col('users')
 	seller_id = reference_col('sellers')
 	
-	timestamp = db.Column(db.DateTime, default=dt.datetime.utcnow)
+	timestamp = Column(db.DateTime, default=dt.datetime.utcnow)
 
 

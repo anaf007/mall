@@ -7,7 +7,7 @@ import time,random
 
 from mall.user.models import User
 from mall.public.models import BuysCar,UserOrder
-from mall.store.models import Sale
+from mall.store.models import Sale,Goods
 from mall.utils import templated
 from .forms import AddUserAddressForm
 
@@ -23,7 +23,7 @@ def members():
 
 #显示购物车
 @blueprint.route('/my_buys_car')
-@templated('users/my_buys_car.html')
+@templated()
 def my_buys_car():
 	buys_car = BuysCar.query.filter_by(users=current_user).all()
 	return dict(buys_car=buys_car)
@@ -31,7 +31,7 @@ def my_buys_car():
 
 #显示我的订单
 @blueprint.route('/my_order')
-@templated('users/my_order.html')
+@templated()
 def my_order():
 	# user_order = UserOrder.query.filter_by(users_buy=current_user).all()
 	user_order = UserOrder.query\
@@ -40,20 +40,51 @@ def my_order():
 		)\
 		.order_by(desc(UserOrder.id))\
 		.all()
-	print user_order
 	return dict(order=user_order)
+
+
+#显示订单详细
+@blueprint.route('/show_my_order/<int:id>')
+@templated()
+def show_my_order(id=0):
+	user_order_id = id
+	
+	user_order = Sale.query\
+		.with_entities(
+			Sale,\
+			UserOrder,\
+			Goods,\
+		)\
+		.join(UserOrder,UserOrder.id==Sale.UserOrder_id)\
+		.join(Goods,Goods.id==Sale.goods_id)\
+		.filter(UserOrder.id==user_order_id)\
+		.all()
+		
+	user_order_dict = {}
+	for i in user_order:
+		if user_order_dict.has_key(str(i[1].id)):
+			user_order_dict[str(i[1].id)].append(i)
+		else:
+			user_order_dict[str(i[1].id)] = [i]
+
+	for k,v in user_order_dict.iteritems():
+		if v[0][1].users_buy !=current_user:
+			abort(404)
+
+	return dict(order=user_order_dict)
+
 
 
 #显示我的关注
 @blueprint.route('/my_follow')
-@templated('users/my_follow.html')
+@templated()
 def my_follow():
 	return dict()
 
 
 #添加收货地址
 @blueprint.route('/add_user_address')
-@templated('users/add_user_address.html')
+@templated()
 def add_user_address():
 	form = AddUserAddressForm()
 	return dict(form=form)
