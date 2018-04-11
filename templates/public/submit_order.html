@@ -1,48 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>sublimt_order</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
-</div>
-{%endfor%}
+{%extends 'public/base.html'%}
+{% block title %}订单确认{% endblock %}
+{% block body %}
 
-	sublimt_order请确认您的商品： <br>
-	
-	{%for i in buys_car%}
+<form action="{{url_for('public.confirm_order')}}" method="post" id="form">
 
-	
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+<input type="hidden" name="note" >
 
-	
-
-	{%if loop.first%}
-
-	店铺：{{i.goodsed.seller.name}}  <br>
-	{%endif%}
-
-
-	
-	商品：{{i.goods_id}}:数量:{{i.count}}，价格：{{i.goodsed.original_price}} <br>	
-	{%endfor%}
-	<br>
-	<form action="{{url_for('public.confirm_order')}}" method="post">
-	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-	收货地址：
-	<select name="user_address" id="">
-		{%for i in user_address%}
-		<option value="{{i.id}}">{{i.name}},{{i.phone}},{{i.address}}</option>
-		{%endfor%}
-	</select> 
-	订单留言：<input type="text" name="note" id=""><br>
+<div class="confirm-order">
+	<div class="top-adrees">
+	{%if user_address%}
+		<input type="hidden" name="user_address" value="{{user_address.id}}" >
+		<div class="fl">
+			<p><span>{{user_address.name}}</span>{{user_address.phone}}</p>
+			<div class="adr"><img src="{{url_for('static',filename='images/adrees.png')}}" /> {{user_address.address}} </div>
+		</div>
+	{%else%}
 	<a href="{{url_for('user.add_user_address')}}">添加收货地址</a>
-	<input type="submit" value="确认下单">
-	</form>
-</body>
-</html>
+	{%endif%}
+	<!-- 这里收货人信息添加更改等 -->
+		<a class="fr" href="#"><img src="{{url_for('static',filename='images/more.png')}}" /> </a>
+	</div>
+	<ul class="order-list">
+		{%for i in buys_car%}
+		<li>
+			<div class="choice">
+				<input type="checkbox" checked="checked">
+				<!-- <span class="on"></span>  -->
+				</div>
+			<div class="prduct">
+				<div class="picbox">
+				<img src="{{url_for('static',filename='images/nav.jpg')}}">
+				</div>
+				<dl>
+					<dt>{{i[3]}}</dt>
+					<dd>数量：{{i[1]}}</dd>
+					<dd>单价￥{{i[4]}}</dd>
+				</dl>
+
+			</div>
+		</li>
+		{%endfor%}
+		
+	</ul>
+</div>
+<!--底部-->
+<div class="operationBox">
+<div style="background-color:#cccccc;color:black;padding-left: 12px;">
+	<h3>暂支持货到付款</h3>
+</div>
+	<div class="operation">
+		<div class="totalprice">合计：<b>￥{{count_price}}</b></div>
+		<a class="goBuyBtn" href="#" onclick="submit_form()">提交订单</a>
+	</div>
+</div>
+
+</form>
+<script>
+	//选择 
+	$('.choice>span').click(function() {
+		if($(this).hasClass('on')) {
+			$(this).removeClass('on').prev().attr('checked', false);
+		} else {
+			$(this).addClass('on').prev().attr('checked', true);
+		}
+		
+	});
+	function submit_form(){
+		document.getElementById('form').submit();
+	}
+</script>
+
+
+{% endblock %}
+
+		

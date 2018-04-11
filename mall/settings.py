@@ -23,6 +23,9 @@ class Config(object):
 
     UPLOADED_PATH = 'data/uploads/'
 
+    #取消sql自动提交 
+    SQLALCHEMY_COMMIT_ON_TEARDOWN =  False
+
 
 
 class ProdConfig(Config):

@@ -94,9 +94,9 @@
 		/*产品列表*/
 		
 		.goodsListBox{ width: 100%; display: table; height: 100%; table-layout: fixed;margin-bottom: 70px;}
-		.goodsListLeft{ display: table-cell; vertical-align: top; background: #efefef; width: 90px; position: relative;/*float: left; background: #efefef; width: 90px; overflow-y: auto;*/
+		.goodsListLeft{ display: table-cell; vertical-align: top; background: #efefef; width: 90px; position: relative;border-right:1px solid #ccc /*float: left; background: #efefef; width: 90px; overflow-y: auto;*/
 			}
-		.goodsListLeft>li{ cursor: pointer; border-bottom: 1px solid #dcdcdc;border-right: 1px solid #ccc;}
+		.goodsListLeft>li{ cursor: pointer; border-bottom: 1px solid #dcdcdc;}
 		.GLindex{height: 50px; line-height: 50px; color: #666; display: block; font-size: 16px; font-weight: bold; text-align: center; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; padding: 0 5px;}
 		.GLindexClick{ color: #333; background: #fff;}
 		.goodsListRight{ background: #e9e9e9; position: relative; display: table-cell; vertical-align: top; width: 100%; box-sizing: border-box;/*overflow-y: auto;*/
@@ -130,7 +130,7 @@
 		.goodsList li .attr .price .intPrice{ color: #e60044;font-size: 16px;}
 		.goodsList li .attr_ope{ margin-top: 7px; overflow: hidden;}
 		.goodsList li .attr_ope{ float: right; overflow: hidden; zoom: 1; margin-top: 4px;}
-		.goodsList li .attr_ope>span.add{ margin: 0px 2px; display: inline-block; width: 22px; height: 22px; background: url(../images/add_icon.png) no-repeat; background-size: 21px auto; float: left; cursor: pointer;}
+		.goodsList li .attr_ope>span.main_add{ margin: 0px 2px; display: inline-block; width: 22px; height: 22px; background: url(../images/add_icon.png) no-repeat; background-size: 21px auto; float: left; cursor: pointer;}
 		.goodsList li .attr_ope>span.minus{ margin-left: 2px; display: inline-block; width: 23px; height: 23px; background: url(../images/minus_icon.png) no-repeat -0px -0px; background-size: 22px auto; float: left; cursor: pointer;}
 		.goodsList li .attr_ope>.count{ color: #000; float: left; width: 30px; line-height: 22px; text-align: center; border: none;}
 		/*产品列表 end*/
@@ -206,15 +206,15 @@
 		
 		.confirm-order {}
 		
-		.top-adrees{ padding: 15px; padding-top: 21px; margin-bottom: 15px; color: #333; background: #fff url(../images/border.png) repeat-x top;overflow: hidden;}
+		.top-adrees{ padding: 15px; padding-top: 21px; border-bottom: 1px solid #ccc; color: #333; background: #fff url(../images/border.png) repeat-x top;overflow: hidden;}
 		.top-adrees p{ font-size: 16px; line-height: 30px;}
 		.top-adrees p span{ margin: 0 35px;}
 		.adr{font-size: 16px;line-height: 35px; color: #999;}
 		.adr img{ vertical-align: top; width: 30px;}
 		.top-adrees a{ color: #fff; height: 70px; position: relative; display: block;}
 		.top-adrees a img{ position: relative; width: 24px; height: 24px; top: 50%; margin-top: -35px;}
-		.order-list{background: #fff;}
-		.order-list li{ padding: 15px; border-bottom: 1px solid #e9e9e9;}
+		.order-list{background: #fff;margin-bottom: 40px;}
+		.order-list li{ padding: 15px; border-bottom: 1px solid #cccccc;}
 		.choice{ display: table-cell; vertical-align: top; width: 30px;position: relative; z-index: 100; cursor: pointer; padding-top: 30px;}
 		.choice>span{ display: inline-block; width: 22px; height: 22px; background: url(../images/check.png) no-repeat; background-size: 20px auto;}
 		.choice>span.on{ display: inline-block; width: 22px; height: 22px; background: url(../images/check1.png) no-repeat; background-size: 20px auto;}
@@ -239,14 +239,14 @@
 		.wddd_tab p{ height: 43px; line-height: 45px; color: #333; font-size: 15px;text-align: center;}
 		.wddd_tab p a{font-weight: bold; color: #333; display: inline-block; height: 45px; margin: 0 5%;}
 		.wddd_tab .active_on{ color: #f0c632; border-bottom: 3px solid #f0c632;}
-		.wddd{ margin: 15px auto;}
-		.wddd li{ background: #f6f6f6;border-top: 1px solid #e4e4e4;border-bottom: 1px solid #e4e4e4; margin-bottom: 15px;}
+		.wddd{ margin: 1px auto;}
+		.wddd li{ background: #f6f6f6;border-bottom: 2px solid #e4e4e4;}
 		.wddd li.mb-0{ margin-bottom: 0px;}
-		.wddd .dhm{ background: #fff; padding: 10px 15px; color: #999;}
+		.wddd .dhm{ background: #fff; padding: 10px 15px; }
 		.wddd .dhm b{ color: #010101; font-weight: normal;}
 		.wddd .dhm em{ float: right;}
 		.wddd_info{ padding: 15px; overflow: hidden;}
-		.wddd_info .photo{float: left; width: 100px; height: 100px;}
+		.wddd_info .photo{float: left; width: 80px; height: 80px;margin:5px;}
 		.wdddbox{ margin-left: 110px;}
 		.wdddname{font-size: 14px; color: #999;line-height: 20px;}
 		.wdddname .mingzi{font-size: 15px;font-weight: bold; color: #010101;}
@@ -255,9 +255,9 @@
 		.wdddname span{ float: right;}
 		.wdddname b{ font-weight: normal; color: #010101;}
 		.wddd-total{ background: #fff;}
-		.wddd-total-tit{ height: 55px; line-height: 55px; padding: 0 15px; color: #010101;}
+		.wddd-total-tit{ height: 40px; line-height: 40px; padding: 0 15px; color: #010101;}
 		.wddd-total-tit b{ font-weight: normal; margin-right: 20px;}
-		.wddd-total-tit .wddd-total-btn{ height: 40px; line-height: 40px; cursor: pointer; float: right; margin-top: 8px; margin-right: 0px;padding: 0 10px; background: #ccc; color: #fff; border-radius: 5px;}
+		.wddd-total-tit .wddd-total-btn{ height: 35px; line-height: 35px; cursor: pointer; float: right; margin-right: 0px;padding: 0 10px; background: #ccc; color: #fff; border-radius: 5px;}
 		.wddd-total-tit .btn-bg{ background: #fdb316;}
 		/*服务订单*/
 		

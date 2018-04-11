@@ -5,6 +5,19 @@
 	<title>500</title>
 </head>
 <body>
-	500
+{%for message in get_flashed_messages()%}
+<div class="panel-body">
+    <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+            &times;
+        </button>
+        {{message}}
+    </div>
+
+</div>
+{%endfor%}
+
+	错误：！500
 </body>
 </html>

@@ -2,11 +2,12 @@
 """User views."""
 from flask import Blueprint, render_template,session,redirect,url_for,request
 from flask_login import login_required,login_user,current_user
-
+from  sqlalchemy  import desc
 import time,random
 
 from mall.user.models import User
 from mall.public.models import BuysCar,UserOrder
+from mall.store.models import Sale
 from mall.utils import templated
 from .forms import AddUserAddressForm
 
@@ -32,11 +33,18 @@ def my_buys_car():
 @blueprint.route('/my_order')
 @templated('users/my_order.html')
 def my_order():
-	user_order = UserOrder.query.filter_by(users_buy=current_user).all()
+	# user_order = UserOrder.query.filter_by(users_buy=current_user).all()
+	user_order = UserOrder.query\
+		.with_entities(
+			UserOrder.id,UserOrder.number,UserOrder.buy_time,UserOrder.pay_price,UserOrder.order_state,\
+		)\
+		.order_by(desc(UserOrder.id))\
+		.all()
+	print user_order
 	return dict(order=user_order)
 
 
-#显示我的订单
+#显示我的关注
 @blueprint.route('/my_follow')
 @templated('users/my_follow.html')
 def my_follow():

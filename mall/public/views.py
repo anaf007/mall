@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for, abort,Response
+from flask import Blueprint, flash, redirect, render_template, request, url_for, abort,Response, jsonify
 from flask_login import login_required, login_user, logout_user,current_user
 from sqlalchemy import desc
 
@@ -28,12 +28,13 @@ def load_user(user_id):
 
 @blueprint.route('/')
 @templated()
+@login_required
 def home():
     """Home page."""
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
     if len_follow>0 and len_follow<=1:
-    	return redirect(url_for('.show_store',id=follow[0].id))
+    	return redirect(url_for('.show_store',seller_id=follow[0].id))
     if len_follow<1:
     	return u'您还未关注店铺。'
     return dict()
@@ -42,8 +43,10 @@ def home():
 #显示店铺
 @blueprint.route('/show_store/<int:seller_id>')
 @templated()
+@login_required
 def show_store(seller_id=0):
-    
+
+	#显示主页商品
     goodsed = Goods.query\
     	.with_entities(Goods.id,Goods.title,Goods.original_price,\
     			Goods.category_id,Category.sort,Seller.name,\
@@ -62,32 +65,85 @@ def show_store(seller_id=0):
     for i in goodsed:
     	value_list = [i.id,i.title,i.original_price,i.category_id,i.name]
     	if goodsed_dic.has_key(str(i.sort)+'_'+str(i.category_id)):
-
     		goodsed_dic[str(i.sort)+'_'+str(i.category_id)].append(value_list)
-    		# pass
     	else:
     		goodsed_dic[str(i.sort)+'_'+str(i.category_id)] = [value_list]
-    	# print goodsed_dic[str(i.category_id)]
-    	print  'end---------'
+    
     #字典排序
-    print '====end'
-    print goodsed_dic
-    # return dict(seller=[seller_name,seller_phone],goods=goodsed_dic)
-    return dict(seller=[],goods=[])
+    goodseds = [(k,goodsed_dic[k]) for k in sorted(goodsed_dic.keys())]
+
+    #end显示主页商品
+
+    #购物车
+    buys_car = BuysCar.query\
+    	.with_entities(BuysCar.id,BuysCar.count,Goods.title,Goods.original_price,Goods.id)\
+    	.join(Goods,Goods.id==BuysCar.goods_id)\
+    	.filter(BuysCar.users==current_user)\
+    	.all()
+
+    return dict(seller=[seller_name,seller_phone],goods=goodseds,buys_car=buys_car)
 
 
-#添加购物车
+#添加购物车    $ajax
+@blueprint.route('/add_car/')
 @blueprint.route('/add_car/<int:id>')
-@templated()
 def add_car(id=0):
-	goodsed = Goods.query.get_or_404(id)
-	is_goods = BuysCar.query.filter_by(users=current_user).filter_by(goodsed=goodsed).first()
+	goods_id = request.args.get('id','0')
+
+	is_goods = BuysCar.query\
+		.with_entities(BuysCar.id,BuysCar.count,Goods.id,Goods.title,Goods.original_price)\
+		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.filter(BuysCar.users==current_user)\
+		.filter(Goods.id==goods_id)\
+		.first()
+
 	if is_goods:
-		count = is_goods.count+1
-		is_goods.update(count=count)
+		count = is_goods[1]+1
+		BuysCar.query.get(is_goods[0]).update(count=count)
+		return jsonify({'title':is_goods[3],'price':str(is_goods[4])})
+
 	else:
-		BuysCar.create(users=current_user,goodsed=goodsed)
-	return dict()
+		BuysCar.create(users=current_user,goods_id=goods_id)
+		return jsonify({'title':u'该商品','price':0})
+
+
+#购物城减少
+@blueprint.route('/sub_car/')
+@blueprint.route('/sub_car/<int:id>')
+def sub_car(id=0):
+	goods_id = request.args.get('id','0')
+
+	is_goods = BuysCar.query\
+		.with_entities(BuysCar.id,BuysCar.count,Goods.id,Goods.title,Goods.original_price)\
+		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.filter(BuysCar.users==current_user)\
+		.filter(Goods.id==goods_id)\
+		.first()
+
+	if is_goods:
+		count = is_goods[1]-1
+		BuysCar.query.get(is_goods[0]).update(count=count)
+		return jsonify({'title':is_goods[3],'price':str(is_goods[4])})
+	return jsonify({'title':'','price':''})
+
+
+#删除购物车
+@blueprint.route('/delete_car/')
+@blueprint.route('/delete_car/<int:id>')
+def delete_car(id=0):
+	goods_id = request.args.get('id','0')
+
+	is_goods = BuysCar.query\
+		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.filter(BuysCar.users==current_user)\
+		.filter(Goods.id==goods_id)\
+		.first()
+
+	if is_goods:
+		is_goods.delete()
+	return jsonify({'title':'','price':''})
+
+
 
 
 #显示商品详情
@@ -109,7 +165,7 @@ def logout():
     return redirect(url_for('public.home'))
 
 
-
+#添加用户地址
 @blueprint.route('/add_user_address',methods=['POST'])
 def add_user_address_post():
 	form = AddUserAddressForm()
@@ -136,10 +192,22 @@ def add_user_address_post():
 @templated()
 def submit_order():
 	#购物车信息
-	buys_car = BuysCar.query.filter_by(users=current_user).all()
+	# buys_car = BuysCar.query.filter_by(users=current_user).all()
+	buys_car = BuysCar.query\
+		.with_entities(\
+			BuysCar.id,BuysCar.count,\
+			Goods.id,Goods.title,Goods.original_price)\
+		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.filter(BuysCar.users==current_user)\
+		.all()
 	#收货地址信息：
-	user_address = UserAddress.query.filter_by(users=current_user).order_by(desc(UserAddress.state)).all()
-	return dict(buys_car=buys_car,user_address=user_address)
+	user_address = UserAddress.query.filter_by(users=current_user).filter_by(state=1).first()
+	
+	count_price = 0
+	for i in buys_car:
+		count_price = count_price+i[1]*i[4]
+
+	return dict(buys_car=buys_car,user_address=user_address,count_price=count_price)
 
 
 #购物车确认下单
@@ -158,82 +226,111 @@ def confirm_order():
 		flash(u'您未添加收货地址，请填写填写收货地址。')
 		abort(401)
 
-	buys_car = BuysCar.query.filter_by(users=current_user).all()
+	# buys_car = BuysCar.query.filter_by(users=current_user).all()
+	buys_car = BuysCar.query\
+		.with_entities(
+			BuysCar.id,BuysCar.count,BuysCar.goods_id,\
+			Goods.title,Goods.original_price,Goods.sellers_id,\
+			Seller.name,Seller.freight,Seller.max_price_no_freight\
+		)\
+		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.join(Seller,Seller.id==Goods.sellers_id)\
+		.filter(BuysCar.users==current_user)\
+		.all()
+
 
 	#检查是否有不同商家商品
 	is_has = {}
 	seller = ''
 	for i in buys_car:
-		if not is_has.has_key(str(i.goodsed.sellers_id)):
+		if not is_has.has_key(str(i[5])):
 			if not is_has:
-				is_has[str(i.goodsed.sellers_id)] = i
-				seller = i.goodsed.sellers_id
+				is_has[str(i[5])] = i
+				seller = i[5]
 			else:
 				flash(u'不能提交订单，存在不同商家的商品，请返回购物车重新修改')
 				abort(401)			
 	#end检查是否有不同商家商品
 
+
 	#检查商家是否足够库存
 	all_goodsed_id = []
 
 	for i in buys_car:
-		all_goodsed_id.append(i.goods_id)
+		all_goodsed_id.append(i[2])
+	
 	#获取购物车里商品库存数, 根据货位排序扣除库存的
 	all_goods = Inventory.query\
 		.filter(Inventory.goods_id.in_(all_goodsed_id))\
 		.join(GoodsAllocation,GoodsAllocation.id==Inventory.goods_allocation_id)\
 		.order_by(GoodsAllocation.sort)\
 		.all()
+
+
 	goodsed_dic = {}
 	for i in all_goods:
 		if goodsed_dic.has_key(str(i.goods_id)):
 			goodsed_dic[str(i.goods_id)].append(i)
 		else:
 			goodsed_dic[str(i.goods_id)] = [i]	
+	
+	
 	for i in buys_car:
 		count = i.count
-		for j in goodsed_dic[str(i.goods_id)]:
-			#库存数减去购物车数量
-			if j.count - count >= 0:
-				break;
-			if j.count - count < 0:
-				count = count - j.count
-		else:
-			abort(Response(u'店家该商品：%s库存不足'%i.goods_id))
+		try:
+			for j in goodsed_dic[str(i[2])]:
+				#库存数减去购物车数量
+				if j.count - count >= 0:
+					break;
+				if j.count - count < 0:
+					count = count - j.count
+			else:
+				abort(Response(u'店家该商品 "%s" 库存不足'%i[3]))
+
+		except Exception, e:
+			abort(Response(u'店家该商品 "%s  "库存不足'%i[3]))
+			
 	#end检查商家是否足够库存
 
-	#出库单
+	#出库单号
 	choice_str = 'ABCDEFGHJKLNMPQRSTUVWSXYZ'
 	str_time =  time.time()
 	number_str = 'T'
 	number_str += str(int(int(str_time)*1.301))
-	for i in range(2):
+	for i in range(4):
 		number_str += random.choice(choice_str)
 
 	#出库单
 	user_order = UserOrder()
 	user_order.user_id = current_user.id
-	user_order.receive = user_address.id
+	# user_order.receive = user_address.id
+	user_order.receive_name = user_address.name
+	user_order.receive_phone = user_address.phone
+	user_order.receive_address = user_address.address
 	user_order.number = number_str
 	user_order.note = request.form.get('note','')
-	user_order.seller_id = all_goods[0].goodsed.sellers_id
+	user_order.seller_id = buys_car[0][5]
 
+	#暂时提交 否则没有id值
 	db.session.add(user_order)
 
+	
 
-	# 减去库存
+	count_price = 0
+
+	# 减去库存   #buys_car 购物车   goodsed_dic 货位商品
 	for i in buys_car:
 		count = i.count
-		for j in goodsed_dic[str(i.goods_id)]:
+		for j in goodsed_dic[str(i[2])]:
 
 			#销售的商品记录
 			sale = Sale()
 			sale.seller_id = seller
-			sale.goods_id = i.goods_id
-			sale.count = i.count
+			sale.goods_id = i[2]
+			sale.count = i[1]
 			sale.residue_count = seller
 			sale.user_order = user_order
-			sale.seller_id = i.goodsed.sellers_id
+			sale.seller_id = i[5]
 			#如果库存数量大于购物车数量
 			if j.count - count >= 0:
 				#出售记录表
@@ -256,21 +353,37 @@ def confirm_order():
 
 			db.session.add(sale)
 
+		#计算总价 1数量  4销售价格
+		count_price += i[1]*i[4]
+
+	#7运费  8最低配送额
+	if count_price < buys_car[0][8]:
+		count_price += buys_car[0][7]
+		user_order.freight = count_price
+	else:
+		user_order.freight = 0
+
+	user_order.pay_price = count_price
+
+	db.session.add(user_order)
+
+
+
 	# end减去库存
 
 	# 删除购物车
-	for i in buys_car:
+	for i in BuysCar.query.filter_by(users=current_user).all():
 		db.session.delete(i)
 	#end删除购物车
 
 	try:
 		db.session.commit()
-		flash(u'订单提交成功')
+		flash(u'订单提交成功','success')
 	except Exception, e:
 		db.session.rollback()
 		return str(e)
 
-	return redirect(url_for('.submit_order'))
+	return redirect(url_for('user.my_order'))
 
 
 

@@ -20,7 +20,7 @@ class UserAddress(SurrogatePK, Model):
 	#状态  0为默认收货地址  默认为1
 	state = Column(db.Integer(),default=1)
 
-	user_order_id = relationship('UserOrder', backref='users_address')
+	# user_order_id = relationship('UserOrder', backref='users_address')
     
 
 #用户购物车商品列表
@@ -42,10 +42,15 @@ class UserOrder(SurrogatePK,Model):
 	#购买者
 	user_id = reference_col('users')
 	#收货人地址
-	receive = reference_col('user_address')
+	# receive = reference_col('user_address')
+
 
 	#卖家
 	seller_id = reference_col('sellers')
+	#收货人信息
+	receive_name = db.Column(db.String(100)) 
+	receive_phone = db.Column(db.String(100)) 
+	receive_address = db.Column(db.String(100)) 
 
 	#订单号
 	number = db.Column(db.String(100),unique=True) 
@@ -82,6 +87,8 @@ class UserOrder(SurrogatePK,Model):
 	evaluate_seller_time = db.Column(db.DateTime) 
 	#评价内容
 	evaluate_seller_note = db.Column(db.UnicodeText())
+	#商品总类数量
+	goods_number = db.Column(db.Integer())
 	
 	#状态默认0 0提交 1付款 2完成 3关闭
 	order_state = db.Column(db.Integer(),default=0)

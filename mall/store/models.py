@@ -103,7 +103,7 @@ class Goods(SurrogatePK, Model):
 
 	#商品名称
 	title = Column(db.String(100)) 
-	#原价，销售价
+	#销售价
 	original_price = Column(db.Numeric(precision=10,scale=2,\
 		asdecimal=True, decimal_return_scale=None))
 	#优惠价进货价

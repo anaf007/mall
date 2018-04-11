@@ -1,13 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>order</title>
-</head>
-<body>
-	我的订单：  <br>	
-	{%for i in order%}
-	id:{{i.id}},订单号：{{i.number}}状态:{{i.order_state}}<br>
-	{%endfor%}
-</body>
-</html>
+{%extends 'public/base.html'%}
+{% block title %}订单确认{% endblock %}
+{% block body %}
+<script>
+	$(function() {
+		$(".wddd_tit a").eq(0).addClass("nav_on");
+		$(".wddd_tit a").click(function() {
+			$(".wddd_tit a").removeClass("nav_on");
+			$(this).addClass("nav_on");
+		})
+		$(".qiehuan-con").hide();
+		$(".qiehuan-con").eq(0).show();
+		$(".wddd_tit a").click(function() {
+			x = $(".wddd_tit a").index(this);
+			$(".qiehuan-con").hide();
+			$(".qiehuan-con").eq(x).show();
+		});
+		
+		//
+		$(".wddd_tab a").eq(0).addClass("active_on");
+		$(".wddd_tab a").click(function() {
+			$(".wddd_tab a").removeClass("active_on");
+			$(this).addClass("active_on");
+		})
+		$(".wddd_con").hide();
+		$(".wddd_con").eq(0).show();
+		$(".wddd_tab a").click(function() {
+			x = $(".wddd_tab a").index(this);
+			$(".wddd_con").hide();
+			$(".wddd_con").eq(x).show();
+		});
+	})
+</script>
+
+
+<div class="qiehuan-con">
+	<!-- <div class="wddd_tab"> -->
+		<!-- <p> -->
+			<!-- <a class="active_on" href="javasript:;">全部</a> -->
+			<!-- <a href="javasript:;">待付款</a> -->
+			<!-- <a href="javasript:;">待发货</a> -->
+			<!-- <a href="javasript:;">待收货</a> -->
+			<!-- <a href="javasript:;">待评价</a> -->
+		<!-- </p> -->
+	<!-- </div> -->
+	<div class="wddd">
+		<ul class="wddd_con">
+			{%for i in order%}
+			<li>
+				<div class="dhm">订单号：<b>{{i[1]}}</b></div>
+				
+
+				<div class="wddd-total">
+					<div class="wddd-total-tit"><b>共1件商品 </b> <b>合计：￥{{i[3]}}</b>
+						<a class="wddd-total-btn btn-bg" href="#">{%if i.order_state==0%}待送货{%endif%} </a>
+					</div>
+
+				</div>
+			</li>
+			{%endfor%}
+			
+
+		</ul>
+
+		<!-- <ul class="wddd_con">
+			<li>
+				<div class="dhm">订单兑换码：<b>54656212</b><em>待付款 </em></div>
+				<div class="wddd_info"><img class="photo" src="images/nav.jpg">
+					<div class="wdddbox">
+						<div class="wdddname">
+							<div class="mingzi">新焕真皙去角质泥膜<span>￥128.00</span></div>
+							<p class="jieshao">可有效去除肌肤表面多余...<span>X1</span></p>
+							<p>规格：<b>100g</b></p>
+							<p>有效期：<b>10月23日（星期一）</b></p>
+							<p>下单时间：<b>2017-08-05 21:49:56</b></p>
+						</div>
+					</div>
+				</div>
+				<div class="wddd-total">
+					<div class="wddd-total-tit"><b>共1件商品 </b> <b>合计：￥95.00</b>
+						<a class="wddd-total-btn btn-bg" href="#">确认支付</a>
+					</div>
+
+				</div>
+			</li>
+
+		</ul> -->
+
+	</div>
+</div>
+
+{% endblock %}
