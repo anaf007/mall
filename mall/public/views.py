@@ -196,8 +196,10 @@ def submit_order():
 	buys_car = BuysCar.query\
 		.with_entities(\
 			BuysCar.id,BuysCar.count,\
-			Goods.id,Goods.title,Goods.original_price)\
+			Goods.id,Goods.title,Goods.original_price,\
+			Seller.freight,Seller.max_price_no_freight)\
 		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.join(Seller,Seller.id==Goods.sellers_id)\
 		.filter(BuysCar.users==current_user)\
 		.all()
 	#收货地址信息：
@@ -317,6 +319,7 @@ def confirm_order():
 	
 
 	count_price = 0
+	goods_number = 0
 
 	# 减去库存   #buys_car 购物车   goodsed_dic 货位商品
 	for i in buys_car:
@@ -355,15 +358,18 @@ def confirm_order():
 
 		#计算总价 1数量  4销售价格
 		count_price += i[1]*i[4]
+		#商品种类数量
+		goods_number += 1
 
 	#7运费  8最低配送额
 	if count_price < buys_car[0][8]:
 		count_price += buys_car[0][7]
-		user_order.freight = count_price
+		user_order.freight = buys_car[0][7]
 	else:
 		user_order.freight = 0
 
 	user_order.pay_price = count_price
+	user_order.goods_number = goods_number
 
 	db.session.add(user_order)
 
@@ -371,14 +377,18 @@ def confirm_order():
 
 	# end减去库存
 
-	# 删除购物车
-	for i in BuysCar.query.filter_by(users=current_user).all():
-		db.session.delete(i)
-	#end删除购物车
+	
 
 	try:
 		db.session.commit()
 		flash(u'订单提交成功','success')
+
+		# 删除购物车
+		for i in BuysCar.query.filter_by(users=current_user).all():
+			db.session.delete(i)
+		db.session.commit()
+		#end删除购物车
+
 	except Exception, e:
 		db.session.rollback()
 		return str(e)

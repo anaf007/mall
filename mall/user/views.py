@@ -36,7 +36,7 @@ def my_order():
 	# user_order = UserOrder.query.filter_by(users_buy=current_user).all()
 	user_order = UserOrder.query\
 		.with_entities(
-			UserOrder.id,UserOrder.number,UserOrder.buy_time,UserOrder.pay_price,UserOrder.order_state,\
+			UserOrder.id,UserOrder.number,UserOrder.buy_time,UserOrder.pay_price,UserOrder.order_state,UserOrder.goods_number\
 		)\
 		.order_by(desc(UserOrder.id))\
 		.all()

@@ -47,10 +47,23 @@
 <!--底部-->
 <div class="operationBox">
 <div style="background-color:#cccccc;color:black;padding-left: 12px;">
-	<h3>暂支持货到付款</h3>
+	{%if count_price < buys_car[0][6]%}
+	<h3>暂只支持货到付款,未满{{buys_car[0][6]}}元，加{{buys_car[0][5]}}元配送费。</h3>
+	{%else%}
+	<h3>暂只支持货到付款,已满{{buys_car[0][6]}}元，免配送费。</h3>
+	{%endif%}
 </div>
 	<div class="operation">
-		<div class="totalprice">合计：<b>￥{{count_price}}</b></div>
+		<div class="totalprice">合计：<b>￥
+
+		{%if count_price < buys_car[0][6]%}
+
+		{{count_price+buys_car[0][5]}}
+		{%else%}
+		{{count_price}}
+		{%endif%}
+
+		</b></div>
 		<a class="goBuyBtn" href="#" onclick="submit_form()">提交订单</a>
 	</div>
 </div>
