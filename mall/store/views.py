@@ -28,8 +28,12 @@ sys.setdefaultencoding('utf8')
 @templated()
 @login_required
 def home():
-	# current_app.logger.info("store_info")
-	store=current_user.seller_id[0]
+	try:
+		store = current_user.seller_id[0]
+	except Exception, e:
+		flash(u'您未申请店铺！')
+		abort(401)
+	
 	if not store.enable:
 		flash(u'您的店铺未启用，请确认管理员是否启用您的店铺。')
 		abort(401)

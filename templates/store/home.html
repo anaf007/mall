@@ -1,44 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>store</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
+{%extends 'store/base.html'%}
+
+{% block title %}后台主页{% endblock %}
+{% block body %}
+
+
+
+
+<!--交易情况-->
+<div class="Personal_top_list">
+  <ul>
+    <li>
+      <p>今日成交额</p>
+      <span>￥9999.00</span></li>
+    <li class="boder">
+      <p>今日访客</p>
+      <span>20000</span></li>
+    <li>
+      <p>今日订单</p>
+      <span>20</span></li>
+  </ul>
 </div>
-{%endfor%}
-
-	store home <br>
-	{%if current_user.seller_id%}
-店铺主页<br>
-店铺信息： <br>	
-每日最大订单:{{store.max_order}} 单<br>
-每日最大交易额:{{store.max_price}}元 <br>
-最大仓库:{{store.max_warehouse}}个 <br>
-最大货位:{{store.max_goods_location}}个 <br>
-最大商品数量:{{store.max_goods_count}}个 <br>
-当前等级:{{store.level}} <br>
-
-<a href="{{url_for('store.stock')}}">进货数据</a> <br>
-<a href="{{url_for('store.sell')}}">出售数据</a> <br><br>
-<a href="{{url_for('store.inventory')}}">库存管理</a> <br>	<br>
-<a href="{{url_for('store.location_management')}}">货位管理</a> <br>	
-<a href="{{url_for('store.commodity_management')}}">商品管理</a> <br>	<br>
-<a href="">店铺信息设置</a> <br><br>
-<a href="{{url_for('store.follow')}}">关注我的用户</a> <br><br>
+<!--订单标签 end--> 
 
 
-<h1>我的关注地址：{{request.url}}guanzhu/{{current_user.seller_id[0].id}}  <br>
-</h1>
-	{%else%}
-	没有店铺 <a href="{{url_for('store.create_store')}}">申请</a>
-	{%endif%}
-</body>
-</html>
+<!--用户操作-->
+<div class="Personal_list_box">
+  <ul>
+    <li> <a href="{{url_for('store.stock')}}"><img src="{{url_for('static',filename='images/store/Personal_1.png')}}"> <span>进货数据</span></a></li>
+
+    <li> <a href="{{url_for('store.sell')}}"><img src="{{url_for('static',filename='images/store/Personal_1.png')}}"> <span>出售数据</span></a></li>
+
+    <li> <a href="{{url_for('store.inventory')}}"><img src="{{url_for('static',filename='images/store/Personal_2.png')}}"> <span>库存管理</span></a></li>
+
+    <li> <a href="{{url_for('store.location_management')}}"><img src="{{url_for('static',filename='images/store/Personal_3.png')}}"> <span>货位管理</span></a></li>
+
+    <li> <a href="{{url_for('store.commodity_management')}}"><img src="{{url_for('static',filename='images/store/Personal_3.png')}}"> <span>商品管理</span></a></li>
+
+    <li> <a href="{{url_for('store.follow')}}"><img src="{{url_for('static',filename='images/store/Personal_4.png')}}"> <span>关注我的用户</span></a></li>
+
+    <li> <a href="{{url_for('store.follow')}}"><img src="{{url_for('static',filename='images/store/Personal_6.png')}}"> <span>横幅设置</span></a></li>
+
+    <li> <a href="{{url_for('store.follow')}}"><img src="{{url_for('static',filename='images/store/Personal_6.png')}}"> <span>店铺设置</span></a></li>
+
+  </ul>
+</div>
+
+
+
+<!-- <h1>我的关注地址：{{request.url}}guanzhu/{{current_user.seller_id[0].id}}  <br> -->
+	<!-- 没有店铺 <a href="{{url_for('store.create_store')}}">申请</a> -->
+
+{% endblock %}
+
+
+

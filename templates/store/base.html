@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width" />
+<title>{% block title %}店铺后台{% endblock %}</title>
+
+<link rel="stylesheet" href="{{url_for('static',filename='css/store/style.css')}}" />
+
+</head>
+
+<body>
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
+{% block body %}
+
+{% endblock %}
+
+
+
+
+
+
+
+</body>
+</html>

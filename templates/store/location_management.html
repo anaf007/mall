@@ -1,17 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>location_management</title>
-</head>
-<body>
-	location_management货位管理
-	<a href="{{url_for('store.add_warehouse')}}">添加仓库</a>
-	<a href="{{url_for('store.add_location')}}">添加货位</a>
-	<br>
-	<a href="{{url_for('store.toexcel_location')}}" target="_blank">导出数据</a> <br>
+{%extends 'store/base.html'%}
+{% block title %} 货位管理-所有货位{%endblock%}
+{% block body %} 
+<div class="Release_list_box">
+
 	{%for i in goods_allocation%}
-		{{i.id}},{{i.name}} <br>
-	{%endfor%}
-</body>
-</html>
+	<a href="#">
+	<span>货位ID:{{i.id}}</span>
+  	<input class="input"  type="text" value="货位名称:{{i.name}},排序：{{i.sort}}">
+  	</a> 
+  	{%endfor%}
+
+</div>
+
+<div class="blank4"></div>
+
+<!--按钮-->
+<div class="operationBox">
+  
+    <input class="goBuyBtn" type="button" value="添加仓库" onclick="window.location = '{{url_for('store.add_warehouse')}}'">
+    <input class="goShoppingcartBtn" type="button" value="导出数据" onclick="window.location = '{{url_for('store.toexcel_location')}}'">
+ 
+</div>
+
+
+ {%endblock%}
+
