@@ -55,4 +55,5 @@ env/
 data/
 loging/
 
+.DS_Store
 

@@ -1,4 +1,3 @@
-#coding=utf-8
 import os, logging, sys
 import logging.handlers
 from logging import raiseExceptions, Logger

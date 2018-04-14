@@ -20,5 +20,5 @@ ckeditor = CKEditor()
 
 login_manager.session_protection ='strong'
 login_manager.login_view = 'user.autologin'
-login_manager.login_message = u"请登录后访问该页面."
+login_manager.login_message = "请登录后访问该页面."
 login_manager.refresh_view = 'auth.autologin'

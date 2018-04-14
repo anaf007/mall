@@ -31,7 +31,7 @@ def add_version_post():
 		summary=request.form.get('summary',' '),
 		context=request.form.get('context',' '),	
 	)
-	flash(u'添加完成.','success')
+	flash('添加完成.','success')
 	return redirect(url_for('.all_version'))
 
 
@@ -63,10 +63,10 @@ def add_category_post():
 			parent_id=form.pid.data,
 			active=form.active.data,			
 		)
-		flash(u'添加成功','success')
+		flash('添加成功','success')
 		return redirect(url_for('.add_category'))
 	else:
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 	return redirect(url_for('.add_category'))
 

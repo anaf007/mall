@@ -15,13 +15,10 @@ from mall.public.models import Follow,UserOrder
 from mall.extensions import db
 from mall.utils import allowed_file
 import datetime as dt
-import StringIO, xlsxwriter,mimetypes,xlrd, os, time, random
-
+import xlsxwriter,mimetypes,xlrd, os, time, random
+import io
 blueprint = Blueprint('store', __name__, url_prefix='/store')
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 
 @blueprint.route('/')
@@ -30,12 +27,12 @@ sys.setdefaultencoding('utf8')
 def home():
 	try:
 		store = current_user.seller_id[0]
-	except Exception, e:
-		flash(u'您未申请店铺！')
+	except e:
+		flash('您未申请店铺！')
 		abort(401)
 	
 	if not store.enable:
-		flash(u'您的店铺未启用，请确认管理员是否启用您的店铺。')
+		flash('您的店铺未启用，请确认管理员是否启用您的店铺。')
 		abort(401)
 	return dict(store=store)
 
@@ -61,7 +58,7 @@ def create_store_post():
 			note = form.note.data,
 			contact = form.contact.data,
 		)
-		flash(u'创建成功，等待管理员审核','success')
+		flash('创建成功，等待管理员审核','success')
 		return redirect(url_for('.home'))
 	else:
 		flash_errors(form)
@@ -101,10 +98,10 @@ def commodity_data_post():
 			seller = current_user.seller_id[0],
 			category_id = form.category.data
 		)
-		flash(u'添加成功','success')
+		flash('添加成功','success')
 		return redirect(url_for('.commodity_data'))
 	else:
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 	return redirect(url_for('.commodity_data'))
 
@@ -135,14 +132,14 @@ def add_warehouse_post():
 	max_warehouse = current_user.seller_id[0].max_warehouse
 	if max_warehouse<=1:
 		if state!=0:
-			flash(u'您只允许开通“正常仓”。请重新选择。')
+			flash('您只允许开通“正常仓”。请重新选择。')
 			return redirect(url_for('.add_warehouse'))
 	if max_warehouse<=2:
 		if state==2 :
-			flash(u'您只允许开通“正常仓”和“库存仓”。请重新选择。')
+			flash('您只允许开通“正常仓”和“库存仓”。请重新选择。')
 			return redirect(url_for('.add_warehouse'))
 	if Warehouse.query.filter_by(seller=current_user.seller_id[0]).count()>=max_warehouse:
-		flash(u'您账号最大允许添加:%s个仓库，目前已经有了这么多个不能再添加了。'%str(max_warehouse))
+		flash('您账号最大允许添加:%s个仓库，目前已经有了这么多个不能再添加了。'%str(max_warehouse))
 		return redirect(url_for('.add_warehouse'))
 
 
@@ -153,10 +150,10 @@ def add_warehouse_post():
 			seller = current_user.seller_id[0],
 			state = state,
 		)
-		flash(u'添加成功','success')
+		flash('添加成功','success')
 		return redirect(url_for('.location_management'))
 	else:
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 	return redirect(url_for('.location_management'))
 
@@ -178,7 +175,7 @@ def add_location_post():
 		.count() 
 
 	if goodsed_allocation_count>=max_goods_location:
-		flash(u'您账号最大允许添加:%s个货位，目前已经有了这么多个不能再添加了。'%str(max_goods_location))
+		flash('您账号最大允许添加:%s个货位，目前已经有了这么多个不能再添加了。'%str(max_goods_location))
 		return redirect(url_for('.add_location'))
 
 
@@ -190,10 +187,10 @@ def add_location_post():
 			warehouse_id = form.warehouse.data,
 			users = current_user
 		)
-		flash(u'添加成功','success')
+		flash('添加成功','success')
 		return redirect(url_for('.add_location'))
 	else:
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 	return redirect(url_for('.add_location'))
 
@@ -202,13 +199,13 @@ def add_location_post():
 @login_required
 def toexcel_location():
     goods_allocation = GoodsAllocation.query.filter_by(users=current_user).order_by('sort').all()
-    column_names = [u'编号',u'货位名称',u'排序',u'货位备注',u'所属仓库ID',u'所属仓库名称']
+    column_names = ['编号','货位名称','排序','货位备注','所属仓库ID','所属仓库名称']
 
     try:
         response = Response()
         response.status_code = 200
 
-        output = StringIO.StringIO()
+        output = io.StringIO()
 
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         worksheet = workbook.add_worksheet('sheet')
@@ -227,7 +224,7 @@ def toexcel_location():
         output.seek(0)
         response.data = output.read()
 
-        file_name = u'goods_allocation_{}.xlsx'.format(dt.datetime.now())
+        file_name = 'goods_allocation_{}.xlsx'.format(dt.datetime.now())
         mimetype_tuple = mimetypes.guess_type(file_name)
 
         response_headers = Headers({
@@ -260,13 +257,13 @@ def toexcel_location():
 @login_required
 def toexcel_commodity_data():
     goodsed = Goods.query.filter_by(seller=current_user.seller_id[0]).all()
-    column_names = [u'编号',u'商品名称',u'条码',u'规格',u'原价',u'优惠价',u'是否出售',u'是否热门',u'查看次数']
+    column_names = ['编号','商品名称','条码','规格','原价','优惠价','是否出售','是否热门','查看次数']
 
     try:
         response = Response()
         response.status_code = 200
 
-        output = StringIO.StringIO()
+        output = io.StringIO()
 
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         worksheet = workbook.add_worksheet('sheet')
@@ -281,13 +278,13 @@ def toexcel_commodity_data():
         	worksheet.write(i+1,4,x.original_price)
         	worksheet.write(i+1,5,x.special_price)
         	if x.is_sell:
-        		worksheet.write(i+1,6,u'是')
+        		worksheet.write(i+1,6,'是')
         	else:
-        		worksheet.write(i+1,6,u'否')
+        		worksheet.write(i+1,6,'否')
         	if x.hot:
-        		worksheet.write(i+1,7,u'是')
+        		worksheet.write(i+1,7,'是')
         	else:
-        		worksheet.write(i+1,7,u'否')
+        		worksheet.write(i+1,7,'否')
         	worksheet.write(i+1,8,x.click_count)
 
 
@@ -295,7 +292,7 @@ def toexcel_commodity_data():
         output.seek(0)
         response.data = output.read()
 
-        file_name = u'goods_{}.xlsx'.format(dt.datetime.now())
+        file_name = 'goods_{}.xlsx'.format(dt.datetime.now())
         mimetype_tuple = mimetypes.guess_type(file_name)
 
         response_headers = Headers({
@@ -338,17 +335,17 @@ def stock():
 def stock_post():
 	form=StockForm()
 	if not form.validate_on_submit():
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 		return redirect(url_for('.stock'))
 
 	f = request.files['excel']
 	filename = secure_filename(f.filename)
 	if not filename:
-		flash(u'添加失败文件名错误或未选择文件','danger')
+		flash('添加失败文件名错误或未选择文件','danger')
 		return redirect(url_for('.stock'))
 	if not allowed_file(f.filename,'ALLOWED_EXTENSIONS_EXCEL'):
-		flash(u'文件名或格式错误，请使用英文名称且不要带"."符号。','danger')
+		flash('文件名或格式错误，请使用英文名称且不要带"."符号。','danger')
 		return redirect(url_for('.stock'))
 	dataetime = dt.datetime.today().strftime('%Y%m%d')
 	file_dir = 'store/stock/excel/%s/%s/'%(current_user.id,dataetime)
@@ -362,20 +359,20 @@ def stock_post():
 	table=data.sheets()[0]
 	message = '' 
 	try:
-		if table.col(0)[0].value.strip() != u'商品编号':
+		if table.col(0)[0].value.strip() != '商品编号':
 			message = u"第一行名称必须叫‘商品编号’，请返回修改"
-		if table.col(1)[0].value.strip() != u'货位编号':
+		if table.col(1)[0].value.strip() != '货位编号':
 			message = u"第二行名称必须叫‘货位编号’，请返回修改"
-		if table.col(2)[0].value.strip() != u'数量':
+		if table.col(2)[0].value.strip() != '数量':
 			message = u"第三行名称必须叫‘数量’，请返回修改"
-		if table.col(3)[0].value.strip() != u'备注':
+		if table.col(3)[0].value.strip() != '备注':
 			message = u"第四行名称必须叫‘备注’，请返回修改"
 
 		if message !="":
 			flash(message)
 			return redirect(url_for('.stock'))
-	except Exception, e:
-		flash(u'excel文件操作错误：%s'%str(e))
+	except e:
+		flash('excel文件操作错误：%s'%str(e))
 		return redirect(url_for('.stock'))
 	
 	nrows = table.nrows #行数
@@ -479,16 +476,16 @@ def stock_post():
 		
 		#
 		if not success_goodsed:
-			flash(u'商品编号%d校验失败'%i[0])
+			flash('商品编号%d校验失败'%i[0])
 			abort(401)
 		else:
-			flash(u'商品%s校验ok'%(success_goodsed.id))
+			flash('商品%s校验ok'%(success_goodsed.id))
 		#
 		if not success_alllocation:
-			flash(u'货位编号%d校验失败'%i[1])
+			flash('货位编号%d校验失败'%i[1])
 			abort(401)
 		else:
-			flash(u'货位%s校验ok'%(success_alllocation.id))
+			flash('货位%s校验ok'%(success_alllocation.id))
 
 		inventory_dic_has_key = inventory_dic.has_key(str(success_goodsed.id)+'_'+str(success_alllocation.id))
 		
@@ -521,10 +518,9 @@ def stock_post():
 					users = current_user,
 				)
 			)
-			print u'添加库存：商品信息{}，货位{}'.format(success_goodsed.id,success_alllocation.id)
+			# print '添加库存：商品信息{success_goodsed.id}，货位{success_alllocation.id}'
 		
 		db.session.add(save_stock)
-		print '======'
 
 	receipt.variety = variety
 	receipt.goods_sum = goods_sum
@@ -535,7 +531,7 @@ def stock_post():
 	try:
 		db.session.commit()	
 		flash('====添加完成=====')
-	except Exception, e:
+	except e:
 		flash('====添加失败=====')
 		db.session.rollback()
 
@@ -549,7 +545,7 @@ def stock_post():
 def add_stock():
 	form=StockForm()
 	if not form.validate_on_submit():
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 		return redirect(url_for('.stock'))
 
@@ -589,9 +585,9 @@ def add_stock():
 	try:
 		db.session.commit()
 		return redirect(url_for('.show_receipt',id=receipt.id))
-	except Exception, e:
+	except e:
 		db.session.rollback()
-		flash(u'添加失败。数据错误.')
+		flash('添加失败。数据错误.')
 		return redirect(url_for('.stock'))
 
 
@@ -624,10 +620,10 @@ def receipt_add_goods_post(id=0):
 	success_alllocation = GoodsAllocation.query.filter_by(users=current_user).filter_by(name=allocation_name).first()
 
 	if not success_goodsed:
-		flash(u'信息错误。，没有这个商品，请检查名称是否输入正确')
+		flash('信息错误。，没有这个商品，请检查名称是否输入正确')
 		return redirect(url_for('.show_receipt',id=id))
 	if not success_alllocation:
-		flash(u'信息错误。，没有这个货位，请检查名称是否输入正确')
+		flash('信息错误。，没有这个货位，请检查名称是否输入正确')
 		return redirect(url_for('.show_receipt',id=id))
 
 	receipt.variety += 1
@@ -670,9 +666,9 @@ def receipt_add_goods_post(id=0):
 	try:
 		db.session.commit()
 		return redirect(url_for('.show_receipt',id=id))
-	except Exception, e:
+	except e:
 		db.session.rollback()
-		flash(u'添加失败。')
+		flash('添加失败。')
 		return redirect(url_for('.show_receipt',id=id))
 
 #完成订单
@@ -685,8 +681,7 @@ def receipt_change(id=0):
 		abort(404)
 	if receipt.order_state==0:
 		receipt.update(order_state=1)
-		flash(u'已完成订单。')
-	print receipt.order_state
+		flash('已完成订单。')
 
 
 	return redirect(url_for('.show_receipt',id=id))
@@ -697,13 +692,13 @@ def receipt_change(id=0):
 @login_required
 def toexcel_stock_template():
     goods_allocation = GoodsAllocation.query.filter_by(users=current_user).order_by('sort').all()
-    column_names = [u'商品编号',u'货位编号',u'数量',u'备注']
+    column_names = ['商品编号','货位编号','数量','备注']
 
     try:
         response = Response()
         response.status_code = 200
 
-        output = StringIO.StringIO()
+        output = io.StringIO()
 
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         worksheet = workbook.add_worksheet('sheet')
@@ -715,7 +710,7 @@ def toexcel_stock_template():
         output.seek(0)
         response.data = output.read()
 
-        file_name = u'toexcel_stock_template.xlsx'
+        file_name = 'toexcel_stock_template.xlsx'
         mimetype_tuple = mimetypes.guess_type(file_name)
 
         response_headers = Headers({
@@ -777,7 +772,7 @@ def follow(id=0):
 def guanzhu(id=0):
 	seller = Seller.query.get_or_404(id)
 	if seller.users ==  current_user:
-		flash(u'您不能关注自己')
+		flash('您不能关注自己')
 		abort(401)
 	Follow.create(
 		users = current_user,
@@ -844,7 +839,7 @@ def order_reject(id=0):
 		abort(404)
 
 	if user_order.order_state==0:
-		flash(u'订单已拒绝送货')
+		flash('订单已拒绝送货')
 		user_order.update(order_state=3)
 
 	return redirect(url_for('.show_order',id=id))
@@ -862,7 +857,7 @@ def order_confirm(id=0):
 		abort(404)
 
 	if user_order.order_state==0:
-		flash(u'订单已开始送货')
+		flash('订单已开始送货')
 		user_order.update(order_state=1)
 
 	return redirect(url_for('.show_order',id=id))

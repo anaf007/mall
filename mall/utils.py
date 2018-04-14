@@ -3,9 +3,6 @@
 from flask import flash, request, render_template, current_app
 from functools import wraps
 
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 
 def flash_errors(form, category='warning'):

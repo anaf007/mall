@@ -20,5 +20,5 @@ def store_home():
 def change_store_enable(id=0):
 	seller = Seller.query.get_or_404(id)
 	seller.update(enable=True)
-	flash(u'店铺"%s"已启用。'%seller.name)
+	flash('店铺"%s"已启用。'%seller.name)
 	return redirect(url_for('superadmin.store_home'))

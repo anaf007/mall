@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
 from flask import Blueprint, flash, redirect, render_template, request, url_for, abort,Response, jsonify
 from flask_login import login_required, login_user, logout_user,current_user
@@ -36,7 +35,7 @@ def home():
     if len_follow>0 and len_follow<=1:
     	return redirect(url_for('.show_store',seller_id=follow[0].id))
     if len_follow<1:
-    	flash(u'您还未关注店铺。')
+    	flash('您还未关注店铺。')
     return dict()
 
 
@@ -104,7 +103,7 @@ def add_car(id=0):
 
 	else:
 		BuysCar.create(users=current_user,goods_id=goods_id)
-		return jsonify({'title':u'该商品','price':0})
+		return jsonify({'title':'该商品','price':0})
 
 
 #购物城减少
@@ -179,9 +178,9 @@ def add_user_address_post():
 			user_address.state = 0
 		db.session.add(user_address)
 		db.session.commit()
-		flash(u'添加成功','success')
+		flash('添加成功','success')
 	else:
-		flash(u'添加失败','danger')
+		flash('添加失败','danger')
 		flash_errors(form)
 
 	return redirect(url_for('.add_user_address'))
@@ -225,7 +224,7 @@ def confirm_order():
 	"""
 	user_address = UserAddress.query.get(request.form.get('user_address',0))
 	if not user_address:
-		flash(u'您未添加收货地址，请填写填写收货地址。')
+		flash('您未添加收货地址，请填写填写收货地址。')
 		abort(401)
 
 	# buys_car = BuysCar.query.filter_by(users=current_user).all()
@@ -250,7 +249,7 @@ def confirm_order():
 				is_has[str(i[5])] = i
 				seller = i[5]
 			else:
-				flash(u'不能提交订单，存在不同商家的商品，请返回购物车重新修改')
+				flash('不能提交订单，存在不同商家的商品，请返回购物车重新修改')
 				abort(401)			
 	#end检查是否有不同商家商品
 
@@ -287,10 +286,10 @@ def confirm_order():
 				if j.count - count < 0:
 					count = count - j.count
 			else:
-				abort(Response(u'店家该商品 "%s" 库存不足'%i[3]))
+				abort(Response('店家该商品 "%s" 库存不足'%i[3]))
 
-		except Exception, e:
-			abort(Response(u'店家该商品 "%s  "库存不足'%i[3]))
+		except e:
+			abort(Response('店家该商品 "%s  "库存不足'%i[3]))
 			
 	#end检查商家是否足够库存
 
@@ -381,7 +380,7 @@ def confirm_order():
 
 	try:
 		db.session.commit()
-		flash(u'订单提交成功','success')
+		flash('订单提交成功','success')
 
 		# 删除购物车
 		for i in BuysCar.query.filter_by(users=current_user).all():
@@ -389,7 +388,7 @@ def confirm_order():
 		db.session.commit()
 		#end删除购物车
 
-	except Exception, e:
+	except  e:
 		db.session.rollback()
 		return str(e)
 
