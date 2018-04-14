@@ -3,6 +3,7 @@
 from flask import Blueprint, render_template,session,redirect,url_for,request,abort
 from flask_login import login_required,login_user,current_user
 from  sqlalchemy  import desc
+from flask_wechatpy import oauth
 import time,random
 
 from mall.user.models import User
