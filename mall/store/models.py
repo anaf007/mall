@@ -1,5 +1,3 @@
-#coding=utf-8
-
 from mall.database import Column, Model, SurrogatePK, db, reference_col, relationship
 
 import datetime as dt
