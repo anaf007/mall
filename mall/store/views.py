@@ -109,7 +109,6 @@ def commodity_data_post():
 	return redirect(url_for('.commodity_data'))
 
 
-
 #商品管理
 @blueprint.route('/location_management')
 @templated()
@@ -162,14 +161,12 @@ def add_warehouse_post():
 	return redirect(url_for('.location_management'))
 
 
-
 #添加货位
 @blueprint.route('/add_location')
 @templated()
 @login_required
 def add_location():
     return dict(form=AddLocationForm())
-
 
 @blueprint.route('/add_location',methods=['POST'])
 @login_required
@@ -335,7 +332,7 @@ def stock():
 	recript = Receipt.query.filter_by(users=current_user).order_by(desc('id')).all()
 	return dict(form=form,recript=recript)
 
-#商品入库数据添加判断是否已存在
+#原始入库单  带表格文件
 @blueprint.route('/stock',methods=['POST'])
 @login_required
 def stock_post():
@@ -431,6 +428,7 @@ def stock_post():
 	receipt.note = form.note.data
 	receipt.number = number_str
 	receipt.users = current_user
+	receipt.order_state = 1
 
 	"""
 		1.检查货位,如果不是该用户货位退出
@@ -500,7 +498,6 @@ def stock_post():
 		save_stock.goods_allocation = success_alllocation
 		save_stock.receipts = receipt
 		save_stock.stock_count = int(i[2])
-		save_stock.users = current_user
 
 		if inventory_dic_has_key:
 
@@ -509,7 +506,6 @@ def stock_post():
 			save_stock.residue_count = inventory_dic[str(success_goodsed.id)+'_'+str(success_alllocation.id)][0].count
 
 			inventory_dic[str(success_goodsed.id)+'_'+str(success_alllocation.id)][0].update(count=count)
-			print u'已存在该商品，该库位信息，更新数量'
 	
 			
 		else:
@@ -545,6 +541,155 @@ def stock_post():
 
 
 	return redirect(url_for('.stock'))
+
+
+#不带表格添加入库单 然后在添加商品完成入库单
+@blueprint.route('/add_stock',methods=['POST'])
+@login_required
+def add_stock():
+	form=StockForm()
+	if not form.validate_on_submit():
+		flash(u'添加失败','danger')
+		flash_errors(form)
+		return redirect(url_for('.stock'))
+
+	choice_str = 'ABCDEFGHJKLNMPQRSTUVWSXYZ'
+	str_time =  time.time()
+	number_str = 'S'
+	number_str += str(int(int(str_time)*1.301))
+	for i in range(2):
+		number_str += random.choice(choice_str)
+
+	receipt = Receipt()
+	receipt.supplier = form.supplier.data
+	receipt.seller = current_user.seller_id[0]
+	if form.buy_time.data:
+		receipt.buy_time = form.buy_time.data
+	if form.send_time.data:
+		receipt.send_time = form.send_time.data
+
+	receipt.freight = form.freight.data
+	receipt.discount = form.discount.data
+	receipt.pay_price = form.pay_price.data
+
+	if form.pay_time.data:
+		receipt.pay_time = form.pay_time.data
+
+	receipt.pay_type = form.pay_type.data
+	receipt.note = form.note.data
+	receipt.number = number_str
+	receipt.users = current_user
+	receipt.order_state = 0
+
+	receipt.variety = 0
+	receipt.goods_sum = 0
+	receipt.price_sum = 0
+
+	db.session.add(receipt)
+	try:
+		db.session.commit()
+		return redirect(url_for('.show_receipt',id=receipt.id))
+	except Exception, e:
+		db.session.rollback()
+		flash(u'添加失败。数据错误.')
+		return redirect(url_for('.stock'))
+
+
+#进货单添加商品
+@blueprint.route('/receipt_add_goods/<int:id>')
+@templated()
+@login_required
+def receipt_add_goods(id=0):
+	return dict(id=id)
+
+
+@blueprint.route('/receipt_add_goods/<int:id>',methods=['POST'])
+@templated()
+@login_required
+def receipt_add_goods_post(id=0):
+	receipt_id = request.form.get('receipt_id')
+	goods_name = request.form.get('goods_name')
+	allocation_name = request.form.get('allocation_name')
+	count = int(request.form.get('count'))
+	note = request.form.get('note')
+
+	#入库单信息
+	receipt = Receipt.query.get_or_404(id)
+	if receipt.users !=current_user:
+		abort(404)
+	
+	#商品信息
+	success_goodsed = Goods.query.filter_by(seller=current_user.seller_id[0]).filter_by(title=goods_name).first()
+	#货位信息
+	success_alllocation = GoodsAllocation.query.filter_by(users=current_user).filter_by(name=allocation_name).first()
+
+	if not success_goodsed:
+		flash(u'信息错误。，没有这个商品，请检查名称是否输入正确')
+		return redirect(url_for('.show_receipt',id=id))
+	if not success_alllocation:
+		flash(u'信息错误。，没有这个货位，请检查名称是否输入正确')
+		return redirect(url_for('.show_receipt',id=id))
+
+	receipt.variety += 1
+	receipt.goods_sum += count
+	receipt.price_sum += success_goodsed.special_price*count
+
+	#进货商品信息
+	save_stock = Stock()
+	save_stock.users = current_user
+	save_stock.goodsed = success_goodsed
+	save_stock.goods_allocation = success_alllocation
+	save_stock.receipts = receipt
+	save_stock.stock_count = count
+	save_stock.users = current_user
+
+	#库存
+	inventory = Inventory.query\
+		.filter_by(users=current_user)\
+		.filter_by(goodsed=success_goodsed)\
+		.filter_by(goods_allocation=success_alllocation)\
+		.first()
+	if inventory:
+		inventory.count += count
+		save_stock.residue_count = inventory.count
+	else:
+		db.session.add(
+			Inventory(
+				goodsed=success_goodsed,
+				goods_allocation=success_alllocation,
+				users=current_user,
+				count=count,
+				note=note
+				)
+			)
+		save_stock.residue_count = 0
+
+
+	db.session.add(save_stock)
+
+	try:
+		db.session.commit()
+		return redirect(url_for('.show_receipt',id=id))
+	except Exception, e:
+		db.session.rollback()
+		flash(u'添加失败。')
+		return redirect(url_for('.show_receipt',id=id))
+
+#完成订单
+@blueprint.route('/receipt_change/<int:id>')
+@templated()
+@login_required
+def receipt_change(id=0):
+	receipt = Receipt.query.get_or_404(id)
+	if receipt.users !=current_user:
+		abort(404)
+	if receipt.order_state==0:
+		receipt.update(order_state=1)
+		flash(u'已完成订单。')
+	print receipt.order_state
+
+
+	return redirect(url_for('.show_receipt',id=id))
 
 
 #进货单模板导出
@@ -616,6 +761,7 @@ def inventory(id=0):
 	return dict(kucun=kucun)
 
 
+#关注我的
 @blueprint.route('/follow')
 @templated()
 @login_required
@@ -624,7 +770,7 @@ def follow(id=0):
 	return dict(guanzhu=guanzhu)
 
 
-#关注
+#关注店铺
 @blueprint.route('/guanzhu/<int:id>')
 @templated()
 @login_required
@@ -648,6 +794,80 @@ def guanzhu(id=0):
 def sell(id=0):
 	buy_users = UserOrder.query.filter_by(seller=current_user.seller_id[0]).all()
 	return dict(buy_users=buy_users)
+
+
+#显示进货单
+@blueprint.route('/show_stock')
+@templated()
+@login_required
+def show_stock():
+	all_stock = Receipt.query.filter_by(users=current_user).order_by(desc(Receipt.id)).all()
+
+	return dict(all_stock=all_stock)
+
+
+#显示进货单详情
+@blueprint.route('/show_receipt/<int:id>')
+@templated()
+@login_required
+def show_receipt(id=0):
+	receipt = Receipt.query.get_or_404(id)
+	if  receipt.users != current_user:
+		abort(404)
+	return dict(receipt=receipt)
+
+
+#显示销售单详情
+@blueprint.route('/show_order/<int:id>')
+@templated()
+@login_required
+def show_order(id=0):
+	user_order = UserOrder.query.get_or_404(id)
+	if  user_order.seller != current_user.seller_id[0]:
+		abort(404)
+
+	#未查看微信通知
+	if not user_order.is_see:
+		user_order.update(is_see=True)
+
+	return dict(order=user_order)
+
+
+#订单拒绝送货 微信通知
+@blueprint.route('/order_reject/<int:id>')
+@templated()
+@login_required
+def order_reject(id=0):
+
+	user_order = UserOrder.query.get_or_404(id)
+	if  user_order.seller != current_user.seller_id[0]:
+		abort(404)
+
+	if user_order.order_state==0:
+		flash(u'订单已拒绝送货')
+		user_order.update(order_state=3)
+
+	return redirect(url_for('.show_order',id=id))
+
+
+
+#订单开始送货 微信通知
+@blueprint.route('/order_confirm/<int:id>')
+@templated()
+@login_required
+def order_confirm(id=0):
+
+	user_order = UserOrder.query.get_or_404(id)
+	if  user_order.seller != current_user.seller_id[0]:
+		abort(404)
+
+	if user_order.order_state==0:
+		flash(u'订单已开始送货')
+		user_order.update(order_state=1)
+
+	return redirect(url_for('.show_order',id=id))
+
+
 
 
 

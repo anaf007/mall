@@ -1,0 +1,37 @@
+{{ ckeditor.load() }}
+{%extends 'store/base.html'%}
+{% block title %} 进货单详情 {%endblock%}
+{% block body %} 
+
+<div class="Release_list_box">
+
+
+ <a href="#"> <label >单号</label> <input type="text" value='{{ receipt.number }} '></a>
+ <a href="#"> <label >供应商</label> <input type="text" value='{{ receipt.supplier }} '></a>
+ <a href="#"> <label >下单时间</label> <input type="text" value='{{ receipt.buy_time }} '></a>
+ <a href="#"> <label >配送费</label> <input type="text" value='￥{{ receipt.freight }} '></a>
+ <a href="#"> <label >支付金额</label> <input type="text" value='￥{{ receipt.pay_price }} '></a>
+ <a href="#"> <label >支付类型</label> <input type="text" value='{{ receipt.pay_type }} '></a>
+ <a href="#"> <label >备注</label> <input type="text" value='{{ receipt.note }} '></a>
+ <a href="#"> <label >商品总数量</label> <input type="text" value='{{ receipt.goods_sum }} '></a>
+ <a href="#"> <label >总价</label> <input type="text" value='{{ receipt.price_sum }} '></a>
+
+	
+</div>
+
+<div class="operationBox">
+  {%if receipt.order_state==0%}
+    <input class="goBuyBtn" type="button" value="添加商品" onclick="window.location = '{{url_for('store.receipt_add_goods',id=receipt.id)}}'">
+    <input class="goShoppingcartBtn" type="submit" value="完成订单" onclick="javascript:if(confirm('确实完成吗?'))location='{{url_for('store.receipt_change',id=receipt.id)}}'">
+   {%else%}
+   <input class="goShoppingcartBtn" type="submit" value="订单已完成" style="width:100%">
+   {%endif%}
+ 
+</div>
+
+
+{%endblock%}
+
+	
+
+      

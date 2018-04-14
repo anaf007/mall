@@ -92,8 +92,13 @@ class UserOrder(SurrogatePK,Model):
 	#商品总类数量
 	goods_number = Column(db.Integer())
 	
-	#状态默认0 0提交 1付款 2完成 3关闭
+	#状态默认0 0提交 1已查看开始送货 2完成 3关闭
 	order_state = Column(db.Integer(),default=0)
+
+	#是否已经查看 用于微信通知 初次查看微信客服通知
+	is_see = Column(db.Boolean,default=False)
+	#是否已付款
+	is_pay = Column(db.Boolean,default=False)
 
 	#出售的商品
 	sale_id = relationship('Sale', backref='user_order')

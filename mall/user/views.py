@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """User views."""
-from flask import Blueprint, render_template,session,redirect,url_for,request
+from flask import Blueprint, render_template,session,redirect,url_for,request,abort
 from flask_login import login_required,login_user,current_user
 from  sqlalchemy  import desc
 import time,random
@@ -70,6 +70,7 @@ def show_my_order(id=0):
 		else:
 			user_order_dict[str(i[1].id)] = [i]
 
+	#是否非法查看他人信息
 	for k,v in user_order_dict.iteritems():
 		if v[0][1].users_buy !=current_user:
 			abort(404)
@@ -128,7 +129,7 @@ def autoregister():
 
 @blueprint.route('/autologin/<string:name>')
 @blueprint.route('/autologin')
-# @oauth(scope='snsapi_userinfo')
+@oauth(scope='snsapi_base')
 def autologin(name=''):
 	if name:
 		user = User.query.filter_by(username=name).first()

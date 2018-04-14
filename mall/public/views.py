@@ -36,7 +36,7 @@ def home():
     if len_follow>0 and len_follow<=1:
     	return redirect(url_for('.show_store',seller_id=follow[0].id))
     if len_follow<1:
-    	return u'您还未关注店铺。'
+    	flash(u'您还未关注店铺。')
     return dict()
 
 

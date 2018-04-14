@@ -26,6 +26,15 @@ class Config(object):
     #取消sql自动提交 
     SQLALCHEMY_COMMIT_ON_TEARDOWN =  False
 
+    MALL_WECHAT_TOKEN = ''
+
+    #测试号
+    WECHAT_APPID = os.environ.get('MALL_WECHAT_APPID') or 'wxb27de34ba5055b6b'
+    WECHAT_SECRET = os.environ.get('MALL_WECHAT_SECRET') or '1ea339c37b7e356def3d9aea0da65d85'
+    WECHAT_TOKEN = os.environ.get('MALL_WECHAT_TOKEN') or 'wx_get_token_1234567890acb'
+
+
+
 
 
 class ProdConfig(Config):

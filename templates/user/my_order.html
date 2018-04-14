@@ -55,7 +55,12 @@
 				<div class="dhm">订单号：<b>{{i[1]}}</b></div>
 				<div class="wddd-total">
 					<div class="wddd-total-tit"><b>共{{i[5]}}件商品 </b> <b>合计：￥{{i[3]}}</b>
-						<a class="wddd-total-btn btn-bg" href="#">{%if i.order_state==0%}待送货{%endif%} </a>
+						<a class="wddd-total-btn btn-bg" href="#">
+						{%if i.order_state==0%}待送货{%endif%} 
+						{%if i.order_state==1%}已送货{%endif%} 
+						{%if i.order_state==2%}已完成{%endif%} 
+						{%if i.order_state==3%}已关闭{%endif%} 
+						</a>
 					</div>
 
 				</div>

@@ -1,72 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
+{{ ckeditor.load() }}
+{%extends 'store/base.html'%}
+{% block title %} 进货数据 {%endblock%}
+{% block body %} 
+<form action="{{url_for('store.add_stock')}}" method="post" enctype="multipart/form-data">
+
+{{ form.hidden_tag() }}
+<div class="Release_list_box">
+
+
+    <a href="#"> {{ form.supplier.label }} {{ form.supplier() }}  </a>
+    <a href="#"> {{ form.buy_time.label }} {{ form.buy_time() }}  </a>
+    <a href="#"> {{ form.send_time.label }} {{ form.send_time() }}  </a>
+    <a href="#"> {{ form.freight.label }} {{ form.freight() }}  </a>
+    <a href="#"> {{ form.discount.label }} {{ form.discount() }}  </a>
+    <a href="#"> {{ form.pay_price.label }} {{ form.pay_price() }}  </a>
+    <a href="#"> {{ form.pay_time.label }} {{ form.pay_time() }}  </a>
+    <a href="#"> {{ form.pay_type.label }} {{ form.pay_type() }}  </a>
+    <a href="#"> {{ form.note.label }} {{ form.note() }}  </a>
+    <!-- <a href="#"> 进货单:<input type="file" name="excel" id="">  </a> -->
 </div>
-{%endfor%}
-	stock进货数据 <br>	
 
-	<a href="{{url_for('store.toexcel_stock_template')}}">进货单模板</a> <br> 
-<hr>
-	<form action="" method="post" enctype="multipart/form-data">
-		{{ form.hidden_tag() }}
-         {{ form.supplier.label }} {{ form.supplier() }} <br>	
-         {{ form.buy_time.label }} {{ form.buy_time() }}<br>	
-         {{ form.send_time.label }} {{ form.send_time() }}<br>	
-         {{ form.freight.label }} {{ form.freight() }}<br>	
-         {{ form.discount.label }} {{ form.discount() }}<br>	
-         {{ form.pay_price.label }} {{ form.pay_price() }}<br>	
-         {{ form.pay_time.label }} {{ form.pay_time() }}<br>	
-         {{ form.pay_type.label }} {{ form.pay_type() }}<br>	
-         {{ form.note.label }} {{ form.note() }}<br>	
-         进货单:<input type="file" name="excel" id=""> <br>
-         <input type="submit" value="tijiao">
-	</form>
-	 <hr>	
-     进货单： <br>
-     {%for i in recript%}
-    进货单号：{{i.number}},
-    供应商：{{i.supplier}},
-    下单时间：{{i.buy_time}},
-    送货时间{{i.send_time}},
-    配送费{{i.freight}},
-    优惠金额{{i.discount}},
-    优惠金额{{i.discount}},
-    支付金额{{i.pay_price}},
-    支付时间{{i.pay_time}},
-    支付类型{{i.pay_type}},
-    备注{{i.note}},
-    商品种类{{i.variety}},
-    商品总数量{{i.goods_sum}},
-    总价{{i.price_sum}},
-    <br>
-    <a href="{{url_for('store.stock_goods',id=i.id)}}">进货的商品</a> <br>
-        {%for j in i.stock_id%}
-            商品名称：{{j.goodsed.title}},
-            货位名称：{{j.goods_allocation.name}},
-            进货数据：{{j.stock_count}},
-            货位数量：{{j.residue_count}},
-            创建时间：{{j.created_at}},<br>
-        {%endfor%}
-     {%endfor%}
+<div class="operationBox">
+  
+    <!-- <input class="goBuyBtn" type="button" value="进货单模板" onclick="window.location = '{{url_for('store.toexcel_stock_template')}}'"> -->
+    <input class="goShoppingcartBtn" type="submit" value="创建" style="width:100%;">
+ 
+</div>
 
+</form>
 
-    
+{%endblock%}
 
+	
 
-
-    
-
-
-</body>
-</html>
+      

@@ -1,0 +1,43 @@
+{{ ckeditor.load() }}
+{%extends 'store/base.html'%}
+{% block title %} 出货单详情 {%endblock%}
+{% block body %} 
+
+<div class="Release_list_box">
+
+
+ <a href="#"> <label >单号</label> <input type="text" value='{{ order.number }} '></a>
+ <a href="#"> <label >收货人姓名</label> <input type="text" value='{{ order.receive_name }} '></a>
+ <a href="#"> <label >收货人电话</label> <input type="text" value='{{ order.receive_phone }} '></a>
+ <a href="#" style="height:auto;"> <label >收货人地址:</label> {{ order.receive_address }} 西乡塘安吉大道40号邮件处理中心 
+ 
+ <a href="#"> <label >下单时间</label> <input type="text" value='{{ order.buy_time }} '></a>
+ <a href="#"> <label >金额</label> <input type="text" value='￥{{ order.pay_price }} '></a>
+ <a href="#"> <label >备注</label> <input type="text" value='{{ order.note }} '></a>
+
+ <a href="#"> <label >商品总数量</label> <input type="text" value='{{ order.goods_number }} '></a>
+	
+</div>
+
+<div class="operationBox">
+  {%if order.order_state==0%}
+    <input class="goShoppingcartBtn" type="submit" value="拒绝送货" onclick="javascript:if(confirm('您要决绝送货到该地址吗?确定后用户将不能再用此地址进行下单购买。'))location='{{url_for('store.order_reject',id=order.id)}}'">
+   
+  <input class="goBuyBtn" type="button" value="开始送货" onclick="window.location = '{{url_for('store.order_confirm',id=order.id)}}'">
+    {%endif%}
+    {%if order.order_state==1%}
+   <input class="goShoppingcartBtn" type="submit" value="订单已送货" style="width:100%">
+   {%endif%}
+
+    {%if order.order_state==3%}
+   <input class="goShoppingcartBtn" type="submit" value="订单已关闭" style="width:100%">
+   {%endif%}
+ 
+</div>
+
+
+{%endblock%}
+
+	
+
+      

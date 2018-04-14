@@ -1,0 +1,29 @@
+{{ ckeditor.load() }}
+{%extends 'store/base.html'%}
+{% block title %} 添加进货商品 {%endblock%}
+{% block body %} 
+<form action="" method="post" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+<div class="Release_list_box">
+
+<input type="hidden" name="receipt_id"  value="{{id}}">
+    <a href="#"><label for="">商品名称</label> <input type="text" name="goods_name" id=""></a>
+    <a href="#"><label for="">货位名称</label> <input type="text" name="allocation_name" id=""></a>
+    <a href="#"><label for="">数量</label> <input type="text" name="count" id=""></a>
+    <a href="#"><label for="">备注</label> <input type="text" name="note" id=""></a>
+</div>
+
+<div class="operationBox">
+  
+    <!-- <input class="goBuyBtn" type="button" value="进货单模板" onclick="window.location = '{{url_for('store.toexcel_stock_template')}}'"> -->
+    <input class="goShoppingcartBtn" type="submit" value="添加" style="width:100%;">
+ 
+</div>
+
+</form>
+
+{%endblock%}
+
+	
+
+      

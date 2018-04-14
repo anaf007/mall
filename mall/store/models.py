@@ -205,12 +205,11 @@ class Receipt(SurrogatePK,Model):
 	pay_time =  Column(db.DateTime) 
 	#支付类型 微信 现金  银行卡 其他
 	pay_type = Column(db.String(100)) 
-
 	#备注
 	note = Column(db.String(255)) 
-
 	#状态默认0
 	order_state = Column(db.Integer(),default=1)
+
 	#商品种类
 	variety = Column(db.Integer)
 	#商品总数量

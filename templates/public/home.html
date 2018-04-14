@@ -5,6 +5,19 @@
   <title>home</title>
 </head>
 <body>
+
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
+<br>
   public home
+   <a href="{{url_for('store.home')}}">store</a>
 </body>
 </html>

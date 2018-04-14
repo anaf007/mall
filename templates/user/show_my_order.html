@@ -46,7 +46,13 @@
 
 				<tr>
 					<td>订单状态：</td>
-					<td>{%if i[0][1].order_state==0%}待送货{%endif%} </td>
+					<td>
+						{%if i[0][1].order_state==0%}待送货{%endif%} 
+						{%if i[0][1].order_state==1%}已送货{%endif%} 
+						{%if i[0][1].order_state==2%}已完成{%endif%} 
+						{%if i[0][1].order_state==3%}已关闭{%endif%} 
+
+					</td>
 				</tr>
 
 				

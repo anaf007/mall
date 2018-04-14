@@ -1,13 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>sell</title>
-</head>
-<body>
-	销售订单：  <br>	
-	{%for i in buy_users%}
-	id:{{i.id}},订单号：{{i.number}}状态:{{i.order_state}}<br>
-	{%endfor%}
-</body>
-</html>
+{%extends 'store/base.html'%}
+{% block title %} 销售单列表 {%endblock%}
+{% block body %} 
+
+
+<!--订单列表-->
+<div class="dingdan_list"> 
+  	
+  	{%for i in buy_users%}
+    <div style="border-bottom:1px solid red;margin-top:10px;line-height:20px;background-color:#cccccc;">
+    <a href="{{url_for('store.show_order',id=i.id)}}">
+    	<p><span>订单号：<font>{{i.number}},</font></span><span>共计{{i.goods_number}}种商品</span></p>
+    	<p><span>创建时间：<font>{{i.buy_time}}</font></span><span>金额：¥{{i.pay_price}}</span></p>
+    </a>
+  	</div>
+  	{%endfor%}
+
+  	
+  
+</div>
+<!--订单列表 end-->
+
+
+{%endblock%}
+
+
