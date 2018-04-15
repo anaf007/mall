@@ -7,7 +7,7 @@ from flask_wechatpy import oauth
 import time,random
 
 from mall.user.models import User
-from mall.public.models import BuysCar,UserOrder
+from mall.public.models import BuysCar,UserOrder,UserAddress
 from mall.store.models import Sale,Goods,Seller
 from mall.utils import templated
 from .forms import AddUserAddressForm
@@ -117,7 +117,7 @@ def add_user_address_post():
 
 	return redirect(url_for('.add_user_address'))
 
-	
+
 #自动注册 
 # @blueprint.route('/autoregister')
 def autoregister():
