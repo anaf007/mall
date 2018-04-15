@@ -303,8 +303,6 @@ def confirm_order():
 	#暂时提交 否则没有id值
 	db.session.add(user_order)
 
-	
-
 	count_price = 0
 	goods_number = 0
 
@@ -360,11 +358,7 @@ def confirm_order():
 
 	db.session.add(user_order)
 
-
-
 	# end减去库存
-
-	
 
 	try:
 		db.session.commit()
@@ -375,6 +369,21 @@ def confirm_order():
 			db.session.delete(i)
 		db.session.commit()
 		#end删除购物车
+
+		#微信客服消息
+		try:
+			seller = Seller.query\
+				.with_entities(User.wechat_id)\
+				.join(User,User.id==Seller.user_id)
+				.filter(Seller.id==buys_car[0][5])
+				.first()
+			teacher_wechat = seller[0]
+			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
+			wechat.message.send_text(teacher_wechat,msg_title)
+		except e:
+			logger.error("发送店铺微信消息错误"+str(e))
+
+	
 
 	except  e:
 		db.session.rollback()
