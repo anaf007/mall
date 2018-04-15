@@ -32,8 +32,8 @@ def home():
     """Home page."""
     
     seller = Seller.query.with_entities(User.wechat_id,Seller.id).join(User,User.id==Seller.user_id).filter(Seller.id==1).first()
-    print seller 
-    
+    print(seller)
+
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
     if len_follow>0 and len_follow<=1:
