@@ -164,26 +164,7 @@ def logout():
     return redirect(url_for('public.home'))
 
 
-#添加用户地址
-@blueprint.route('/add_user_address',methods=['POST'])
-def add_user_address_post():
-	form = AddUserAddressForm()
-	if form.validate_on_submit():
-		user_address = UserAddress()
-		user_address.name = form.name.data
-		user_address.phone = form.phone.data
-		user_address.address = form.address.data
-		user_address.users = current_user
-		if not UserAddress.query.filter_by(users=current_user).first():
-			user_address.state = 0
-		db.session.add(user_address)
-		db.session.commit()
-		flash('添加成功','success')
-	else:
-		flash('添加失败','danger')
-		flash_errors(form)
 
-	return redirect(url_for('.add_user_address'))
 
 
 #购物车提交订单
