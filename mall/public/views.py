@@ -385,9 +385,9 @@ def confirm_order():
 
 	
 
-	except:
+	except OSError as err:
 		db.session.rollback()
-		return str(e)
+		return str(err)
 
 	return redirect(url_for('user.my_order'))
 
