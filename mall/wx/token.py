@@ -2,7 +2,7 @@
 
 from flask import request,current_app
 from . import blueprint
-
+from mall.extensions import csrf_protect
 
 def createmenu():
     wechat.menu.create({"button":[
