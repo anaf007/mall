@@ -67,7 +67,7 @@ def show_my_order(id=0):
 
 	user_order_dict = {}
 	for i in user_order:
-		if user_order_dict.has_key(str(i[1].id)):
+		if user_order_dict.__contains__(str(i[1].id)):
 			user_order_dict[str(i[1].id)].append(i)
 		else:
 			user_order_dict[str(i[1].id)] = [i]
