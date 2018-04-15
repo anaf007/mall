@@ -42,6 +42,7 @@ def register_blueprints(app):
     app.register_blueprint(user.views.blueprint)
     app.register_blueprint(superadmin.views.blueprint)
     app.register_blueprint(store.views.blueprint)
+    app.register_blueprint(wx.views.blueprint)
     return None
 
 
