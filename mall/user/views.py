@@ -73,7 +73,7 @@ def show_my_order(id=0):
 			user_order_dict[str(i[1].id)] = [i]
 
 	#是否非法查看他人信息
-	for k,v in user_order_dict.iteritems():
+	for k,v in user_order_dict.items():
 		if v[0][1].users_buy !=current_user:
 			abort(404)
 
