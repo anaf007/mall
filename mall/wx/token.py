@@ -1,6 +1,8 @@
 #coding=utf-8
 
 from flask import request,current_app
+from flask_wechatpy import wechat_required
+
 from . import blueprint
 from mall.extensions import csrf_protect
 
