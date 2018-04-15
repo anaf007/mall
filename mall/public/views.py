@@ -276,7 +276,7 @@ def confirm_order():
 			else:
 				abort(Response('店家该商品 "%s" 库存不足'%i[3]))
 
-		except e:
+		except:
 			abort(Response('店家该商品 "%s  "库存不足'%i[3]))
 			
 	#end检查商家是否足够库存
@@ -380,7 +380,7 @@ def confirm_order():
 			teacher_wechat = seller[0]
 			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
 			wechat.message.send_text(teacher_wechat,msg_title)
-		except e:
+		except:
 			logger.error("发送店铺微信消息错误"+str(e))
 
 	
