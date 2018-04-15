@@ -106,7 +106,7 @@ def commodity_data_post():
 	return redirect(url_for('.commodity_data'))
 
 
-#商品管理
+#货位管理
 @blueprint.route('/location_management')
 @templated()
 @login_required
