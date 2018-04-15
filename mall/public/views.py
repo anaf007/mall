@@ -63,7 +63,7 @@ def show_store(seller_id=0):
 
     for i in goodsed:
     	value_list = [i.id,i.title,i.original_price,i.category_id,i.name]
-    	if goodsed_dic.has_key(str(i.sort)+'_'+str(i.category_id)):
+    	if goodsed_dic.__contains__(str(i.sort)+'_'+str(i.category_id)):
     		goodsed_dic[str(i.sort)+'_'+str(i.category_id)].append(value_list)
     	else:
     		goodsed_dic[str(i.sort)+'_'+str(i.category_id)] = [value_list]
@@ -244,7 +244,7 @@ def confirm_order():
 	is_has = {}
 	seller = ''
 	for i in buys_car:
-		if not is_has.has_key(str(i[5])):
+		if not is_has.__contains__(str(i[5])):
 			if not is_has:
 				is_has[str(i[5])] = i
 				seller = i[5]
@@ -270,7 +270,7 @@ def confirm_order():
 
 	goodsed_dic = {}
 	for i in all_goods:
-		if goodsed_dic.has_key(str(i.goods_id)):
+		if goodsed_dic.__contains__(str(i.goods_id)):
 			goodsed_dic[str(i.goods_id)].append(i)
 		else:
 			goodsed_dic[str(i.goods_id)] = [i]	
