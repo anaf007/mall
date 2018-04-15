@@ -16,7 +16,13 @@
 			<div class="adr"><img src="{{url_for('static',filename='images/adrees.png')}}" /> {{user_address.address}} </div>
 		</div>
 	{%else%}
-	<a href="{{url_for('user.add_user_address')}}">添加收货地址</a>
+
+	<div class="fl">
+			<p><a href="{{url_for('user.add_user_address')}}">添加收货地址</a></p>
+		</div>
+
+
+	
 	{%endif%}
 	<!-- 这里收货人信息添加更改等 -->
 		<a class="fr" href="#"><img src="{{url_for('static',filename='images/more.png')}}" /> </a>
