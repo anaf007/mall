@@ -385,7 +385,7 @@ def confirm_order():
 
 	
 
-	except  e:
+	except:
 		db.session.rollback()
 		return str(e)
 
