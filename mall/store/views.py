@@ -774,10 +774,13 @@ def guanzhu(id=0):
 	if seller.users ==  current_user:
 		flash('您不能关注自己')
 		abort(401)
-	Follow.create(
-		users = current_user,
-		seller = seller
-	)
+
+	if not Follow.query.filter_by(users=current_user).filter_by(seller=seller).first():
+		Follow.create(
+			users = current_user,
+			seller = seller
+		)
+		flash('您已成功关注该店铺')
 
 	return redirect(url_for('public.home'))
 
