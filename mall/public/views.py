@@ -380,8 +380,8 @@ def confirm_order():
 			teacher_wechat = seller[0]
 			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
 			wechat.message.send_text(teacher_wechat,msg_title)
-		except:
-			logger.error("发送店铺微信消息错误"+str(e))
+		except OSError as err:
+			return str(err)
 
 	
 
