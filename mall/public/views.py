@@ -208,7 +208,6 @@ def confirm_order():
 		flash('您未添加收货地址，请填写填写收货地址。')
 		abort(401)
 
-	# buys_car = BuysCar.query.filter_by(users=current_user).all()
 	buys_car = BuysCar.query\
 		.with_entities(
 			BuysCar.id,BuysCar.count,BuysCar.goods_id,\
@@ -219,6 +218,8 @@ def confirm_order():
 		.join(Seller,Seller.id==Goods.sellers_id)\
 		.filter(BuysCar.users==current_user)\
 		.all()
+	if not buys_car:
+		return redirect(url_for('public.home'))
 
 
 	#检查是否有不同商家商品
