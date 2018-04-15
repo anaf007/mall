@@ -2,7 +2,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
 
-from mall import commands, public, user, superadmin, store
+from mall import commands, public, user, superadmin, store, wx
 from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, ckeditor
 from mall.settings import ProdConfig
 
