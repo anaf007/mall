@@ -182,6 +182,12 @@ def submit_order():
 		.join(Seller,Seller.id==Goods.sellers_id)\
 		.filter(BuysCar.users==current_user)\
 		.all()
+
+	#如果购物车为空
+	if not buys_car:
+		flash('购物车中无货，不能提交订单。')
+		return redirect(url_for('public.home'))
+
 	#收货地址信息：
 	user_address = UserAddress.query.filter_by(users=current_user).filter_by(state=1).first()
 	
