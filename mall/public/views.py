@@ -374,8 +374,8 @@ def confirm_order():
 		try:
 			seller = Seller.query\
 				.with_entities(User.wechat_id)\
-				.join(User,User.id==Seller.user_id)
-				.filter(Seller.id==buys_car[0][5])
+				.join(User,User.id==Seller.user_id)\
+				.filter(Seller.id==buys_car[0][5])\
 				.first()
 			teacher_wechat = seller[0]
 			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
