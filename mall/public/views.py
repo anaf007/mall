@@ -27,11 +27,14 @@ def load_user(user_id):
 
 @blueprint.route('/')
 @templated()
-@login_required
+# @login_required
 def home():
     """Home page."""
     
-    seller = Seller.query.with_entities(User,Seller).join(User,User.id==Seller.user_id).filter(Seller.id==1).first()
+    seller = Seller.query
+    	.join(User,User.id==Seller.user_id)\
+    	.filter(Seller.id==1)\
+    	.first()
     print(seller)
 
     follow = Follow.query.filter_by(users=current_user).all()
