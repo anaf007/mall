@@ -12,6 +12,7 @@ from mall.superadmin.models import Category
 from mall.store.models import Seller,Goods,Inventory,GoodsAllocation,Sale
 from mall.utils import flash_errors,templated
 from .models import Follow,BuysCar,UserAddress,UserOrder
+from ..extensions import wechat
 from  . import blueprint
 
 import random,time
@@ -27,15 +28,9 @@ def load_user(user_id):
 
 @blueprint.route('/')
 @templated()
-# @login_required
+@login_required
 def home():
     """Home page."""
-    
-    seller = Seller.query
-    	.join(User,User.id==Seller.user_id)\
-    	.filter(Seller.id==1)\
-    	.first()
-    print(seller)
 
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
@@ -380,11 +375,11 @@ def confirm_order():
 		#微信客服消息
 		try:
 			seller = Seller.query\
-				.with_entities(User.wechat_id,Seller.id)\
+				.with_entities(Seller,User)\
 				.join(User,User.id==Seller.user_id)\
 				.filter(Seller.id==buys_car[0][5])\
 				.first()
-			teacher_wechat = seller[0]
+			teacher_wechat = seller[1].wechat_id
 			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
 			wechat.message.send_text(teacher_wechat,msg_title)
 		except OSError as err:
