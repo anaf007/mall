@@ -32,7 +32,7 @@ def load_user(user_id):
 def home():
     """Home page."""
 
-    wechat.message.send_text('oN-VsuEz71VEihapalvXNobXLrYk','msg_title')
+    wechat.message.send_text('oN-VsuEz71VEihapalvXNobXLrYk','内容已发送')
 
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
