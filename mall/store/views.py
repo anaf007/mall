@@ -26,7 +26,7 @@ blueprint = Blueprint('store', __name__, url_prefix='/store')
 @login_required
 def home():
 
-    redirect_url = url_for('store.show_order',id=1,_external=True)
+    
 
 
 	try:
@@ -34,7 +34,7 @@ def home():
 	except e:
 		flash('您未申请店铺！')
 		abort(401)
-	
+	redirect_url = url_for('store.show_order',id=1,_external=True)
 	if not store.enable:
 		flash('您的店铺未启用，请确认管理员是否启用您的店铺。')
 		abort(401)
