@@ -31,9 +31,6 @@ def load_user(user_id):
 @login_required
 def home():
     """Home page."""
-
-    wechat.message.send_text('oN-VsuBVuhUf-HKYtiiqrwC5zlrg','内容已发送')
-
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
     if len_follow>0 and len_follow<=1:

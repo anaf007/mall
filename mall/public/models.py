@@ -43,8 +43,7 @@ class UserOrder(SurrogatePK,Model):
 	user_id = reference_col('users')
 	#收货人地址
 	# receive = reference_col('user_address')
-
-
+	
 	#卖家
 	seller_id = reference_col('sellers')
 	#收货人信息

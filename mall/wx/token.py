@@ -2,31 +2,32 @@
 
 from flask import request,current_app
 from flask_wechatpy import wechat_required
+from wechatpy.replies import TextReply,ArticlesReply,create_reply,ImageReply
 
-from . import blueprint
+from . import blueprint,wechat
 from mall.extensions import csrf_protect
+
+from mall.public.models import UserOrder
+from mall.store.models import Serller
+from mall.user.models import User
+
 
 def createmenu():
     wechat.menu.create({"button":[
-        {"type":"view","name":u"请假","sub_button":[
-            {
-                "type":"view",
-                "name":u"发起请假",
-                "url":"http://school.anaf.cn/users/send_leave"
-            },
-        ]},\
+        {"type":"view","name":"买买买","url":'http://mall.anaf.cn'},\
 
-        {"type":"view","name":u"用户服务","sub_button":[
+        {"type":"view","name":"用户服务","sub_button":[
             {
                 "type":"view",
-                "name":u"个人中心",
-                "url":'http://school.anaf.cn/users'
+                "name":"我的订单",
+                "url":'http://mall.anaf.cn/users/my_order'
             },
             {
                 "type":"view",
-                "name":u"平台简介",
-                "url":'http://school.anaf.cn/'
+                "name":"我的购物车",
+                "url":'http://mall.anaf.cn/users/my_buys_car'
             },
+            
         ]},\
         
     ]})
@@ -61,6 +62,36 @@ def token_get():
 def token_post():
 	msg = request.wechat_msg
 	reply=''
+    if msg.type == 'text':
+
+        event_str = msg.content[0:2]
+        str_id = msg.content[2:]
+
+        #店家显示订单详情
+        if event_str == 'so':
+
+            users_order = UserOrder.query\
+                .with_entities(UserOrder,Serller,User)\
+                .join(Serller,Serller.id==UserOrder.seller_id)\
+                .join(User,User.id==Serller.user_id)\
+                .filter(User.wechat_id==msg.source)\
+                .filter(UserOrder.id==str_id)\
+                .first()
+
+            if users_order:
+                textreply_str = '您有新的销售订单。<a href="">点击查看</a>'
+                
+            else:
+                textreply_str = '输入错误'
+                
+
+            reply = TextReply(content='', message=msg)
+            return reply
+
+
+
+
+
 	reply=TextReply(content=u'hhhhh', message=msg)
 
 	return reply
