@@ -62,6 +62,7 @@ def token_get():
 def token_post():
     msg = request.wechat_msg
     reply = ''
+
     if msg.type == 'text':
 
         event_str = msg.content[0:2]
@@ -88,5 +89,30 @@ def token_post():
             reply = TextReply(content='', message=msg)
             return reply
 
-    return ''
+
+    try:
+        msg.event
+    except Exception, e:
+        return reply
+
+
+    #关注事件
+    if msg.event == 'subscribe':
+        createmenu()
+        reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
+    #扫描二维码关注事件
+    if msg.event == 'subscribe_scan':
+        createmenu()
+        reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
+
+
+
+
+    return reply
+
+
+
+
+
+
 
