@@ -57,6 +57,7 @@ def token_post():
     msg = request.wechat_msg
     reply = ''
 
+    help(msg)
     if msg.type == 'text':
 
         event_str = msg.content[0:2]
@@ -86,7 +87,7 @@ def token_post():
 
     try:
         msg.event
-    except OSError as err:
+    except:
         return reply
 
 
