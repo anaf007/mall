@@ -88,11 +88,5 @@ def token_post():
             reply = TextReply(content='', message=msg)
             return reply
 
-
-
-
-
-	reply=TextReply(content=u'hhhhh', message=msg)
-
-	return reply
+	return ''
 
