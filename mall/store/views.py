@@ -843,18 +843,18 @@ def show_order(id=0):
 @login_required
 def order_reject(id=0):
 
-	user_order = UserOrder.query\
+    user_order = UserOrder.query\
         .with_entities(UserOrder,User)\
         .join(User,User.id==UserOrder.user_id)\
         .filter(UserOrder.id==id)\
         .first()
 
-	if user_order[0].seller != current_user.seller_id[0]:
+    if user_order[0].seller != current_user.seller_id[0]:
         abort(404)
 
-	if user_order[0].order_state==0:
-		flash('订单已拒绝送货')
-		user_order[0].update(order_state=3)
+    if user_order[0].order_state==0:
+        flash('订单已拒绝送货')
+        user_order[0].update(order_state=3)
 
     #微信客服消息
     try:
@@ -864,7 +864,7 @@ def order_reject(id=0):
     except OSError as err:
         return str(err)
 
-	return redirect(url_for('.show_order',id=id))
+    return redirect(url_for('.show_order',id=id))
 
 
 
