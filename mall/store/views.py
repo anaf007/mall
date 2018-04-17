@@ -27,18 +27,18 @@ blueprint = Blueprint('store', __name__, url_prefix='/store')
 def home():
 
     
+    redirect_url = url_for('store.show_order',id=1,_external=True)
 
+    try:
+        store = current_user.seller_id[0]
+    except:
+        flash('您未申请店铺！')
+        abort(401)
 
-	try:
-		store = current_user.seller_id[0]
-	except e:
-		flash('您未申请店铺！')
-		abort(401)
-	redirect_url = url_for('store.show_order',id=1,_external=True)
-	if not store.enable:
-		flash('您的店铺未启用，请确认管理员是否启用您的店铺。')
-		abort(401)
-	return dict(store=store)
+    if not store.enable:
+        flash('您的店铺未启用，请确认管理员是否启用您的店铺。')
+        abort(401)
+    return dict(store=store)
 
 
 #店铺申请
