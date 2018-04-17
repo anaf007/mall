@@ -92,7 +92,7 @@ def token_post():
 
     try:
         msg.event
-    except Exception, e:
+    except OSError as err:
         return reply
 
 
