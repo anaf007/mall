@@ -75,7 +75,7 @@ def token_post():
                 .first()
 
             if users_order:
-                textreply_str = '您有新的销售订单。<a href="">点击查看</a>'
+                textreply_str = '您有新的销售订单。<a href="http://www.163.com">点击查看</a>'
                 
             else:
                 textreply_str = '输入错误'
