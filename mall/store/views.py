@@ -12,7 +12,7 @@ from .forms import *
 from .models import Seller,Goods,GoodsAllocation,Inventory,Receipt,Stock
 from mall.user.models import User
 from mall.public.models import Follow,UserOrder
-from mall.extensions import db
+from mall.extensions import db,wechat
 from mall.utils import allowed_file
 import datetime as dt
 import xlsxwriter,mimetypes,xlrd, os, time, random
