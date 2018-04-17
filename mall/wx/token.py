@@ -8,7 +8,7 @@ from . import blueprint
 from mall.extensions import csrf_protect,wechat
 
 from mall.public.models import UserOrder
-from mall.store.models import Serller
+from mall.store.models import Seller
 from mall.user.models import User
 
 
@@ -71,9 +71,9 @@ def token_post():
         if event_str == 'so':
 
             users_order = UserOrder.query\
-                .with_entities(UserOrder,Serller,User)\
-                .join(Serller,Serller.id==UserOrder.seller_id)\
-                .join(User,User.id==Serller.user_id)\
+                .with_entities(UserOrder,Seller,User)\
+                .join(Seller,Seller.id==UserOrder.seller_id)\
+                .join(User,User.id==Seller.user_id)\
                 .filter(User.wechat_id==msg.source)\
                 .filter(UserOrder.id==str_id)\
                 .first()
