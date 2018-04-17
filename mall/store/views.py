@@ -872,7 +872,7 @@ def order_confirm(id=0):
 
     if user_order[0].order_state==0:
         flash('订单已开始送货')
-        user_order.update(order_state=1)
+        user_order[0].update(order_state=1)
     #微信客服消息
     try:
         
