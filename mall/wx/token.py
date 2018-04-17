@@ -57,7 +57,7 @@ def token_post():
     msg = request.wechat_msg
     reply = ''
 
-    help(msg)
+    # help(msg)
     if msg.type == 'text':
 
         event_str = msg.content[0:2]
@@ -88,7 +88,7 @@ def token_post():
     try:
         msg.event
     except:
-        return reply
+        return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
 
 
     #关注事件
