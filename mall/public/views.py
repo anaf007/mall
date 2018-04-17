@@ -33,11 +33,11 @@ def home():
     """Home page."""
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
-    if len_follow>0 and len_follow<=1:
+    if len_follow == 1:
     	return redirect(url_for('.show_store',seller_id=follow[0].id))
     if len_follow<1:
     	flash('您还未关注店铺。')
-    return dict()
+    return dict(follow=follow)
 
 
 #显示店铺

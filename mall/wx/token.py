@@ -22,12 +22,6 @@ def createmenu():
                 "name":"我的订单",
                 "url":'http://mall.anaf.cn/users/my_order'
             },
-            {
-                "type":"view",
-                "name":"我的购物车",
-                "url":'http://mall.anaf.cn/users/my_buys_car'
-            },
-
         ]},\
         
     ]})
