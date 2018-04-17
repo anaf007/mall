@@ -81,7 +81,7 @@ def token_post():
                 textreply_str = '输入错误'
                 
 
-            reply = TextReply(content='', message=msg)
+            reply = TextReply(content=textreply_str, message=msg)
             return reply
 
 
