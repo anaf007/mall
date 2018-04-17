@@ -77,7 +77,7 @@ def token_post():
             if users_order:
                 redirect_url = url_for('store.show_order',id=users_order[0].id,_external=True)
 
-                textreply_str = '您有新的销售订单。<a href="{redirect_url}">点击查看</a>'
+                textreply_str = f'您有新的销售订单。<a href="{redirect_url}">点击查看</a>'
                 
             else:
                 textreply_str = '输入错误'
