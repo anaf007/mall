@@ -4,8 +4,8 @@ from flask import request,current_app
 from flask_wechatpy import wechat_required
 from wechatpy.replies import TextReply,ArticlesReply,create_reply,ImageReply
 
-from . import blueprint,wechat
-from mall.extensions import csrf_protect
+from . import blueprint
+from mall.extensions import csrf_protect,wechat
 
 from mall.public.models import UserOrder
 from mall.store.models import Serller
