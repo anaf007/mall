@@ -26,6 +26,10 @@ blueprint = Blueprint('store', __name__, url_prefix='/store')
 @login_required
 def home():
 
+    redirect_url = url_for('store.show_order',id=1,_external=True)
+    textreply_str = '您有新的销售订单。<a href="{redirect_url}">点击查看</a>'
+    print(textreply_str)
+
 
     try:
         store = current_user.seller_id[0]
