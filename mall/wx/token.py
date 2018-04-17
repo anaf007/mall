@@ -1,6 +1,6 @@
 #coding=utf-8
 
-from flask import request,current_app
+from flask import request,current_app,url_for
 from flask_wechatpy import wechat_required
 from wechatpy.replies import TextReply,ArticlesReply,create_reply,ImageReply
 
@@ -75,7 +75,8 @@ def token_post():
                 .first()
 
             if users_order:
-                textreply_str = '您有新的销售订单。<a href="http://www.163.com">点击查看</a>'
+                redirect_url = url_for('store.show_order',id=users_order[0].id)
+                textreply_str = '您有新的销售订单。<a href="redirect_url">点击查看</a>'
                 
             else:
                 textreply_str = '输入错误'
