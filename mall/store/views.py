@@ -861,15 +861,28 @@ def order_reject(id=0):
 @login_required
 def order_confirm(id=0):
 
-	user_order = UserOrder.query.get_or_404(id)
-	if  user_order.seller != current_user.seller_id[0]:
-		abort(404)
+    user_order = UserOrder.query\
+        .with_entities(UserOrder,User)\
+        .join(User,User.id==UserOrder.user_id)\
+        .filter(UserOrder.id==id)\
+        .first()
 
-	if user_order.order_state==0:
-		flash('订单已开始送货')
-		user_order.update(order_state=1)
+    if  user_order[0].seller != current_user.seller_id[0]:
+        abort(404)
 
-	return redirect(url_for('.show_order',id=id))
+    if user_order[0].order_state==0:
+        flash('订单已开始送货')
+        user_order.update(order_state=1)
+    #微信客服消息
+    try:
+        
+        teacher_wechat = user_order[1].wechat_id
+        msg_title = '商家已确认您的订单，并准备进行货送，请做好收货准备。'
+        wechat.message.send_text(teacher_wechat,msg_title)
+    except OSError as err:
+        return str(err)
+
+    return redirect(url_for('.show_order',id=id))
 
 
 
