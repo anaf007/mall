@@ -27,7 +27,7 @@ def createmenu():
                 "name":"我的购物车",
                 "url":'http://mall.anaf.cn/users/my_buys_car'
             },
-            
+
         ]},\
         
     ]})
@@ -60,8 +60,8 @@ def token_get():
 @blueprint.route('/token',methods=['POST'])
 @wechat_required
 def token_post():
-	msg = request.wechat_msg
-	reply=''
+    msg = request.wechat_msg
+    reply = ''
     if msg.type == 'text':
 
         event_str = msg.content[0:2]
