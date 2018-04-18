@@ -396,7 +396,7 @@ def confirm_order():
 
 
 #获取缩略图
-@blueprint.route("/thumbnail/<path:filename>", methods=['GET'])
+@blueprint.route("/thumbnail/<path:filename>")
 def get_thumbnail(filename=''):
     path = os.getcwd()+'/'+current_app.config['THUMBNAIL_FOLDER']
     return send_from_directory(path, filename)
