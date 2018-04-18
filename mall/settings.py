@@ -26,6 +26,15 @@ class Config(object):
     #取消sql自动提交 
     SQLALCHEMY_COMMIT_ON_TEARDOWN =  False
 
+    #图片上传
+    THUMBNAIL_FOLDER = 'data/uploads/thumbnail/'
+    ALLOWED_EXTENSIONS_IMAGES = set(['png', 'jpg', 'jpeg', 'gif'])
+
+    #最大上传文件大小
+    MAX_CONTENT_LENGTH = 3 * 1024 * 1024  # 2MB
+
+
+
     MALL_WECHAT_TOKEN = ''
 
     #测试号

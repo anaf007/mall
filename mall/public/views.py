@@ -1,5 +1,6 @@
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for, abort,Response, jsonify
+from flask import Blueprint, flash, redirect, render_template, request, \
+	url_for, abort,Response, jsonify,send_from_directory,current_app
 from flask_login import login_required, login_user, logout_user,current_user
 from sqlalchemy import desc
 
@@ -15,7 +16,7 @@ from .models import Follow,BuysCar,UserAddress,UserOrder
 from ..extensions import wechat
 from  . import blueprint
 
-import random,time
+import random,time,os
 
 
 
@@ -391,6 +392,14 @@ def confirm_order():
 		return str(err)
 
 	return redirect(url_for('user.my_order'))
+
+
+
+#获取缩略图
+@blueprint.route("/thumbnail/<path:filename>", methods=['GET'])
+def get_thumbnail(filename):
+    path = os.getcwd()+'/'+current_app.config['THUMBNAIL_FOLDER']
+    return send_from_directory(path, filename)
 
 
 

@@ -13,10 +13,12 @@ from .models import Seller,Goods,GoodsAllocation,Inventory,Receipt,Stock
 from mall.user.models import User
 from mall.public.models import Follow,UserOrder
 from mall.extensions import db,wechat
-from mall.utils import allowed_file
+from mall.utils import allowed_file,create_thumbnail
+
 import datetime as dt
 import xlsxwriter,mimetypes,xlrd, os, time, random
 import io
+
 blueprint = Blueprint('store', __name__, url_prefix='/store')
 
 
@@ -90,26 +92,45 @@ def commodity_data():
 @blueprint.route('/commodity_data',methods=['POST'])
 @login_required
 def commodity_data_post():
-	form = CommodityDataForm()
-	if form.validate_on_submit():
-		Goods.create(
-			title=form.title.data,
-			original_price=form.original_price.data,
-			special_price=form.special_price.data,
-			note = form.note.data,
-			is_sell = form.is_sell.data,
-			hot = form.hot.data,
-			ean = form.ean.data,
-			unit = form.unit.data,
-			seller = current_user.seller_id[0],
-			category_id = form.category.data
-		)
-		flash('添加成功','success')
-		return redirect(url_for('.commodity_data'))
-	else:
-		flash('添加失败','danger')
-		flash_errors(form)
-	return redirect(url_for('.commodity_data'))
+    form = CommodityDataForm()
+    if form.validate_on_submit():
+        f = request.files['image']
+
+        filename = secure_filename(f.filename)
+        if not filename:
+            flash(u'请选择图片','error')
+            return redirect(url_for('.commodity_data'))
+        if not allowed_file(f.filename):
+            flash(u'图文件名或格式错误。','error')
+            return redirect(url_for('.commodity_data'))
+
+        dataetime = dt.datetime.today().strftime('%Y%m%d')
+        file_dir = 'store/%s/main_photo/%s/'%(current_user.id,dataetime)
+        if not os.path.isdir(current_app.config['UPLOADED_PATH']+file_dir):
+            os.makedirs(current_app.config['UPLOADED_PATH']+file_dir)
+        f.save(current_app.config['UPLOADED_PATH'] +file_dir+filename)
+
+        create_thumbnail(f,80,file_dir,filename)
+
+        Goods.create(
+            title=form.title.data,
+            original_price=form.original_price.data,
+            special_price=form.special_price.data,
+            note = form.note.data,
+            is_sell = form.is_sell.data,
+            hot = form.hot.data,
+            ean = form.ean.data,
+            unit = form.unit.data,
+            seller = current_user.seller_id[0],
+            category_id = form.category.data,
+            main_photo = file_dir+filename,
+        )
+        flash('添加成功','success')
+        return redirect(url_for('.commodity_data'))
+    else:
+        flash('添加失败','danger')
+        flash_errors(form)
+    return redirect(url_for('.commodity_data'))
 
 
 #货位管理

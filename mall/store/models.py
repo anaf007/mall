@@ -129,6 +129,8 @@ class Goods(SurrogatePK, Model):
 	unit = Column(db.Integer,default=1)
 	#创建时间
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
+	#首页展示图
+	main_photo = Column(db.String(200))
 	
 	#出售记录
 	sale_id = relationship('Sale', backref='goodsed')

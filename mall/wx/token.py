@@ -87,6 +87,15 @@ def token_post():
             return reply
 
 
+        #显示店铺地址
+        if event_str == '店铺':
+            redirect_url = url_for('store.home',_external=True)
+            textreply_str = f'<a href="{redirect_url}">点击进入店铺主页。</a>'
+            return reply
+              
+
+
+
     try:
         msg.event
     except:
