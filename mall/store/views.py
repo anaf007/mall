@@ -84,7 +84,7 @@ def commodity_data():
     return dict(form=CommodityDataForm())
 
 #商品数据
-@blueprint.route('/commodity_data',methods=['POST'])
+@blueprint.route('/commodity_data_post',methods=['POST'])
 @login_required
 def commodity_data_post():
     form = CommodityDataForm()
