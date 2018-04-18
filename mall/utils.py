@@ -34,7 +34,7 @@ def templated(template=None):
 
 
 
-def allowed_file(filename,config_name):
+def allowed_file(filename,config_name='ALLOWED_EXTENSIONS_IMAGES'):
     if '.' in filename and \
         filename.rsplit('.', 1)[1] in current_app.config['{}'.format(config_name)] :
         return True

@@ -87,29 +87,23 @@ def commodity_data():
 @blueprint.route('/commodity_data_post',methods=['POST'])
 @login_required
 def commodity_data_post():
-    print('ok')
     form = CommodityDataForm()
     if form.validate_on_submit():
-        print('ok1')
         f = request.files['image']
-        print('ok5')
 
         filename = secure_filename(f.filename)
-        print('ok6')
         if not filename:
             flash(u'请选择图片','error')
             return redirect(url_for('.home'))
         if not allowed_file(f.filename):
             flash(u'图文件名或格式错误。','error')
             return redirect(url_for('.home'))
-        print('ok3')
 
         dataetime = dt.datetime.today().strftime('%Y%m%d')
         file_dir = 'store/%s/main_photo/%s/'%(current_user.id,dataetime)
         if not os.path.isdir(current_app.config['UPLOADED_PATH']+file_dir):
             os.makedirs(current_app.config['UPLOADED_PATH']+file_dir)
         f.save(current_app.config['UPLOADED_PATH'] +file_dir+filename)
-        print('ok4')
 
         create_thumbnail(f,80,file_dir,filename)
 
@@ -129,7 +123,6 @@ def commodity_data_post():
         flash('添加成功','success')
         return redirect(url_for('.home'))
     else:
-        print('ok2')
 
         flash('添加失败','danger')
         flash_errors(form)

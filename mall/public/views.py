@@ -403,5 +403,10 @@ def get_thumbnail(filename):
 
 
 
+@blueprint.route('/files/<path:filename>')
+def get_image(filename=''):
+    path = os.getcwd()+'/'+current_app.config['UPLOADED_PATH']
+    return send_from_directory(path, filename)
+
 
 
