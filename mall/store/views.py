@@ -90,6 +90,7 @@ def commodity_data_post():
     print('ok')
     form = CommodityDataForm()
     if form.validate_on_submit():
+        print('ok1')
         f = request.files['image']
 
         filename = secure_filename(f.filename)
@@ -124,6 +125,8 @@ def commodity_data_post():
         flash('添加成功','success')
         return redirect(url_for('.commodity_data'))
     else:
+        print('ok2')
+
         flash('添加失败','danger')
         flash_errors(form)
     return redirect(url_for('.commodity_data'))
