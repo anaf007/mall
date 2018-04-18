@@ -8,7 +8,7 @@
   	<div class="tabconent">
   		{%for i in goodsed%}
     	<dl>
-	      	<dt><img src="{{url_for('public.get_thumbnail',filename=i.main_photo)}}"></dt>
+	      	<dt><img src="{{url_for('public.get_image',filename=i.main_photo)}}"></dt>
 	      	<dd><a href="#">{{i.title}}</a><span>进货价：￥{{i.special_price}}，销售价：￥{{i.original_price}}</span>
 	        <p><font>商品编号：{{i.id}}</font> <font>是否出售：{{i.is_sell}} </font></p>
       		</dd>
