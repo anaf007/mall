@@ -87,6 +87,7 @@ def commodity_data():
 @blueprint.route('/commodity_data_post',methods=['POST'])
 @login_required
 def commodity_data_post():
+    print('ok')
     form = CommodityDataForm()
     if form.validate_on_submit():
         f = request.files['image']
