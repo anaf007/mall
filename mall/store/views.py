@@ -92,8 +92,10 @@ def commodity_data_post():
     if form.validate_on_submit():
         print('ok1')
         f = request.files['image']
+        print('ok5')
 
         filename = secure_filename(f.filename)
+        print('ok6')
         if not filename:
             flash(u'请选择图片','error')
             return redirect(url_for('.home'))
