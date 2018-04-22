@@ -7,7 +7,7 @@ from wechatpy.replies import TextReply,ArticlesReply,create_reply,ImageReply
 from . import blueprint
 from mall.extensions import csrf_protect,wechat
 
-from mall.public.models import UserOrder
+from mall.public.models import UserOrder,Follow
 from mall.store.models import Seller
 from mall.user.models import User
 
@@ -56,7 +56,6 @@ def token_get():
 def token_post():
     msg = request.wechat_msg
     reply = ''
-    print(msg)
 
     # help(msg)
     if msg.type == 'text':
@@ -111,6 +110,22 @@ def token_post():
     #扫描二维码关注事件
     if msg.event == 'subscribe_scan':
         createmenu()
+        if msg.scene_id:
+            seller = Seller.query.get_or_404(id)
+            user = User.query.filter_by(wechat_id=msg.source).first()
+            if seller.users ==  user:
+                reply = TextReply(content='您不能关注自己', message=msg)
+                return reply
+            if not Follow.query.filter_by(users=user).filter_by(seller=seller).first():
+                Follow.create(
+                    users = user,
+                    seller = seller
+                )
+                seller_name = seller.name
+                reply = TextReply(content=f'您已关注{seller_name}.', message=msg)
+                return reply
+
+
         reply = TextReply(content=msg.scene_id, message=msg)
 
 
