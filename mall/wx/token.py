@@ -126,6 +126,12 @@ def token_post():
                 textreply_str = f'您已关注{seller_name}<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
                 reply = TextReply(content=textreply_str, message=msg)
                 return reply
+            else:
+                redirect_url = url_for('public.home',_external=True)
+                textreply_str = f'您已关注关注过该店铺了。<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
+                reply = TextReply(content=textreply_str, message=msg)
+                return reply
+
 
 
         reply = TextReply(content=msg.scene_id, message=msg)
