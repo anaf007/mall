@@ -41,7 +41,7 @@ def home():
     res = wechat.qrcode.create({
         'action_name': 'QR_LIMIT_STR_SCENE',
         'action_info': {
-            'scene': {'scene_str': 'store.id'},
+            'scene': {'scene_str': '10'},
             }
         })
     imgstr = wechat.qrcode.show(res)
