@@ -27,7 +27,7 @@ from . import blueprint
 @templated()
 @login_required
 def home():
-
+    
     try:
         store = current_user.seller_id[0]
     except:
@@ -37,7 +37,17 @@ def home():
     if not store.enable:
         flash('您的店铺未启用，请确认管理员是否启用您的店铺。')
         abort(401)
-    return dict(store=store)
+
+    res = wechat.qrcode.create({
+        'expire_seconds': 1800,
+        'action_name': 'QR_SCENE',
+        'action_info': {
+            'scene': {'scene_id': store.id},
+            }
+        })
+    imgstr = wechat.qrcode.get_url(res)
+
+    return dict(store=store,imgstr=imgstr)
 
 
 #店铺申请
