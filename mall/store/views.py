@@ -44,7 +44,7 @@ def home():
             'scene': {'scene_str': '10'},
             }
         })
-    imgstr = wechat.qrcode.show(res)
+    imgstr = wechat.qrcode.get_url(res)
     print(imgstr)
     # imgstr = wechat.qrcode.get_url(res)
 
