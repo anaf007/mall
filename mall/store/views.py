@@ -42,7 +42,7 @@ def home():
         'expire_seconds': 1800,
         'action_name': 'QR_SCENE',
         'action_info': {
-            'scene': {'scene_id': store.id},
+            'scene': {'scene_str': 'store.id'},
             }
         })
     imgstr = wechat.qrcode.get_url(res)
