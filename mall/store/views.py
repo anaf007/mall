@@ -48,7 +48,7 @@ def home():
     print(imgstr)
     # imgstr = wechat.qrcode.get_url(res)
 
-    return dict(store=store,imgstr=res)
+    return dict(store=store,imgstr=imgstr)
 
 
 #店铺申请
