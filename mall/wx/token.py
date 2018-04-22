@@ -122,7 +122,7 @@ def token_post():
                     seller = seller
                 )
                 seller_name = seller.name
-                redirect_url = url_for('store.home',_external=True)
+                redirect_url = url_for('public.home',_external=True)
                 textreply_str = f'您已关注{seller_name}<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
                 reply = TextReply(content=textreply_str, message=msg)
                 return reply
