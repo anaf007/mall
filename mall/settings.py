@@ -33,8 +33,6 @@ class Config(object):
     #最大上传文件大小
     MAX_CONTENT_LENGTH = 3 * 1024 * 1024  # 2MB
 
-
-
     MALL_WECHAT_TOKEN = ''
 
     #测试号
@@ -43,6 +41,19 @@ class Config(object):
     WECHAT_SECRET = os.environ.get('MALL_WECHAT_SECRET') or '1ea339c37b7e356def3d9aea0da65d85'
     WECHAT_TOKEN = os.environ.get('MALL_WECHAT_TOKEN') or 'wx_get_token_1234567890acb'
 
+
+    #ckeditor config
+    #ckeditor 图片上传地址url
+    #ckeditor服务器上传函数
+    CKEDITOR_FILE_UPLOADER = '/upload'
+    #上传存放路径
+    CKEDITOR_FILE_UPLOAD_URL =  'data/ckeditor/uploads/'
+
+    # CKEDITOR_FILE_BROWSER_URL = 'data/ckeditor/uploads/'
+
+     
+
+    
 
 
 

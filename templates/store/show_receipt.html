@@ -16,8 +16,21 @@
  <a href="#"> <label >商品总数量</label> <input type="text" value='{{ receipt.goods_sum }} '></a>
  <a href="#"> <label >总价</label> <input type="text" value='{{ receipt.price_sum }} '></a>
 
-	
+	<div style="margin-bottom:50px;">
+        {%for i in receipt.stock_id%}
+    <img class="photo" src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}"> <br>  
+    {{i.goodsed.title}} <br>
+    货位:{{i.goods_allocation.name}} <br>
+    数量:{{i.stock_count}} <br>
+    原数量:{{i.residue_count}} <br>
+
+{%endfor%}
+    </div>
+
+
 </div>
+
+
 
 <div class="operationBox">
   {%if receipt.order_state==0%}

@@ -2,6 +2,8 @@
 {%extends 'store/base.html'%}
 {% block title %} 进货数据 {%endblock%}
 {% block body %} 
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static',filename='laydate/laydate.js')}}"></script>
 <form action="{{url_for('store.add_stock')}}" method="post" enctype="multipart/form-data">
 
 {{ form.hidden_tag() }}
@@ -9,12 +11,12 @@
 
 
     <a href="#"> {{ form.supplier.label }} {{ form.supplier() }}  </a>
-    <a href="#"> {{ form.buy_time.label }} {{ form.buy_time() }}  </a>
-    <a href="#"> {{ form.send_time.label }} {{ form.send_time() }}  </a>
+    <a href="#"> {{ form.buy_time.label }} {{ form.buy_time(id='buy_time') }}  </a>
+    <a href="#"> {{ form.send_time.label }} {{ form.send_time(id='send_time') }}  </a>
     <a href="#"> {{ form.freight.label }} {{ form.freight() }}  </a>
     <a href="#"> {{ form.discount.label }} {{ form.discount() }}  </a>
     <a href="#"> {{ form.pay_price.label }} {{ form.pay_price() }}  </a>
-    <a href="#"> {{ form.pay_time.label }} {{ form.pay_time() }}  </a>
+    <a href="#"> {{ form.pay_time.label }} {{ form.pay_time(id='pay_time') }}  </a>
     <a href="#"> {{ form.pay_type.label }} {{ form.pay_type() }}  </a>
     <a href="#"> {{ form.note.label }} {{ form.note() }}  </a>
     <!-- <a href="#"> 进货单:<input type="file" name="excel" id="">  </a> -->
@@ -28,7 +30,21 @@
 </div>
 
 </form>
+<script type="text/javascript">
+laydate.render({
+  elem: '#buy_time' 
+  ,type: 'datetime'
+});
+laydate.render({
+  elem: '#send_time' 
+  ,type: 'datetime'
+});
+laydate.render({
+  elem: '#pay_time' 
+  ,type: 'datetime'
+});
 
+</script>
 {%endblock%}
 
 	

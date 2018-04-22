@@ -8,7 +8,7 @@
   	<div class="tabconent">
   		{%for i in kucun%}
     	<dl>
-	      	<dt><img src="images/goods.png"></dt>
+	      	<dt><img src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}"></dt>
 	      	<dd><a href="#">{{i.goodsed.title}}</a>
 	      	<span>数量：{{i.count}},货位：{{i.goods_allocation.name}} </span>
 	        <!-- <p><font>商品编号：{{i.id}}</font> <font>是否出售：{{i.is_sell}} </font></p> -->

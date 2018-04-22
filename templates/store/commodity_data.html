@@ -2,11 +2,25 @@
 {%extends 'store/base.html'%}
 {% block title %} 添加商品基础数据 {%endblock%}
 {% block body %} 
+<style type="text/css">
+    
+    #word{
+        position: absolute;
+        z-index: 99;
+        width: 100%;
+        height: auto;
+        background-color: white;
+        border: black solid 1px;
+        display: none;
+    }
+
+</style>
+
 <form action="{{url_for('store.commodity_data_post')}}" method="post" enctype="multipart/form-data">
 
 {{ form.hidden_tag() }}
 
-
+<input type="hidden" id="hidden_id" name='hidden_id' value="">
 <div  class="Release_top">
 
   <!-- <input class="ReleaseBtn" type="file" onchange="changed" style="color: transparent;"> -->
@@ -16,15 +30,17 @@
 <div class="Release_list_box">
    
 
-    <a href="#">{{ form.title.label }} {{ form.title() }}</a>
+    <a href="#">{{ form.title.label }} {{ form.title(id='title') }}
+    <div id="word"></div>
+    </a>
 
-    <a href="#">{{ form.ean.label }} {{ form.ean() }}</a>
+    <a href="#">{{ form.ean.label }} {{ form.ean(id='ean') }}</a>
 
-    <a href="#">{{ form.unit.label }} {{ form.unit() }}</a>
+    <a href="#">{{ form.unit.label }} {{ form.unit(id='unit') }}</a>
 
-    <a href="#">{{ form.original_price.label }} {{ form.original_price() }}</a>
+    <a href="#">{{ form.original_price.label }} {{ form.original_price(id='original_price') }}</a>
 
-    <a href="#">{{ form.special_price.label }} {{ form.special_price() }}</a>
+    <a href="#">{{ form.special_price.label }} {{ form.special_price(id='special_price') }}</a>
 
     <a href="#">{{ form.is_sell.label }} {{ form.is_sell() }}</a>
 
@@ -32,11 +48,11 @@
 
     <a href="#">{{ form.category.label }} {{ form.category() }}</a>
 
-    <a href="#"><label for="is_sell">缩略图</label><input type="file" name="image" id="" style="width:70%"></a>
+    <a href="#"><label for="is_sell">缩略图</label><input type="file" name="image" id="" style="width:70%" id="main_photo"></a>
 
     <a href="#">{{ form.note.label }} {{ form.note() }}</a>
   
-         {{ ckeditor.config(name='note',width='100%') }}
+         {{ ckeditor.config(name='note',width='100%',custom_config='id="note"') }}
 
 </div>
 
@@ -48,9 +64,73 @@
     <input class="goShoppingcartBtn" type="submit" value="立即发布">
  
 </div>
-
-
 </form>
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery.js')}}"></script>
+<script type="text/javascript">
+ $(function(){
+//当键盘键被松开时发送Ajax获取数据
+    $('#title').keyup(function(){
+        var keywords = $(this).val();
+        if (keywords=='') { $('#word').hide(); return };
+        $.ajax({
+
+            url: "{{url_for('store.get_base_product',_external=True)}}?wd="+keywords,
+            dataType: 'json',
+            jsonp: 'cb', //回调函数的参数名(键值)key
+            // jsonpCallback: 'fun', //回调函数名(值) value
+            beforeSend:function(){
+                $('#word').append('<div>正在加载。。。</div>');
+            },
+            success:function(data){
+                $('#word').empty().show();
+                $.each(data.cb, function(){
+                    $('#word').append('<div class="click_work">'+ this.id+'|'+this.title +'</div>');
+                });
+            },
+            error:function(){
+                $('#word').empty().show();
+                $('#word').append('<div class="click_work">Fail "' + keywords + '"</div>');
+            }
+        })
+    })
+//点击搜索数据复制给搜索框
+    $(document).on('click','.click_work',function(){
+        var word = $(this).text();
+        $('#title').val(word);
+        $('#word').hide();
+        // $('#texe').trigger('click');触发搜索事件
+
+        $.ajax({
+            url: "{{url_for('store.get_base_product_one',_external=True)}}?wd="+word,
+            dataType: 'json',
+            jsonp: 'pr', //回调函数的参数名(键值)key
+            // jsonpCallback: 'fun', //回调函数名(值) value
+            beforeSend:function(){
+                $('#word').append('<div>正在加载。。。</div>');
+            },
+            success:function(data){
+                $('#title').val(data.pr.title);
+                $('#ean').val(data.pr.ean);
+                $('#unit').val(data.pr.unit);
+                $('#original_price').val(data.pr.original_price);
+                $('#special_price').val(data.pr.special_price);
+                $('#main_photo').val(data.pr.main_photo);
+                $('#note').val(data.pr.note);
+                $('#hidden_id').val(data.pr.id);
+
+            },
+            error:function(){
+                $('#word').empty().show();
+                $('#word').append('<div class="click_work">Fail "' + word + '"</div>');
+            }
+
+        })
+    })
+
+
+})   
+
+</script>
 {%endblock%}
 
 

@@ -18,14 +18,13 @@
 	{%else%}
 
 	<div class="fl">
-			<p><a href="{{url_for('user.add_user_address')}}">添加收货地址</a></p>
+			<p ><h1><a href="{{url_for('user.add_user_address')}}" style="color:#000000;">添加收货地址</a></h1></p>
 		</div>
 
 
 	
 	{%endif%}
 	<!-- 这里收货人信息添加更改等 -->
-		<a class="fr" href="#"><img src="{{url_for('static',filename='images/more.png')}}" /> </a>
 	</div>
 	<ul class="order-list">
 		{%for i in buys_car%}
@@ -36,7 +35,7 @@
 				</div>
 			<div class="prduct">
 				<div class="picbox">
-				<img src="{{url_for('static',filename='images/nav.jpg')}}">
+				<img src="{{url_for('public.get_image',filename=i[7])}}">
 				</div>
 				<dl>
 					<dt>{{i[3]}}</dt>

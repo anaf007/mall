@@ -12,6 +12,7 @@ from .forms import *
 from .models import Seller,Goods,GoodsAllocation,Inventory,Receipt,Stock
 from mall.user.models import User
 from mall.public.models import Follow,UserOrder
+from mall.superadmin.models import BaseProducts
 from mall.extensions import db,wechat
 from mall.utils import allowed_file,create_thumbnail
 
@@ -19,8 +20,7 @@ import datetime as dt
 import xlsxwriter,mimetypes,xlrd, os, time, random
 import io
 
-blueprint = Blueprint('store', __name__, url_prefix='/store')
-
+from . import blueprint
 
 
 @blueprint.route('/')
@@ -88,6 +88,31 @@ def commodity_data():
 @login_required
 def commodity_data_post():
     form = CommodityDataForm()
+
+    #如果通过系统商品基础数据的模板读取
+    hidden_id = request.form.get('hidden_id')
+    print(hidden_id)
+    if hidden_id:
+        base_product = BaseProducts.query.get_or_404(int(hidden_id))
+
+        Goods.create(
+            title=base_product.title,
+            original_price=base_product.original_price,
+            special_price=base_product.special_price,
+            note = base_product.note,
+            is_sell = True,
+            hot = True,
+            ean = base_product.ean,
+            unit = base_product.unit,
+            seller = current_user.seller_id[0],
+            category_id = base_product.category_id,
+            main_photo = base_product.main_photo,
+        )
+        flash('添加成功','success')
+        return redirect(url_for('.home'))
+
+
+
     if form.validate_on_submit():
         f = request.files['image']
 
@@ -310,7 +335,6 @@ def toexcel_commodity_data():
         		worksheet.write(i+1,7,'否')
         	worksheet.write(i+1,8,x.click_count)
 
-
         workbook.close()
         output.seek(0)
         response.data = output.read()
@@ -394,7 +418,7 @@ def stock_post():
 		if message !="":
 			flash(message)
 			return redirect(url_for('.stock'))
-	except e:
+	except Exception as e:
 		flash('excel文件操作错误：%s'%str(e))
 		return redirect(url_for('.stock'))
 	
@@ -554,7 +578,7 @@ def stock_post():
 	try:
 		db.session.commit()	
 		flash('====添加完成=====')
-	except e:
+	except Exception as e:
 		flash('====添加失败=====')
 		db.session.rollback()
 
@@ -608,7 +632,7 @@ def add_stock():
 	try:
 		db.session.commit()
 		return redirect(url_for('.show_receipt',id=receipt.id))
-	except e:
+	except Exception as e:
 		db.session.rollback()
 		flash('添加失败。数据错误.')
 		return redirect(url_for('.stock'))
@@ -689,7 +713,7 @@ def receipt_add_goods_post(id=0):
 	try:
 		db.session.commit()
 		return redirect(url_for('.show_receipt',id=id))
-	except e:
+	except Exception as e:
 		db.session.rollback()
 		flash('添加失败。')
 		return redirect(url_for('.show_receipt',id=id))
@@ -878,10 +902,10 @@ def order_reject(id=0):
         teacher_wechat = user_order[1].wechat_id
         msg_title = '商家拒绝配送您的订单，您可致电店铺或直接到店购买，谢谢合作。'
         wechat.message.send_text(teacher_wechat,msg_title)
-    except OSError as err:
-        return str(err)
+    except Exception as err:
+        print(str(err))
 
-    return redirect(url_for('.show_order',id=id))
+    return redirect(url_for('.sell'))
 
 
 
@@ -910,10 +934,10 @@ def order_confirm(id=0):
         teacher_wechat = user_order[1].wechat_id
         msg_title = '商家已确认您的订单，并准备进行货送，请做好收货准备。'
         wechat.message.send_text(teacher_wechat,msg_title)
-    except OSError as err:
-        return str(err)
+    except Exception as err:
+        print(str(err))
 
-    return redirect(url_for('.show_order',id=id))
+    return redirect(url_for('.sell'))
 
 
 

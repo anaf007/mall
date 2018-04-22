@@ -17,10 +17,11 @@ blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../s
 
 
 @blueprint.route('/')
+@templated()
 @login_required
 def members():
     """List members."""
-    return render_template('users/members.html')
+    return dict()
 
 
 #显示购物车
@@ -116,7 +117,7 @@ def add_user_address_post():
 		flash('添加失败','danger')
 		flash_errors(form)
 
-	return redirect(url_for('.add_user_address'))
+	return redirect(url_for('public.submit_order'))
 
 
 #自动注册 

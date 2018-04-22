@@ -1,27 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>add_user_address</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
-</div>
-{%endfor%}
+{%extends 'store/base.html'%}
+{% block title %}添加收货地址{%endblock%}
+{% block body %} 
+<form action="" method="post">
 
-	add_user_address
-	<form method="post">
-		{{ form.hidden_tag() }}
-         {{ form.name.label }} {{ form.name() }} <br>	
-         {{ form.phone.label }} {{ form.phone() }}<br>	
-         {{ form.address.label }} {{ form.address() }}<br>	
-         <input type="submit" value="提交">
-	</form>
-</body>
-</html>
+{{ form.hidden_tag() }}
+
+<div class="Release_list_box">
+
+    
+    <a href="#"> {{ form.name.label }} {{ form.name() }}  </a> 
+    <a href="#"> {{ form.phone.label }} {{ form.phone() }}  </a> 
+    <a href="#"> {{ form.address.label }} {{ form.address() }}  </a>
+
+</div>
+
+<div class="blank4"></div>
+
+<!--按钮-->
+<div class="Baby_Box">
+
+<input type="submit" value="添加" style="width:100%;">
+  
+    <!-- <input class="goBuyBtn" type="button" value="添加仓库" onclick="window.location = '{{url_for('store.add_warehouse')}}'"> -->
+    <!-- <input class="goShoppingcartBtn" type="button" value="导出数据" onclick="window.location = '{{url_for('store.toexcel_location')}}'"> -->
+ 
+</div>
+</form>
+<style>
+   .Baby_Box input[type="submit"] { float: left; background: #ff4900; line-height: 50px; width: 50%; font-size: 14px; color: #fff;  border-right: 1px solid white; }
+ 
+</style>
+ {%endblock%}
+
+
+
+
+
+

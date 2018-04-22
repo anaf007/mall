@@ -13,12 +13,12 @@
 			
 			
 			<li><a href="#">
-				<div class="dhm">{{i[0][3].name}}</b><b>{{i[0][3].contact}}</b></div>
+				<div class="dhm">{{i[0][3].name}}</b>，<b>{{i[0][3].contact}}</b></div>
 				<div class="dhm">订单号：<b>{{i[0][1].number}}</b></div>
 
 				<div class="wddd_info">
 					{%for j in i%}
-					<img class="photo" src="images/nav.jpg">
+					<a href="{{url_for('public.show_goods',id=j[2].id)}}"><img class="photo" src="{{url_for('public.get_image',filename=j[2].main_photo)}}"> </a>
 					{%endfor%}
 					
 				</div>

@@ -12,7 +12,7 @@
 	<ul class="goodsListLeft">
 	<!-- 挺绕的循环结构v[1][0][4]做了字典排序 -->
 	{%for v in goods%}
-		<li><a class="GLindex">{{v[1][0][4]}}</a></li>
+		<li><a class="GLindex">{{v[1][0][0][1].name}}</a></li>
 	{%endfor%}
 
 						
@@ -24,25 +24,25 @@
 		{%for v in goods%}
 		<ul class="goodsList">
 			{%for  j in v[1]%}
-
 			<li>
-				<a href="{{url_for('public.show_goods',id=j[0])}}">
+
+				<a href="{{url_for('public.show_goods',id=j[0][0].id)}}">
 					<div class="goodimg">
-						<img src="{{url_for('static',filename='images/nav.jpg')}}">
+						<img src="{{url_for('public.get_thumbnail',filename=j[0][0].main_photo)}}">
 					</div>
 				</a>
 				
 				<div class="jieshao">
-					<a href="{{url_for('public.show_goods',id=j[0])}}">
-						<div class="sku">{{j[1]}}</div>
+					<a href="{{url_for('public.show_goods',id=j[0][0].id)}}">
+						<div class="sku">{{j[0][0].title}}</div>
 					</a>
 
 					<div class="attr">
 						<div class="money price">
-							<span class="intPrice">{{j[2]}}元</span>
+							<span class="intPrice">{{j[0][0].original_price}}</span>
 							<div class="attr_ope">
 								<span class='main_add'></span>
-								<input type="hidden" name="goods_id" id="goods_id" value="{{j[0]}}">
+								<input type="hidden" name="goods_id" id="goods_id" value="{{j[0][0].id}}">
 							</div>
 						</div>
 					</div>
@@ -56,9 +56,6 @@
 		</ul>
 		{%endfor%}
 		
-
-		
-
 	</div>
 	<!--单个模板 end-->
 </div>
@@ -86,13 +83,13 @@
 			<ul class="cartlist">
 			{%for i in buys_car%}
 				<li>
-					<h3>{{i[2]}}</h3>
+					<h3>{{i[1].title}}</h3>
 					<div class="right_box">
-						<span class="danjia">￥{{i[3]}}</span>
+						<span class="danjia">￥{{i[1].original_price}}</span>
 						<span class="control-num">
 						<span class="minus"></span>
-						<input type="text" class="count" value="{{i[1]}}">
-						<input type="hidden" name="goods_id" id="goods_id" value="{{i[4]}}">
+						<input type="text" class="count" value="{{i[0].count}}">
+						<input type="hidden" name="goods_id" id="goods_id" value="{{i[1].id}}">
 						<span class="add"></span>
 						</span>
 					</div>

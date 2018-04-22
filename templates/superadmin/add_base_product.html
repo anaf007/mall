@@ -1,0 +1,41 @@
+{{ckeditor.load()}}
+<!-- 加载本地路径错误 -->
+{#ckeditor.load(custom_url=url_for('static',filename='ckeditor/ckeditor.js'))#}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>add_base_produce</title>
+</head>
+<body>
+add_base_produce添加基础数据
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+    add_category添加基础数据 <br>
+    <form action="{{url_for('superadmin.add_base_product_post')}}" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+         {{ form.title.label }} {{ form.title() }} <br>   
+         {{ form.original_price.label }} {{ form.original_price() }}<br>  
+         {{ form.special_price.label }} {{ form.special_price() }}<br>    
+         {{ form.ean.label }} {{ form.ean() }}<br>    
+         {{ form.unit.label }} {{ form.unit() }}<br>    
+         {{ form.note.label }} {{ form.note() }}<br>
+         {{ ckeditor.config(name='note',width='100%') }}
+         {{ form.category_id.label }} {{ form.category_id() }}<br>   
+         {{ form.attach_key.label }} {{ form.attach_key() }}<br>   
+         {{ form.attach_value.label }} {{ form.attach_value() }}<br>   
+         <input type="file" name="image"> <br>    
+  
+         
+         <input type="submit" value="tijiao">
+    </form> 
+</body>
+</html>
+
+  

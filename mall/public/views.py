@@ -16,7 +16,7 @@ from .models import Follow,BuysCar,UserAddress,UserOrder
 from ..extensions import wechat
 from  . import blueprint
 
-import random,time,os
+import random,time,os,sys
 
 
 
@@ -32,6 +32,7 @@ def load_user(user_id):
 @login_required
 def home():
     """Home page."""
+
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
     if len_follow == 1:
@@ -47,39 +48,40 @@ def home():
 @login_required
 def show_store(seller_id=0):
 
-	#显示主页商品
+    #显示主页商品
     goodsed = Goods.query\
-    	.with_entities(Goods.id,Goods.title,Goods.original_price,\
-    			Goods.category_id,Category.sort,Seller.name,\
-    			Seller.contact,Category.name)\
-    	.join(Category,Goods.category_id==Category.id)\
-    	.join(Seller,Seller.id==Goods.sellers_id)\
-    	.join(Follow,Follow.seller_id==Seller.id)\
-    	.filter(Seller.id==seller_id)\
-    	.order_by(Category.sort)\
-    	.all()
+        .with_entities(Goods,Category,Seller)\
+        .join(Category,Goods.category_id==Category.id)\
+        .join(Seller,Seller.id==Goods.sellers_id)\
+        .filter(Seller.id==seller_id)\
+        .order_by(Category.sort)\
+        .all()
 
     goodsed_dic = {}
-    seller_name =  goodsed[0][5]
-    seller_phone=  goodsed[0][6]
+    seller_name =  goodsed[0][2].name
+    seller_phone=  goodsed[0][2].contact
 
+    #排序  按照商品类别排序
     for i in goodsed:
-    	value_list = [i.id,i.title,i.original_price,i.category_id,i.name]
-    	if goodsed_dic.__contains__(str(i.sort)+'_'+str(i.category_id)):
-    		goodsed_dic[str(i.sort)+'_'+str(i.category_id)].append(value_list)
-    	else:
-    		goodsed_dic[str(i.sort)+'_'+str(i.category_id)] = [value_list]
+        value_list = [i]
+        if goodsed_dic.__contains__(str(i[1].sort)+'_'+str(i[0].category_id)):
+            goodsed_dic[str(i[1].sort)+'_'+str(i[0].category_id)].append(value_list)
+        else:
+            goodsed_dic[str(i[1].sort)+'_'+str(i[0].category_id)] = [value_list]
     
     #字典排序
     goodseds = [(k,goodsed_dic[k]) for k in sorted(goodsed_dic.keys())]
+
+    goodseds.sort()
 
     #end显示主页商品
 
     #购物车
     buys_car = BuysCar.query\
-    	.with_entities(BuysCar.id,BuysCar.count,Goods.title,Goods.original_price,Goods.id)\
+    	.with_entities(BuysCar,Goods)\
     	.join(Goods,Goods.id==BuysCar.goods_id)\
-    	.filter(BuysCar.users==current_user)\
+    	.join(User,User.id==BuysCar.user_id)\
+    	.filter(User.id==current_user.id)\
     	.all()
 
     return dict(seller=[seller_name,seller_phone],goods=goodseds,buys_car=buys_car)
@@ -179,7 +181,7 @@ def submit_order():
 		.with_entities(\
 			BuysCar.id,BuysCar.count,\
 			Goods.id,Goods.title,Goods.original_price,\
-			Seller.freight,Seller.max_price_no_freight)\
+			Seller.freight,Seller.max_price_no_freight,Goods.main_photo)\
 		.join(Goods,Goods.id==BuysCar.goods_id)\
 		.join(Seller,Seller.id==Goods.sellers_id)\
 		.filter(BuysCar.users==current_user)\
@@ -382,12 +384,10 @@ def confirm_order():
 			teacher_wechat = seller[1].wechat_id
 			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
 			wechat.message.send_text(teacher_wechat,msg_title)
-		except OSError as err:
-			return str(err)
+		except Exception as e:
+			pass
 
-	
-
-	except OSError as err:
+	except Exception as err:
 		db.session.rollback()
 		return str(err)
 

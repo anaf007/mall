@@ -15,7 +15,22 @@
  <a href="#"> <label >金额</label> <input type="text" value='￥{{ order.pay_price }} '></a>
  <a href="#"> <label >备注</label> <input type="text" value='{{ order.note }} '></a>
 
- <a href="#"> <label >商品总数量</label> <input type="text" value='{{ order.goods_number }} '></a>
+ <a href="#"> <label >备注</label> <input type="text" value='{{ order.note }} '></a>
+
+
+ <div style="bottom:150px;">
+        {%for i in order.sale_id%}
+        <div style="border:1px solid red; float:left; margin:5px;">
+    <img class="photo" src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}" width="80" height="80"> <br>  
+    {{i.goodsed.title}} <br>
+    货位:{{i.goodsed_allocation.name}} <br>
+    数量:{{i.count}} <br>
+    原数量:{{i.residue_count}} <br>
+</div>
+{%endfor%}
+    </div>
+
+
 	
 </div>
 

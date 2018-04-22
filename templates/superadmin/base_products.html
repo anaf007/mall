@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>add_base_product</title>
+</head>
+<body>
+
+<a href="{{url_for('superadmin.add_base_product')}}">add_base_product</a> 
+<br>
+{%for i in base_product%}
+{{i.id}}{{i.title}} <br>
+{%endfor%}
+</body>
+</html>

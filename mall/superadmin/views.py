@@ -1,26 +1,27 @@
 #coding=utf-8
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for,current_app
 from sqlalchemy import desc
+from werkzeug.utils import secure_filename
+from flask_login import current_user
 
-from .models import SystemVersion,Category
-from mall.utils import templated,flash_errors
+from .models import SystemVersion,Category,BaseProducts
+from mall.utils import templated,flash_errors,allowed_file
 from . import blueprint
-from .forms import AddCategoryForm
+from .forms import AddCategoryForm,AddBaseProductForm
+
+import datetime as dt
+import os
 
 @blueprint.route('/')
+@templated()
 def home():
-	return render_template('superadmin/home.html')
+	return dict()
 
 
 @blueprint.route('/all_version')
+@templated()
 def all_version():
-	return render_template('superadmin/all_version.html',version=SystemVersion.query.order_by(desc('id')).all())
-
-
-@blueprint.route('/add_version',methods=['GET'])
-def add_version():
-	version = SystemVersion.query.order_by(desc('id')).first()
-	return render_template('superadmin/add_version.html',version=version)
+	return dict(version=SystemVersion.query.order_by(desc('id')).all())
 
 
 @blueprint.route('/add_version',methods=['POST'])
@@ -37,19 +38,18 @@ def add_version_post():
 
 #分类
 @blueprint.route('/category')
-@templated('superadmin/category.html')
+@templated()
 def category():
 	return dict(categorys=Category.query.order_by('sort').all())
 
 #分类
 @blueprint.route('/add_category')
-@templated('superadmin/add_category.html')
+@templated()
 def add_category():
 	return dict(form=AddCategoryForm())
 
 
 @blueprint.route('/add_category',methods=["POST"])
-@templated('superadmin/add_category.html')
 def add_category_post():
 	form=AddCategoryForm(request.form)
 	if form.validate_on_submit():
@@ -60,7 +60,7 @@ def add_category_post():
 			name=form.name.data,
 			ico=form.ico.data,
 			sort=form.sort.data,
-			parent_id=form.pid.data,
+			note=form.pid.data,
 			active=form.active.data,			
 		)
 		flash('添加成功','success')
@@ -71,5 +71,54 @@ def add_category_post():
 	return redirect(url_for('.add_category'))
 
 
+#商品基础数据
+@blueprint.route('/base_products')
+@templated()
+def base_products():
+	base_product = BaseProducts.query.all()
+	return dict(base_product=base_product)
 
+
+#添加商品基础数据
+@blueprint.route('/add_base_product')
+@templated()
+def add_base_product():
+
+	return dict(form=AddBaseProductForm())
+
+
+@blueprint.route('/add_base_product',methods=['POST'])
+def add_base_product_post():
+    form=AddBaseProductForm()
+    if form.validate_on_submit():
+        f = request.files['image']
+        filename = secure_filename(f.filename)
+        if not filename:
+            flash(u'请选择图片','error')
+            return redirect(url_for('.home'))
+        if not allowed_file(f.filename):
+            flash(u'图文件名或格式错误。','error')
+            return redirect(url_for('.home'))
+
+        dataetime = dt.datetime.today().strftime('%Y%m%d')
+        file_dir = 'superadmin/%s/base_products/%s/'%(current_user.id,dataetime)
+        if not os.path.isdir(current_app.config['UPLOADED_PATH']+file_dir):
+            os.makedirs(current_app.config['UPLOADED_PATH']+file_dir)
+        f.save(current_app.config['UPLOADED_PATH'] +file_dir+filename)
+
+
+        BaseProducts.create(
+            title=form.title.data,
+            original_price=form.original_price.data,
+            special_price=form.special_price.data,
+            unit=form.unit.data,
+            ean=form.ean.data,
+            note=form.note.data,
+            category_id=form.category_id.data,            
+            attach_key=form.attach_key.data,            
+            attach_value=form.attach_value.data,
+            main_photo = file_dir+filename,        	
+        )
+        flash('ok')
+    return redirect(url_for('superadmin.home'))
 

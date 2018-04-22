@@ -25,7 +25,7 @@ class BaseProducts(SurrogatePK, Model):
 	__tablename__ = 'base_products'
 
 	#商品名称
-	name = Column(db.String(255)) 
+	title = Column(db.String(255)) 
 	#原价
 	original_price = Column(db.Numeric(15,2))
 	#优惠价
@@ -38,6 +38,13 @@ class BaseProducts(SurrogatePK, Model):
 	attach_key = Column(db.String(200))
 	#附加值
 	attach_value = Column(db.String(500))
+	#首页展示图
+	main_photo = Column(db.String(200))
+	#条码
+	ean = Column(db.String(50))
+	#规格
+	unit = Column(db.Integer,default=1)
+	
 
 
 #商品分类
