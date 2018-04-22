@@ -110,10 +110,13 @@ def token_post():
     #扫描二维码关注事件
     if msg.event == 'subscribe_scan':
         createmenu()
+        print(msg.scene_id)
         if msg.scene_id:
             seller = Seller.query.get_or_404(id)
+            print(seller)
             user = User.query.filter_by(wechat_id=msg.source).first()
-            if seller.users ==  user:
+            print(user)
+            if seller.users == user:
                 reply = TextReply(content='您不能关注自己', message=msg)
                 return reply
             if not Follow.query.filter_by(users=user).filter_by(seller=seller).first():
