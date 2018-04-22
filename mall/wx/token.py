@@ -112,7 +112,7 @@ def token_post():
         createmenu()
         print(msg.scene_id)
         if msg.scene_id:
-            seller = Seller.query.get_or_404(id)
+            seller = Seller.query.get_or_404(msg.scene_id)
             print(seller)
             user = User.query.filter_by(wechat_id=msg.source).first()
             print(user)
