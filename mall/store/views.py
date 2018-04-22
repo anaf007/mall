@@ -39,8 +39,7 @@ def home():
         abort(401)
 
     res = wechat.qrcode.create({
-        'expire_seconds': 1800,
-        'action_name': 'QR_SCENE',
+        'action_name': 'QR_LIMIT_STR_SCENE',
         'action_info': {
             'scene': {'scene_str': 'store.id'},
             }
