@@ -38,14 +38,14 @@ def home():
         flash('您的店铺未启用，请确认管理员是否启用您的店铺。')
         abort(401)
 
-    # res = wechat.qrcode.create({
-    #     'action_name': 'QR_LIMIT_STR_SCENE',
-    #     'action_info': {
-    #         'scene': {'scene_str': 'store.id'},
-    #         }
-    #     })
-    res = wechat.qrcode.show('ticket data')
-    print(res)
+    res = wechat.qrcode.create({
+        'action_name': 'QR_LIMIT_STR_SCENE',
+        'action_info': {
+            'scene': {'scene_str': 'store.id'},
+            }
+        })
+    imgstr = wechat.qrcode.show(res)
+    print(imgstr)
     # imgstr = wechat.qrcode.get_url(res)
 
     return dict(store=store,imgstr=res)
