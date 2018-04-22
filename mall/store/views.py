@@ -44,7 +44,7 @@ def home():
     #         'scene': {'scene_str': 'store.id'},
     #         }
     #     })
-    res = client.qrcode.show('ticket data')
+    res = wechat.qrcode.show('ticket data')
     print(res)
     # imgstr = wechat.qrcode.get_url(res)
 
