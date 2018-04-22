@@ -110,12 +110,9 @@ def token_post():
     #扫描二维码关注事件
     if msg.event == 'subscribe_scan':
         createmenu()
-        print(msg.scene_id)
         if msg.scene_id:
             seller = Seller.query.get_or_404(msg.scene_id)
-            print(seller)
             user = User.query.filter_by(wechat_id=msg.source).first()
-            print(user)
             if seller.users == user:
                 reply = TextReply(content='您不能关注自己', message=msg)
                 return reply
@@ -125,7 +122,9 @@ def token_post():
                     seller = seller
                 )
                 seller_name = seller.name
-                reply = TextReply(content=f'您已关注{seller_name}.', message=msg)
+                redirect_url = url_for('store.home',_external=True)
+                textreply_str = f'您已关注{seller_name}<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
+                reply = TextReply(content=textreply_str, message=msg)
                 return reply
 
 
