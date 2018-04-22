@@ -39,15 +39,14 @@ def home():
         abort(401)
 
     res = wechat.qrcode.create({
-        'action_name': 'QR_LIMIT_STR_SCENE',
+        'expire_seconds': 1800,
+        'action_name': 'QR_SCENE',
         'action_info': {
-            'scene': {'scene_str': '10'},
+            'scene': {'scene_id':store.id },
             }
         })
     imgstr = wechat.qrcode.get_url(res)
-    print(imgstr)
-    # imgstr = wechat.qrcode.get_url(res)
-
+    
     return dict(store=store,imgstr=imgstr)
 
 

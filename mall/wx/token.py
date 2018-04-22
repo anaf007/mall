@@ -111,9 +111,7 @@ def token_post():
     #扫描二维码关注事件
     if msg.event == 'subscribe_scan':
         createmenu()
-        reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
-
-
+        reply = TextReply(content=msg.EventKey, message=msg)
 
 
     return reply
