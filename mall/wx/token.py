@@ -56,6 +56,7 @@ def token_get():
 def token_post():
     msg = request.wechat_msg
     reply = ''
+    print(msg)
 
     # help(msg)
     if msg.type == 'text':
