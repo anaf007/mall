@@ -101,14 +101,12 @@ def commodity_data_post():
 
     #如果通过系统商品基础数据的模板读取
     hidden_id = request.form.get('hidden_id')
-    print(hidden_id)
     if hidden_id:
         base_product = BaseProducts.query.get_or_404(int(hidden_id))
-
         Goods.create(
             title=base_product.title,
-            original_price=base_product.original_price,
-            special_price=base_product.special_price,
+            original_price=form.original_price。data,
+            special_price=form.special_price.data,
             note = base_product.note,
             is_sell = True,
             hot = True,
@@ -120,8 +118,6 @@ def commodity_data_post():
         )
         flash('添加成功','success')
         return redirect(url_for('.home'))
-
-
 
     if form.validate_on_submit():
         f = request.files['image']
