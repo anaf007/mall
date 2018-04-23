@@ -105,7 +105,7 @@ def commodity_data_post():
         base_product = BaseProducts.query.get_or_404(int(hidden_id))
         Goods.create(
             title=base_product.title,
-            original_price=form.original_price。data,
+            original_price=form.original_price.data,
             special_price=form.special_price.data,
             note = base_product.note,
             is_sell = True,
