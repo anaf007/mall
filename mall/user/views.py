@@ -122,7 +122,7 @@ def add_user_address_post():
 
 #自动注册 
 # @blueprint.route('/autoregister')
-def autoregister():
+def autoregister(wechat_id=''):
 	
 	choice_str = 'ABCDEFGHJKLNMPQRSTUVWSXYZ'
 	username_str = ''
@@ -139,14 +139,19 @@ def autoregister():
 	username = username_str
 	password = password_str
 
+	if not wechat_id:
+		wechat_id = session.get('wechat_user_id','')
+
+
 	user = User.query.filter_by(username=username).first()
 	if user is None:
 		user = User.create(
 			username=username,
 			password=password,
-			wechat_id=session.get('wechat_user_id',''),
+			wechat_id=wechat_id,
 		)
 		login_user(user,True)
+		return user 
 	else:
 		autoregister()
 
@@ -168,7 +173,7 @@ def autologin(name=''):
 	if user :
 		login_user(user,True)
 	else:
-		autoregister()
+		user = autoregister()
 
 	return redirect(request.args.get('next') or url_for('public.home'))
 		

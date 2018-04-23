@@ -10,6 +10,7 @@ from mall.extensions import csrf_protect,wechat
 from mall.public.models import UserOrder,Follow
 from mall.store.models import Seller
 from mall.user.models import User
+from mall.user.views import autoregister
 
 
 def createmenu():
@@ -113,6 +114,8 @@ def token_post():
         if msg.scene_id:
             seller = Seller.query.get_or_404(msg.scene_id)
             user = User.query.filter_by(wechat_id=msg.source).first()
+            if not user:
+                user = autoregister(msg.source)
             if seller.users == user:
                 reply = TextReply(content='您不能关注自己', message=msg)
                 return reply
