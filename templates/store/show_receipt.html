@@ -1,47 +1,92 @@
-{{ ckeditor.load() }}
 {%extends 'store/base.html'%}
 {% block title %} 进货单详情 {%endblock%}
 {% block body %} 
+<style type="text/css">
+  body{background-color: white;}
+</style>
 
-<div class="Release_list_box">
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-left">进货单号：</div>
+        <div class="cell-right">{{ receipt.number }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">供应商</div>
+        <div class="cell-right">{{ receipt.supplier }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">下单时间</div>
+        <div class="cell-right">{{ receipt.buy_time }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">配送费</div>
+        <div class="cell-right">{{ receipt.freight }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">支付金额</div>
+        <div class="cell-right">{{ receipt.pay_price }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">支付类型</div>
+        <div class="cell-right">{{ receipt.pay_type }}</div>
+    </div>
+    
 
-
- <a href="#"> <label >单号</label> <input type="text" value='{{ receipt.number }} '></a>
- <a href="#"> <label >供应商</label> <input type="text" value='{{ receipt.supplier }} '></a>
- <a href="#"> <label >下单时间</label> <input type="text" value='{{ receipt.buy_time }} '></a>
- <a href="#"> <label >配送费</label> <input type="text" value='￥{{ receipt.freight }} '></a>
- <a href="#"> <label >支付金额</label> <input type="text" value='￥{{ receipt.pay_price }} '></a>
- <a href="#"> <label >支付类型</label> <input type="text" value='{{ receipt.pay_type }} '></a>
- <a href="#"> <label >备注</label> <input type="text" value='{{ receipt.note }} '></a>
- <a href="#"> <label >商品总数量</label> <input type="text" value='{{ receipt.goods_sum }} '></a>
- <a href="#"> <label >总价</label> <input type="text" value='{{ receipt.price_sum }} '></a>
-
-	<div style="margin-bottom:50px;">
-        {%for i in receipt.stock_id%}
-    <img class="photo" src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}"> <br>  
-    {{i.goodsed.title}} <br>
-    货位:{{i.goods_allocation.name}} <br>
-    数量:{{i.stock_count}} <br>
-    原数量:{{i.residue_count}} <br>
-
-{%endfor%}
+    <div class="cell-item">
+        <div class="cell-left">商品总数量</div>
+        <div class="cell-right">{{ receipt.goods_sum }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">总价</div>
+        <div class="cell-right">{{ receipt.price_sum }}</div>
     </div>
 
+    
 
+    {%if receipt.note%}
+    <div class="cell-item">
+        <div class="cell-left">备注</div>
+        <div class="cell-right">{{ receipt.note }}</div>
+    </div>
+    {%endif%}
 </div>
 
 
+        <article class="m-list list-theme3">
+            {%for i in receipt.stock_id%}
+            <a href="javascript:;" class="list-item">
+                <div class="list-img">
+                    <img src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}">
+                </div>
+                <div class="list-mes">
+                    <h3 class="list-title">{{i.goodsed.title}}</h3>
+                    <div class="list-mes-item">
+                        <div>
+                            <span class="list-title">货位{{i.goods_allocation.name}}</span>
+                        </div>
+                        <div>进货数量{{i.stock_count}}</div>
+                    </div>
+                </div>
+            </a>
+            {%endfor%}
+        </article>
 
-<div class="operationBox">
-  {%if receipt.order_state==0%}
-    <input class="goBuyBtn" type="button" value="添加商品" onclick="window.location = '{{url_for('store.receipt_add_goods',id=receipt.id)}}'">
-    <input class="goShoppingcartBtn" type="submit" value="完成订单" onclick="javascript:if(confirm('确实完成吗?'))location='{{url_for('store.receipt_change',id=receipt.id)}}'">
-   {%else%}
-   <input class="goShoppingcartBtn" type="submit" value="订单已完成" style="width:100%">
+
+
+{%if receipt.order_state==0%}
+<div class="m-grids-2">
+    <a href="#" class="grids-item">
+       <button type="button" class="btn-block btn-warning" onclick="window.location = '{{url_for('store.receipt_add_goods',id=receipt.id)}}'">添加商品</button>
+    </a>
+    <a href="#" class="grids-item">
+       <button type="button" class="btn-block btn-danger" onclick="javascript:if(confirm('确实完成吗?'))location='{{url_for('store.receipt_change',id=receipt.id)}}'">完成订单</button>
+    </a>
+</div>
+
+{%else%}
+   <button type="button" class="btn-block btn-warning">订单已完成</button>
    {%endif%}
- 
-</div>
-
+  
 
 {%endblock%}
 

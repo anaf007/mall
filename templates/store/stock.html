@@ -1,4 +1,3 @@
-{{ ckeditor.load() }}
 {%extends 'store/base.html'%}
 {% block title %} 进货数据 {%endblock%}
 {% block body %} 
@@ -7,27 +6,53 @@
 <form action="{{url_for('store.add_stock')}}" method="post" enctype="multipart/form-data">
 
 {{ form.hidden_tag() }}
-<div class="Release_list_box">
-
-
-    <a href="#"> {{ form.supplier.label }} {{ form.supplier() }}  </a>
-    <a href="#"> {{ form.buy_time.label }} {{ form.buy_time(id='buy_time') }}  </a>
-    <a href="#"> {{ form.send_time.label }} {{ form.send_time(id='send_time') }}  </a>
-    <a href="#"> {{ form.freight.label }} {{ form.freight() }}  </a>
-    <a href="#"> {{ form.discount.label }} {{ form.discount() }}  </a>
-    <a href="#"> {{ form.pay_price.label }} {{ form.pay_price() }}  </a>
-    <a href="#"> {{ form.pay_time.label }} {{ form.pay_time(id='pay_time') }}  </a>
-    <a href="#"> {{ form.pay_type.label }} {{ form.pay_type() }}  </a>
-    <a href="#"> {{ form.note.label }} {{ form.note() }}  </a>
-    <!-- <a href="#"> 进货单:<input type="file" name="excel" id="">  </a> -->
-</div>
-
-<div class="operationBox">
-  
-    <!-- <input class="goBuyBtn" type="button" value="进货单模板" onclick="window.location = '{{url_for('store.toexcel_stock_template')}}'"> -->
-    <input class="goShoppingcartBtn" type="submit" value="创建" style="width:100%;">
  
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.supplier(class='cell-input',placeholder="请输入供应商名称") }} </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.buy_time(class='cell-input',placeholder="下单时间",id='buy_time') }} </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.send_time(class='cell-input',placeholder="送货时间",id='send_time') }} </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.freight(class='cell-input',placeholder="配送费") }} </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.discount(class='cell-input',placeholder="优惠金额") }} </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.pay_price(class='cell-input',placeholder="支付金额") }} </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.pay_time(class='cell-input',placeholder="支付时间",id='pay_time') }} </div>
+    </div>
+    <div class="cell-item">
+      <div class="cell-left">支付方式: &nbsp;</div>
+        <label class="cell-right cell-arrow">
+        {{ form.pay_type(class="cell-select") }}
+            
+        </label>
+    </div>
+    <div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+          {{ form.note(class='cell-textarea',placeholder="备注") }}
+        </div>
+    </div>
 </div>
+    
+  <input type="submit" class="btn-block btn-warning" value="创建">
+   
 
 </form>
 <script type="text/javascript">

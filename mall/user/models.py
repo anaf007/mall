@@ -63,6 +63,8 @@ class User(UserMixin, SurrogatePK, Model):
     stock_id = relationship('Stock', backref='users')
     buys_car_id = relationship('BuysCar', backref='users')
     follows_id = relationship('Follow', backref='users')
+    #盘点表
+    quantity_check_id = relationship('QuantityCheck', backref='users')
     
 
     

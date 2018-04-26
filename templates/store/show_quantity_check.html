@@ -1,0 +1,88 @@
+{%extends 'store/base.html'%}
+{% block title %} 盘点详情 {%endblock%}
+{% block body %} 
+<link rel="stylesheet" href="{{url_for('static',filename='layui/css/layui.css')}}" />
+
+<script src="{{url_for('static',filename='layui/layui.js')}}"></script>
+<!--宝贝管理-->
+<div class="Order_list">
+    <!--出售中-->
+    <div class="tabconent">
+        {%for i in quantity_check_goods%}
+        <dl style="border-bottom:1px solid #ccc;">
+            
+            <dd>
+                <a href="#">{{i.goods_name}}</a>
+                <a href="#">{{i.location}}</a>
+
+            <p><font>数量:{{i.count}}</font> {%if  i.submit_change%}{{i.count_check}}{%else%}未盘点{%endif%}</p>
+            </dd>
+        </dl>
+        {%endfor%}
+
+        
+    
+    
+    
+  </div>
+  
+</div>
+<!--宝贝管理 end-->
+
+
+<div class="blank4"></div>
+<!--按钮-->
+<div class="Baby_Box">
+  <input type="button" value="导出表格" onclick="window.location = '{{url_for('store.to_excel_quantity_check',id=id)}}'">
+  <button type="button" class="Baby_Box_btn" id="btnfile" name='btnfile'>
+  <i class="layui-icon">&#xe67c;</i>上传表格
+</button>
+
+  <!-- <input type="file" value="导入表格"  style="float:right;"> -->
+</div>
+
+<style type="text/css">
+.Baby_Box_btn{
+    float: left;
+    background: #ff4900;
+    line-height: 50px;
+    width: 50%;
+    font-size: 14px;
+    color: #fff;
+    border-right: 1px solid white;
+}
+</style>
+
+<script type="text/javascript">
+var data = {
+    data: JSON.stringify({
+        "id":'{{id}}'
+    })
+}
+
+layui.use('upload', function(){
+    var upload = layui.upload;
+    var uploadInst = upload.render({
+        elem: '#btnfile' 
+        ,url: '{{url_for("store.in_excel_quantity_check")}}' 
+        ,data:data
+        ,size:5000
+        ,accept:'file'
+        ,choose: function(obj){
+            var files = this.files = obj.pushFile();
+            obj.upload(file);
+        }
+        ,done: function(res){
+            
+
+        }
+        ,error: function(){
+            alert('上传失败');
+        }
+    });
+});
+</script>
+
+ {%endblock%}
+
+

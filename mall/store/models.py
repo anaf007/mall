@@ -71,6 +71,8 @@ class Seller(SurrogatePK, Model):
 	seller_info_id = relationship('SellerInfo', backref='seller')
 	sale_id = relationship('Sale', backref='seller')
 	follow_id = relationship('Follow', backref='seller')
+	#盘点表
+	quantity_check_id = relationship('QuantityCheck', backref='seller')
 
 
 #横幅
@@ -139,6 +141,7 @@ class Goods(SurrogatePK, Model):
 	#进货的商品
 	stock_id = relationship('Stock', backref='goodsed')
 	buys_car_id = relationship('BuysCar', backref='goodsed')
+	
     
 
 #卖家订单中心 每日信息
@@ -292,6 +295,8 @@ class GoodsAllocation(SurrogatePK,Model):
 class Inventory(SurrogatePK,Model):
 
 	__tablename__ = 'inventory'
+
+
 	#商品
 	goods_id = reference_col('goodsed')
 	#货位
@@ -302,6 +307,46 @@ class Inventory(SurrogatePK,Model):
 	note = Column(db.String(200))
 
 	user_id = reference_col('users')
+
+
+#盘点表
+class QuantityCheck(SurrogatePK,Model):
+	__tablename__ = 'quantity_check'
+
+	#盘点标题
+	title = Column(db.String(50))
+
+	seller_id = reference_col('sellers')
+	users_id = reference_col('users')
+
+	created_at = Column(db.DateTime,default=dt.datetime.now)  
+	#商品种类数量
+	count = Column(db.Integer,default=0)
+
+	#盘点表
+	quantity_check_id = relationship('QuantityCheckGoods', backref='quantity_checks')
+    
+
+#盘点的商品
+class QuantityCheckGoods(SurrogatePK,Model):
+	__tablename__ = 'quantity_check_goods'
+
+	quantity_check_id = reference_col('quantity_check')
+	#数量
+	count = Column(db.Integer,default=0)
+	#位置
+	location = Column(db.String(50))
+	#商品名称 ，不外键
+	goods_name = Column(db.String(50))
+	#库存id  不用外键
+	inventory_id = Column(db.Integer())
+	#是否已提交更改库存
+	submit_change = Column(db.Boolean,default=False)
+	#盘点后的数量
+	count_check = Column(db.Integer,default=0)
+    
+
+
 
 
 

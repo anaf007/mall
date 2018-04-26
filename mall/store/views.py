@@ -1,5 +1,5 @@
-#coding=utf-8
-from flask import Blueprint, flash, redirect, render_template, request, url_for, current_app, abort, Response
+from flask import Blueprint, flash, redirect, render_template\
+    , request, url_for, current_app, abort, Response,json
 from sqlalchemy import desc
 from mall.utils import templated, flash_errors
 from flask_login import login_required,current_user
@@ -9,23 +9,34 @@ from werkzeug.utils import secure_filename
 from collections import defaultdict
 
 from .forms import *
-from .models import Seller,Goods,GoodsAllocation,Inventory,Receipt,Stock
+from .models import Seller,Goods,GoodsAllocation,Inventory\
+    ,Receipt,Stock,QuantityCheck,QuantityCheckGoods
 from mall.user.models import User
 from mall.public.models import Follow,UserOrder
 from mall.superadmin.models import BaseProducts
 from mall.extensions import db,wechat
 from mall.utils import allowed_file,create_thumbnail
+from mall.extensions import csrf_protect
 
 import datetime as dt
 import xlsxwriter,mimetypes,xlrd, os, time, random
-import io
+
+import array
+from io import StringIO,BytesIO
+
+import simplejson as json
+import numpy as np
+import pandas as pd
+from io import BytesIO
+from flask import Flask, send_file
+
 
 from . import blueprint
 
 
 @blueprint.route('/')
 @templated()
-@login_required
+# @login_required
 def home():
     
     try:
@@ -253,57 +264,27 @@ def add_location_post():
 @login_required
 def toexcel_location():
     goods_allocation = GoodsAllocation.query.filter_by(users=current_user).order_by('sort').all()
-    column_names = ['编号','货位名称','排序','货位备注','所属仓库ID','所属仓库名称']
+    column_names = ['编号','货位名称','排序','货位备注','所属仓库ID']
 
-    try:
-        response = Response()
-        response.status_code = 200
+    excel_name_title = str(dt.datetime.now().strftime('%Y%m%d%H%M%S'))
+    columns_data = []
+    for i in goods_allocation:
+        columns_data.append([i.id,i.name,i.sort,i.note,i.warehouse_id])
 
-        output = io.StringIO()
+    df_1 = pd.DataFrame(columns_data,columns=column_names)
 
-        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet('sheet')
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
 
-        for i,x in enumerate(column_names):
-        	worksheet.write(0,i,x)
-        for i,x in enumerate(goods_allocation):
-        	worksheet.write(i+1,0,x.id)
-        	worksheet.write(i+1,1,x.name)
-        	worksheet.write(i+1,2,x.sort)
-        	worksheet.write(i+1,3,x.note)
-        	worksheet.write(i+1,4,x.warehouse_id)
-        	worksheet.write(i+1,5,x.warehouse.name)
+    df_1.to_excel(writer, startrow = 0, merge_cells = False, sheet_name = "Sheet_1")
+    workbook = writer.book
+    worksheet = writer.sheets["Sheet_1"]
+    writer.close()
+    output.seek(0)
 
-        workbook.close()
-        output.seek(0)
-        response.data = output.read()
+    return send_file(output, attachment_filename=f"{excel_name_title}_goods_allocation.xlsx", as_attachment=True)
 
-        file_name = 'goods_allocation_{}.xlsx'.format(dt.datetime.now())
-        mimetype_tuple = mimetypes.guess_type(file_name)
 
-        response_headers = Headers({
-                'Pragma': "public",  # required,
-                'Expires': '0',
-                'Charset': 'UTF-8',
-                'Cache-Control': 'must-revalidate, post-check=0, pre-check=0',
-                'Cache-Control': 'private',  # required for certain browsers,
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition': 'attachment; filename=\"%s\";' % file_name,
-                'Content-Transfer-Encoding': 'binary',
-                'Content-Length': len(response.data)
-            })
-
-        if not mimetype_tuple[1] is None:
-            response.update({
-                    'Content-Encoding': mimetype_tuple[1]
-                })
-
-        response.headers = response_headers
-        response.set_cookie('fileDownload', 'true', path='/')
-        return response
-
-    except Exception as e:
-        return str(e)
 
     
 #导出商品基础数据
@@ -313,64 +294,36 @@ def toexcel_commodity_data():
     goodsed = Goods.query.filter_by(seller=current_user.seller_id[0]).all()
     column_names = ['编号','商品名称','条码','规格','原价','优惠价','是否出售','是否热门','查看次数']
 
-    try:
-        response = Response()
-        response.status_code = 200
+    excel_name_title = str(dt.datetime.now().strftime('%Y%m%d%H%M%S'))
+    columns_data = []
+    for i in goodsed:
+        is_sell = ''
+        is_hot = ''
+        if i.is_sell:
+            is_sell = '是'
+        else:
+            is_sell = '否'
+        if i.hot:
+            is_hot = '是'
+        else:
+            is_hot = '否'
 
-        output = io.StringIO()
+        columns_data.append([i.id,i.title,i.ean,i.unit,i.original_price,i.special_price,is_sell,is_hot,i.click_count])
 
-        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet('sheet')
+    df_1 = pd.DataFrame(columns_data,columns=column_names)
 
-        for i,x in enumerate(column_names):
-        	worksheet.write(0,i,x)
-        for i,x in enumerate(goodsed):
-        	worksheet.write(i+1,0,x.id)
-        	worksheet.write(i+1,1,x.title)
-        	worksheet.write(i+1,2,x.ean)
-        	worksheet.write(i+1,3,x.unit)
-        	worksheet.write(i+1,4,x.original_price)
-        	worksheet.write(i+1,5,x.special_price)
-        	if x.is_sell:
-        		worksheet.write(i+1,6,'是')
-        	else:
-        		worksheet.write(i+1,6,'否')
-        	if x.hot:
-        		worksheet.write(i+1,7,'是')
-        	else:
-        		worksheet.write(i+1,7,'否')
-        	worksheet.write(i+1,8,x.click_count)
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
 
-        workbook.close()
-        output.seek(0)
-        response.data = output.read()
+    df_1.to_excel(writer, startrow = 0, merge_cells = False, sheet_name = "Sheet_1")
+    workbook = writer.book
+    worksheet = writer.sheets["Sheet_1"]
+    writer.close()
+    output.seek(0)
 
-        file_name = 'goods_{}.xlsx'.format(dt.datetime.now())
-        mimetype_tuple = mimetypes.guess_type(file_name)
+    return send_file(output, attachment_filename=f"{excel_name_title}_goods.xlsx", as_attachment=True)
 
-        response_headers = Headers({
-                'Pragma': "public",  # required,
-                'Expires': '0',
-                'Charset': 'UTF-8',
-                'Cache-Control': 'must-revalidate, post-check=0, pre-check=0',
-                'Cache-Control': 'private',  # required for certain browsers,
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition': 'attachment; filename=\"%s\";' % file_name,
-                'Content-Transfer-Encoding': 'binary',
-                'Content-Length': len(response.data)
-            })
 
-        if not mimetype_tuple[1] is None:
-            response.update({
-                    'Content-Encoding': mimetype_tuple[1]
-                })
-
-        response.headers = response_headers
-        response.set_cookie('fileDownload', 'true', path='/')
-        return response
-
-    except Exception as e:
-        return str(e)
 
     
 #进货入库
@@ -381,6 +334,7 @@ def stock():
 	form=StockForm()
 	recript = Receipt.query.filter_by(users=current_user).order_by(desc('id')).all()
 	return dict(form=form,recript=recript)
+
 
 #原始入库单  带表格文件
 @blueprint.route('/stock',methods=['POST'])
@@ -946,6 +900,131 @@ def order_confirm(id=0):
     return redirect(url_for('.sell'))
 
 
+#盘点列表
+@blueprint.route('/quantity_check')
+@templated()
+@login_required
+def quantity_check(id=0):
+    quantity = QuantityCheck.query.filter_by(users=current_user).order_by(desc('id')).all()
+    return dict(quantity=quantity)
 
+
+@blueprint.route('/create_quantity_check')
+# @login_required
+def create_quantity_check(id=0):
+
+    title_time = dt.datetime.now().strftime('%Y%m%d%H%M')
+
+    #盘点标题
+    title = str(title_time)+'盘点'
+    seller_id = current_user.seller_id[0]
+    users_id = current_user
+
+    #商品种类数量
+    count = 0   
+    #盘点表
+    quantity_check  = QuantityCheck()
+
+    quantity_check.title  = title
+    quantity_check.seller  = seller_id
+    quantity_check.users  = users_id
+
+    
+    
+
+    inventory = Inventory.query\
+        .with_entities(Inventory,Goods,GoodsAllocation)\
+        .join(Goods,Goods.id==Inventory.goods_id)\
+        .join(GoodsAllocation,GoodsAllocation.id==Inventory.goods_allocation_id)\
+        .filter(Inventory.user_id==current_user.id)\
+        .all()
+
+    db.session.add(quantity_check)
+
+    for i in inventory:
+        #盘点商品表
+        quantity_check_goods = QuantityCheckGoods()
+        #商品id
+        quantity_check_goods.inventory_id = i[0].id
+        #货位名称
+        quantity_check_goods.location = i[2].name
+        #商品名称
+        quantity_check_goods.goods_name = i[1].title
+        #盘点前数量
+        quantity_check_goods.count = i[0].count
+        quantity_check_goods.quantity_checks = quantity_check
+
+        db.session.add(quantity_check_goods)
+
+    try:
+        db.session.commit()
+        flash('创建成功')
+    except Exception as e:
+        return f'创建失败：{e}'
+        db.session.rollback()
+
+
+    return redirect(url_for('.show_quantity_check',id=quantity_check.id))
+
+
+
+@blueprint.route('/show_quantity_check/<int:id>')
+@templated()
+@login_required
+def show_quantity_check(id=0):
+    quantity_check_goods = QuantityCheckGoods.query.filter_by(quantity_check_id=id).all()
+    return dict(quantity_check_goods=quantity_check_goods,id=id)
+
+
+@blueprint.route('/to_excel_quantity_check/<int:id>')
+@login_required
+def to_excel_quantity_check(id=0):
+    quantity_check_goods = QuantityCheckGoods.query.filter_by(quantity_check_id=id).all()
+    excel_name_title = str(dt.datetime.now().strftime('%Y%m%d%H%M%S'))+'_pandian'
+    column_names = ['编号(勿修改)','商品名称','货位名称','数量','盘点后']
+    columns_data = []
+    for i in quantity_check_goods:
+        columns_data.append([i.inventory_id,i.goods_name,i.location,i.count,''])
+
+    #create a random Pandas dataframe
+    df_1 = pd.DataFrame(columns_data,columns=column_names)
+
+    #create an output stream
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+
+    #taken from the original question
+    df_1.to_excel(writer, startrow = 0, merge_cells = False, sheet_name = "Sheet_1")
+    workbook = writer.book
+    worksheet = writer.sheets["Sheet_1"]
+    #the writer has done its job
+    writer.close()
+
+    #go back to the beginning of the stream
+    output.seek(0)
+
+    #finally return the file
+    return send_file(output, attachment_filename=f"{excel_name_title}.xlsx", as_attachment=True)
+
+
+
+#生成无重复随机数
+gen_rnd_filename = lambda :"%s%s" %(dt.datetime.now().strftime('%Y%m%d%H%M%S'), str(random.randrange(1000, 10000)))
+#文件名合法性验证
+allowed_file_lambda = lambda filename: '.' in filename and filename.rsplit('.', 1)[1] in set(['txt', 'xls', 'xlsx', 'gif', 'bmp'])
+
+
+
+@csrf_protect.exempt
+@blueprint.route('/in_excel_quantity_check/',methods=['POST'])
+@login_required
+def in_excel_quantity_check():
+    id = json.loads(request.form.get('data'))['id']
+    f = request.files['file']
+    if f and allowed_file_lambda(f.filename):
+        filename = secure_filename(gen_rnd_filename() + "." + f.filename.split('.')[-1]) #随机命名
+        print(filename)
+
+    return json.dumps({'id':id})
 
 

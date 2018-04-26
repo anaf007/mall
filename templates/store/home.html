@@ -3,51 +3,60 @@
 {% block title %}后台主页{% endblock %}
 {% block body %}
 
+<style type="text/css">
+    i{font-size:28px;}
+</style>
 
 
+<div class="m-grids-3">
+    <a href="{{url_for('store.show_stock')}}" class="grids-item" >
+        <div class="grids-icon"><i class="icon-feedback"></i></div>
+        <div class="grids-txt"><span>进货数据</span></div>
+    </a>
+    <a href="{{url_for('store.sell')}}" class="grids-item">
+        <div class="grids-icon"><i class="icon-order"></i></div>
+        <div class="grids-txt"><span>出货数据</span></div>
+    </a>
+    <a href="{{url_for('store.inventory')}}" class="grids-item">
+        <div class="grids-icon"> <img src="{{url_for('static',filename='images/ydui01.png')}}"> </div>
+        <div class="grids-txt"><span>库存管理</span></div>
+    </a>
+    <a href="{{url_for('store.location_management')}}" class="grids-item">
+        <div class="grids-icon"> <img src="{{url_for('static',filename='images/ydui02.png')}}"> </div>
+        <div class="grids-txt"><span>货位管理</span></div>
+    </a>
 
-<!--交易情况-->
-<div class="Personal_top_list">
-  <ul>
-    <li>
-      <p>今日成交额</p>
-      <span>￥9999.00</span></li>
-    <li class="boder">
-      <p>今日访客</p>
-      <span>20000</span></li>
-    <li>
-      <p>今日订单</p>
-      <span>20</span></li>
-  </ul>
+    <a href="{{url_for('store.commodity_management')}}" class="grids-item">
+        <div class="grids-icon"> <i class="icon-discount"></i> </div>
+        <div class="grids-txt"><span>商品管理</span></div>
+    </a>
+
+    <a href="{{url_for('store.follow')}}" class="grids-item">
+        <div class="grids-icon"> <i class="icon-star"></i> </div>
+        <div class="grids-txt"><span>关注我的</span></div>
+    </a>
+
+    <a href="#" class="grids-item">
+        <div class="grids-icon"> <i class="icon-setting"></i></div>
+        <div class="grids-txt"><span>店铺设置</span></div>
+    </a>
+
+    <a href="#" class="grids-item">
+        <div class="grids-txt" style="font-size:22px;"><span>今日成交</span></div>
+        <div class="grids-txt" style="font-size:21px;"><span>￥9999.00</span></div>
+    </a>
+    <a href="#" class="grids-item">
+        <div class="grids-txt" style="font-size:22px;"><span>今日订单</span></div>
+        <div class="grids-txt" style="font-size:21px;"><span>99</span></div>
+    </a>
+
 </div>
-<!--订单标签 end--> 
+
+  
 
 
-<!--用户操作-->
-<div class="Personal_list_box">
-  <ul>
-    <!-- <li> <a href="{{url_for('store.stock')}}"><img src="{{url_for('static',filename='images/store/Personal_1.png')}}"> <span>进货数据</span></a></li> -->
-    <li> <a href="{{url_for('store.show_stock')}}"><img src="{{url_for('static',filename='images/store/Personal_1.png')}}"> <span>进货数据</span></a></li>
 
-    <li> <a href="{{url_for('store.sell')}}"><img src="{{url_for('static',filename='images/store/Personal_1.png')}}"> <span>出售数据</span></a></li>
-
-    <li> <a href="{{url_for('store.inventory')}}"><img src="{{url_for('static',filename='images/store/Personal_2.png')}}"> <span>库存管理</span></a></li>
-
-    <li> <a href="{{url_for('store.location_management')}}"><img src="{{url_for('static',filename='images/store/Personal_3.png')}}"> <span>货位管理</span></a></li>
-
-    <li> <a href="{{url_for('store.commodity_management')}}"><img src="{{url_for('static',filename='images/store/Personal_3.png')}}"> <span>商品管理</span></a></li>
-
-    <li> <a href="{{url_for('store.follow')}}"><img src="{{url_for('static',filename='images/store/Personal_4.png')}}"> <span>关注我的用户</span></a></li>
-
-    <li> <a href="{{url_for('store.follow')}}"><img src="{{url_for('static',filename='images/store/Personal_6.png')}}"> <span>横幅设置</span></a></li>
-
-    <li> <a href="{{url_for('store.follow')}}"><img src="{{url_for('static',filename='images/store/Personal_6.png')}}"> <span>店铺设置</span></a></li>
-
-  </ul>
-</div>
-
-
-<img src="{{imgstr}}" width="300" height="300">
+<img src="{{imgstr}}" width="300" height="300" style="margin:0px auto;">
 <!-- <h1>我的关注地址：{{request.url}}guanzhu/{{current_user.seller_id[0].id}}  <br> -->
 	<!-- 没有店铺 <a href="{{url_for('store.create_store')}}">申请</a> -->
 
