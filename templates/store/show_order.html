@@ -1,57 +1,92 @@
-{{ ckeditor.load() }}
 {%extends 'store/base.html'%}
 {% block title %} 出货单详情 {%endblock%}
 {% block body %} 
+<style type="text/css">
+  body{background-color: white;}
+</style>
 
-<div class="Release_list_box">
-
-
- <a href="#"> <label >单号</label> <input type="text" value='{{ order.number }} '></a>
- <a href="#"> <label >收货人姓名</label> <input type="text" value='{{ order.receive_name }} '></a>
- <a href="#"> <label >收货人电话</label> <input type="text" value='{{ order.receive_phone }} '></a>
- <a href="#" style="height:auto;"> <label >收货人地址:</label> {{ order.receive_address }}
- 
- <a href="#"> <label >下单时间</label> <input type="text" value='{{ order.buy_time }} '></a>
- <a href="#"> <label >金额</label> <input type="text" value='￥{{ order.pay_price }} '></a>
- <a href="#"> <label >备注</label> <input type="text" value='{{ order.note }} '></a>
-
- <a href="#"> <label >备注</label> <input type="text" value='{{ order.note }} '></a>
-
-
- <div style="bottom:150px;">
-        {%for i in order.sale_id%}
-        <div style="border:1px solid red; float:left; margin:5px;">
-    <img class="photo" src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}" width="80" height="80"> <br>  
-    {{i.goodsed.title}} <br>
-    货位:{{i.goodsed_allocation.name}} <br>
-    数量:{{i.count}} <br>
-    原数量:{{i.residue_count}} <br>
-</div>
-{%endfor%}
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-left">出货单号：</div>
+        <div class="cell-right">{{ order.number }}</div>
     </div>
+    <div class="cell-item">
+        <div class="cell-left">收货人姓名</div>
+        <div class="cell-right">{{ order.receive_name }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">收货人电话</div>
+        <div class="cell-right">{{ order.receive_phone }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">收货人地址</div>
+        <div class="cell-right">{{ order.receive_address }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">下单时间</div>
+        <div class="cell-right">{{ order.buy_time }}</div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">支付金额</div>
+        <div class="cell-right">{{ order.pay_price }}</div>
+    </div>
+    
 
-
-	
-</div>
-
-<div class="operationBox">
-  {%if order.order_state==0%}
-    <input class="goShoppingcartBtn" type="submit" value="拒绝送货" onclick="javascript:if(confirm('您要决绝送货到该地址吗?确定后用户将不能再用此地址进行下单购买。'))location='{{url_for('store.order_reject',id=order.id)}}'">
-   
-  <input class="goBuyBtn" type="button" value="开始送货" onclick="window.location = '{{url_for('store.order_confirm',id=order.id)}}'">
+    {%if order.note%}
+    <div class="cell-item">
+        <div class="cell-left">备注</div>
+        <div class="cell-right">{{ order.note }}</div>
+    </div>
     {%endif%}
-    {%if order.order_state==1%}
-   <input class="goShoppingcartBtn" type="submit" value="订单已送货" style="width:100%">
-   {%endif%}
-
-    {%if order.order_state==3%}
-   <input class="goShoppingcartBtn" type="submit" value="订单已关闭" style="width:100%">
-   {%endif%}
- 
 </div>
 
+
+<article class="m-list list-theme3">
+    {%for i in order.sale_id%}
+    <a href="javascript:;" class="list-item">
+        <div class="list-img">
+            <img src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}">
+        </div>
+        <div class="list-mes">
+            <h3 class="list-title">{{i.goodsed.title}}</h3>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-title">出货数量:{{i.count}}</span>
+                </div>
+                <div>货位{{i.goodsed_allocation.name}}</div>
+            </div>
+        </div>
+    </a>
+    {%endfor%}
+</article>
+
+
+ 
+{%if order.order_state==0%}
+<div class="m-grids-2">
+    <a href="#" class="grids-item">
+       <button type="button" class="btn-block btn-warning" onclick="javascript:if(confirm('您要决绝送货到该地址吗?确定后用户将不能再用此地址进行下单购买。'))location='{{url_for('store.order_reject',id=order.id)}}'">拒绝送货</button>
+    </a>
+    <a href="#" class="grids-item">
+       <button type="button" class="btn-block btn-danger" onclick="window.location = '{{url_for('store.order_confirm',id=order.id)}}'">开始送货</button>
+    </a>
+</div>
+
+  {%endif%}
+
+  {%if order.order_state==1%}
+   <button type="button" class="btn-block btn-warning">订单已完成</button>
+ {%endif%}
+
+  {%if order.order_state==3%}
+   <button type="button" class="btn-block btn-error">订单已关闭</button>
+ {%endif%}
+  
 
 {%endblock%}
+
+  
+
 
 	
 

@@ -3,22 +3,28 @@
 {% block body %} 
 
 
-<!--订单列表-->
-<div class="dingdan_list"> 
-  	
-  	{%for i in buy_users%}
-    <div style="border-bottom:1px solid red;margin-top:10px;line-height:20px;background-color:#cccccc;">
-    <a href="{{url_for('store.show_order',id=i.id)}}">
-    	<p><span>订单号：<font>{{i.number}},</font></span><span>共计{{i.goods_number}}种商品</span></p>
-    	<p><span>创建时间：<font>{{i.buy_time}}</font></span><span>金额：¥{{i.pay_price}}</span></p>
-    </a>
-  	</div>
-  	{%endfor%}
+        <article class="m-list list-theme4">
+            {%for i in buy_users%}
+            <a href="{{url_for('store.show_order',id=i.id)}}" class="list-item">                
+                <div class="list-mes">
+                    <h3 class="list-title">订单号：{{i.number}}</h3>
+                    <div class="list-mes-item">
+                        <div>
+                            <span class="list-price">共{{i.goods_number}}种商品</span>
+                            <span class="list-price">金额¥{{i.pay_price}}</span>
+                        </div>
+                        <div>{{i.buy_time}}</div>
+                    </div>
+                </div>
+            </a>
+            {%endfor%}
+        </article>
 
-  	
-  
-</div>
-<!--订单列表 end-->
+
+
+
+
+
 
 
 {%endblock%}
