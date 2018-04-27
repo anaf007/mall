@@ -45,7 +45,7 @@
     {%for i in order.sale_id%}
     <a href="javascript:;" class="list-item">
         <div class="list-img">
-            <img src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}">
+            <img src="{{url_for('public.get_image',filename=i.goodsed.main_photo)}}">
         </div>
         <div class="list-mes">
             <h3 class="list-title">{{i.goodsed.title}}</h3>
