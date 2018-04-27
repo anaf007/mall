@@ -12,6 +12,7 @@
         background-color: white;
         border: black solid 1px;
         display: none;
+        line-height: 40px;
     }
 
 </style>
@@ -21,49 +22,85 @@
 {{ form.hidden_tag() }}
 
 <input type="hidden" id="hidden_id" name='hidden_id' value="">
-<div  class="Release_top">
 
-  <!-- <input class="ReleaseBtn" type="file" onchange="changed" style="color: transparent;"> -->
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.title(class='cell-input title',placeholder="商品标题") }} 
+        </div>
+        
+    </div>
+<div id="word"></div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.ean(class='cell-input',placeholder="商品条码") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.unit(class='cell-input',placeholder="商品规格") }} 
+        </div>
+    </div>
+
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.original_price(class='cell-input',placeholder="销售价") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.special_price(class='cell-input',placeholder="进货价") }} 
+        </div>
+    </div>
+    <div class="m-cell">
+        <label class="cell-item">
+            <span class="cell-left">{{form.is_sell.label()}}</span>
+            <label class="cell-right">
+                <input type="checkbox" class="m-switch">
+                {{form.is_sell(id='m-switch')}}
+            </label>
+        </label>
+    </div>
+    <div class="m-cell">
+        <label class="cell-item">
+            <span class="cell-left">{{form.hot.label()}}</span>
+            <label class="cell-right">
+                <input type="checkbox" class="m-switch">
+                {{form.hot(id='m-switch')}}
+            </label>
+        </label>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.category(class='cell-input',placeholder="栏目分类") }} 
+        </div>
+    </div>
+
+    <div class="cell-item">
+    <span class="cell-left">缩略图</span>
+    <div class="cell-right">
+
+        <label for="is_sell"></label><input type="file" name="image" id="" style="width:70%" id="main_photo">
+
+        </div>
+    </div>
+
+    <div class="m-celltitle">{{ form.note.label }}</div>
+{{ form.note() }}
+    {{ ckeditor.config(name='note',width='100%',custom_config='id="note"') }}
+
+    
+
+
 
 </div>
 
-<div class="Release_list_box">
-   
 
-    <a href="#">{{ form.title.label }} {{ form.title(id='title') }}
-    <div id="word"></div>
-    </a>
+<footer class="m-tabbar">
+    <button type="submit" class="btn-block btn-danger">添加</button>
+</footer>
 
-    <a href="#">{{ form.ean.label }} {{ form.ean(id='ean') }}</a>
 
-    <a href="#">{{ form.unit.label }} {{ form.unit(id='unit') }}</a>
-
-    <a href="#">{{ form.original_price.label }} {{ form.original_price(id='original_price') }}</a>
-
-    <a href="#">{{ form.special_price.label }} {{ form.special_price(id='special_price') }}</a>
-
-    <a href="#">{{ form.is_sell.label }} {{ form.is_sell() }}</a>
-
-    <a href="#">{{ form.hot.label }} {{ form.hot() }}</a>
-
-    <a href="#">{{ form.category.label }} {{ form.category() }}</a>
-
-    <a href="#"><label for="is_sell">缩略图</label><input type="file" name="image" id="" style="width:70%" id="main_photo"></a>
-
-    <a href="#">{{ form.note.label }} {{ form.note() }}</a>
-  
-         {{ ckeditor.config(name='note',width='100%',custom_config='id="note"') }}
-
-</div>
-
-<div class="blank4"></div>
-<!--按钮-->
-<div class="operationBox">
-  
-    <input class="goBuyBtn" type="button" value="放入仓库" onclick="window.location = '#'">
-    <input class="goShoppingcartBtn" type="submit" value="立即发布">
- 
-</div>
 </form>
 <script type="text/javascript" src="{{url_for('static',filename='js/jquery.js')}}"></script>
 <script type="text/javascript">
@@ -72,6 +109,7 @@
     $('#title').keyup(function(){
         var keywords = $(this).val();
         if (keywords=='') { $('#word').hide(); return };
+
         $.ajax({
 
             url: "{{url_for('store.get_base_product',_external=True)}}?wd="+keywords,

@@ -1,28 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>create_store</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
-</div>
-{%endfor%}
+{%extends 'store/base.html'%}
+{% block title %} 创建店铺 {%endblock%}
+{% block body %} 
 
-	create_store:
-	<form method="POST" >
-         {{ form.hidden_tag() }}
-         {{ form.name.label }} {{ form.name() }} <br>	
-         {{ form.address.label }} {{ form.address() }}<br>	
-         {{ form.note.label }} {{ form.note() }}<br>	
-         {{ form.contact.label }} {{ form.contact() }}<br>	
-         <input type="submit" value="提交">
-	</form>
+<form action="" method="post">
+
+{{ form.hidden_tag() }}
+
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.name(class='cell-input',placeholder="店铺名称") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.address(class='cell-input',placeholder="地址") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.note(class='cell-input',placeholder="备注") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.contact(class='cell-input',placeholder="联系方式") }} 
+        </div>
+    </div>
+
+    
+</div>
+    
+  <input type="submit" class="btn-block btn-warning" value="申请">
+   
+
+</form>
+
+
+{%endblock%}
+
+
 </body>
 </html>

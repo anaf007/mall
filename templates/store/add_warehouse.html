@@ -1,38 +1,43 @@
 {%extends 'store/base.html'%}
-{% block title %} 货位管理-添加货位{%endblock%}
+{% block title %} 添加仓库 {%endblock%}
 {% block body %} 
+
 <form action="" method="post">
 
 {{ form.hidden_tag() }}
-
-<div class="Release_list_box">
-
+ 
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.name(class='cell-input',placeholder="仓库名称") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.state(class='cell-input',placeholder="仓库状态") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.nickname(class='cell-input',placeholder="仓库别名") }} 
+        </div>
+    </div>
     
-    <a href="#">{{ form.name.label }} {{ form.name() }} </a> 
-    <a href="#">{{ form.state.label }} {{ form.state() }} </a> 
-    <a href="#">{{ form.nickname.label }} {{ form.nickname() }} </a> 
+    
+</div>
+    
+  <input type="submit" class="btn-block btn-warning" value="创建">
    
 
-</div>
-
-<div class="blank4"></div>
-
-<!--按钮-->
-<div class="Baby_Box">
-
-<input type="submit" value="添加仓库" style="width:100%;">
-  
-    <!-- <input class="goBuyBtn" type="button" value="添加仓库" onclick="window.location = '{{url_for('store.add_warehouse')}}'"> -->
-    <!-- <input class="goShoppingcartBtn" type="button" value="导出数据" onclick="window.location = '{{url_for('store.toexcel_location')}}'"> -->
- 
-</div>
 </form>
-<style>
-   .Baby_Box input[type="submit"] { float: left; background: #ff4900; line-height: 50px; width: 50%; font-size: 14px; color: #fff;  border-right: 1px solid white; }
- 
-</style>
 
- {%endblock%}
+
+{%endblock%}
+
+    
+
+      
+
 
 
 

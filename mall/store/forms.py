@@ -73,10 +73,16 @@ class StockForm(FlaskForm):
 	note = StringField(u'备注')
 	
 
+#店铺设置
+class SettingStroeForm(FlaskForm):
+	name = StringField(u'店铺名称', validators=[DataRequired()])
+	address = StringField(u'店铺地址')
+	contact = StringField(u'联系方式')
+	note = StringField(u'店铺备注')
+	freight = StringField(u'运费')
+	max_price_no_freight = StringField(u'满额免运费')
 
 
-
-    
 
 
        

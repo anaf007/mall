@@ -1,28 +1,64 @@
 {%extends 'store/base.html'%}
-{% block title %} 货位管理-所有货位{%endblock%}
+{% block title %} 货位管理-所有货位 {%endblock%}
 {% block body %} 
-<div class="Release_list_box">
 
-	{%for i in goods_allocation%}
-	<a href="#">
-	<span>货位ID:{{i.id}}</span>
-  	<input class="input"  type="text" value="货位名称:{{i.name}},排序：{{i.sort}}">
-  	</a> 
-  	{%endfor%}
+<article class="m-list list-theme4">
+    {%for i in goods_allocation%}
+    <a href="#" class="list-item">
+        <div class="list-mes">
+            
+            <div class="list-mes-item">
+                <h3 class="list-title">货位名称:{{i.name}}</h3>
+                <div>货位排序:{{i.sort}}</div>
+            </div>
+        </div>
+    </a>
+    {%endfor%}
 
-</div>
+    <a href="#" class="list-item">
+        <div class="list-mes">
+            
+            <div class="list-mes-item">
+                <h3 class="list-title">货位名称:1ad</h3>
+                <div>货位排序:222</div>
+            </div>
+        </div>
+    </a>
 
-<div class="blank4"></div>
+    <a href="#" class="list-item">
+        <div class="list-mes">
+            
+            <div class="list-mes-item">
+                <h3 class="list-title">货位名称:4242</h3>
+                <div>货位排序:fafa</div>
+            </div>
+        </div>
+    </a>
+</article>
 
-<!--按钮-->
-<div class="operationBox">
-  
-    <input class="goBuyBtn" type="button" value="添加仓库" onclick="window.location = '{{url_for('store.add_warehouse')}}'">
-    <input class="goBuyBtn" type="button" value="添加货位" onclick="window.location = '{{url_for('store.add_location')}}'">
-    <!-- <input class="goShoppingcartBtn" type="button" value="导出数据" onclick="window.location = '{{url_for('store.toexcel_location')}}'"> -->
- 
-</div>
 
+
+
+<footer class="m-tabbar tabbar-fixed">
+    
+    <a href="{{url_for('store.add_warehouse')}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui05.png')}}">
+        </span>
+        <span class="tabbar-txt">添加仓库</span>
+    </a>
+    <a href="{{url_for('store.add_location')}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui05.png')}}">
+        </span>
+        <span class="tabbar-txt">添加货位</span>
+    </a>
+    
+    
+</footer>
 
  {%endblock%}
+
+
+
 

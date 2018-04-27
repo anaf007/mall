@@ -2,36 +2,44 @@
 {% block title %} 商品管理 {%endblock%}
 {% block body %} 
 
-<!--宝贝管理-->
-<div class="Order_list">
-	<!--出售中-->
-  	<div class="tabconent">
-  		{%for i in goodsed%}
-    	<dl>
-	      	<dt><img src="{{url_for('public.get_image',filename=i.main_photo)}}"></dt>
-	      	<dd><a href="#">{{i.title}}</a><span>进货价：￥{{i.special_price}}，销售价：￥{{i.original_price}}</span>
-	        <p><font>商品编号：{{i.id}}</font> <font>是否出售：{{i.is_sell}} </font></p>
-      		</dd>
-    	</dl>
-    	{%endfor%}
 
-    	
-    
-    
-    
-  </div>
+<article class="m-list list-theme3">
+  {%for i in goodsed%}
+  <a href="javascript:;" class="list-item">
+      <div class="list-img">
+          <img src="{{url_for('public.get_image',filename=i.main_photo)}}">
+      </div>
+      <div class="list-mes">
+          <h3 class="list-title">{{i.title}}</h3>
+          <div class="list-mes-item">
+              <div>
+                  <!-- <span class="list-price">,</span> -->
+                  <span class="list-del-price">销售价:￥{{i.original_price}}</span>
+              </div>
+              <div>进货价:￥{{i.special_price}}</div>
+          </div>
+      </div>
+  </a>
+  {%endfor%}
   
-</div>
-<!--宝贝管理 end-->
+</article>
 
 
-<div class="blank4"></div>
-<!--按钮-->
-<div class="Baby_Box">
-  <input type="button" value="添加商品数据" onclick="window.location = '{{url_for('store.commodity_data')}}'">
-  <input type="button" value="导出商品数据" onclick="window.location = '{{url_for('store.toexcel_commodity_data')}}'" style="float:right;">
-</div>
-
+<footer class="m-tabbar tabbar-fixed">
+    <a href="{{url_for('store.commodity_data')}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui05.png')}}">
+        </span>
+        <span class="tabbar-txt">添加</span>
+    </a>
+    
+    <a href="{{url_for('store.toexcel_commodity_data')}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <i class="icon-share2"></i>
+        </span>
+        <span class="tabbar-txt">导出</span>
+    </a>
+</footer>
 
  {%endblock%}
 

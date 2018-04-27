@@ -1,28 +1,144 @@
 {{ ckeditor.load() }}
 {%extends 'store/base.html'%}
-{% block title %} 添加进货商品 {%endblock%}
+{% block title %} 添加商品基础数据 {%endblock%}
 {% block body %} 
+<style type="text/css">
+    
+    #word_goods,#word_location{
+        position: absolute;
+        z-index: 99;
+        width: 100%;
+        height: auto;
+        background-color: white;
+        border: black solid 1px;
+        display: none;
+        line-height: 40px;
+    }
+
+</style>
+
 <form action="" method="post" enctype="multipart/form-data">
+
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-<div class="Release_list_box">
-
 <input type="hidden" name="receipt_id"  value="{{id}}">
-    <a href="#"><label for="">商品名称</label> <input type="text" name="goods_name" id=""></a>
-    <a href="#"><label for="">货位名称</label> <input type="text" name="allocation_name" id=""></a>
-    <a href="#"><label for="">数量</label> <input type="text" name="count" id=""></a>
-    <a href="#"><label for="">备注</label> <input type="text" name="note" id=""></a>
+
+
+
+<div class="m-cell">
+
+    <div class="cell-item">
+        <div class="cell-right">
+        <input type="text" name="goods_name" id="goods_name"   placeholder='商品名称(可输入条码快速选择)' class='cell-input'>
+        </div>
+    </div>
+<div id="word_goods"></div>
+
+    <div class="cell-item">
+        <div class="cell-right">
+        <input type="text" name="allocation_name" id="allocation_name"   placeholder='货位名称' class='cell-input'>
+        </div>
+    </div>
+<div id="word_location"></div>
+
+    <div class="cell-item">
+        <div class="cell-right">
+        <input type="text" name="count" id="count"  placeholder='数量' class='cell-input'>
+        </div>
+    </div>
+
+    <div class="cell-item">
+        <div class="cell-right">
+        <input type="text" name="count" id="note"   placeholder='备注' class='cell-input'>
+        </div>
+    </div>
+
 </div>
 
-<div class="operationBox">
-  
-    <!-- <input class="goBuyBtn" type="button" value="进货单模板" onclick="window.location = '{{url_for('store.toexcel_stock_template')}}'"> -->
-    <input class="goShoppingcartBtn" type="submit" value="添加" style="width:100%;">
- 
-</div>
+
+<footer class="m-tabbar tabbar-fixed">
+    <button type="submit" class="btn-block btn-danger">添加</button>
+</footer>
+
 
 </form>
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery.js')}}"></script>
+<script type="text/javascript">
+ $(function(){
+//当键盘键被松开时发送Ajax获取数据
+    $('#goods_name').keyup(function(){
+        var keywords = $(this).val();
+        if (keywords=='') { $('#word_goods').hide(); return };
 
+        $.ajax({
+
+            url: "{{url_for('store.get_receipt_goods_name',_external=True)}}?wd="+keywords,
+            dataType: 'json',
+            jsonp: 'cb', //回调函数的参数名(键值)key
+            // jsonpCallback: 'fun', //回调函数名(值) value
+            beforeSend:function(){
+                $('#word_goods').append('<div>正在加载。。。</div>');
+            },
+            success:function(data){
+                $('#word_goods').empty().show();
+                $.each(data.cb, function(){
+                    $('#word_goods').append('<div class="click_work">'+ this.title+'|'+this.ean +'</div>');
+                });
+            },
+            error:function(){
+                $('#word_goods').empty().show();
+                $('#word_goods').append('<div class="click_work">Fail "' + keywords + '"</div>');
+            }
+        })
+    })
+//点击搜索数据复制给搜索框
+    $(document).on('click','.click_work',function(){
+        var word = $(this).text().split("|")[0];
+        $('#goods_name').val(word);
+        $('#word_goods').hide();
+    })
+
+
+
+    $('#allocation_name').keyup(function(){
+        var keywords = $(this).val();
+        if (keywords=='') { $('#word_location').hide(); return };
+
+        $.ajax({
+
+            url: "{{url_for('store.get_receipt_location_name',_external=True)}}?wd="+keywords,
+            dataType: 'json',
+            jsonp: 'cb', //回调函数的参数名(键值)key
+            // jsonpCallback: 'fun', //回调函数名(值) value
+            beforeSend:function(){
+                $('#word_location').append('<div>正在加载。。。</div>');
+            },
+            success:function(data){
+                $('#word_location').empty().show();
+                $.each(data.cb, function(){
+                    $('#word_location').append('<div class="click_work_location">'+ this.name+'</div>');
+                });
+            },
+            error:function(){
+                $('#word_location').empty().show();
+                $('#word_location').append('<div class="click_work_location">Fail "' + keywords + '"</div>');
+            }
+        })
+    })
+//点击搜索数据复制给搜索框
+    $(document).on('click','.click_work_location',function(){
+        var word = $(this).text();
+        $('#allocation_name').val(word);
+        $('#word_location').hide();
+    })
+
+
+})   
+
+</script>
 {%endblock%}
+
+
+
 
 	
 

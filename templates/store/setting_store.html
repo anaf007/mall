@@ -1,0 +1,59 @@
+{%extends 'store/base.html'%}
+{% block title %} 店铺设置 {%endblock%}
+{% block body %} 
+
+<form action="" method="post">
+<input type="hidden" name="id" value="{{id}}">
+{{ form.hidden_tag() }}
+ 
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-left">{{form.name.label()}}：</div>
+        <div class="cell-right">
+        {{ form.name(class='cell-input') }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">{{form.address.label()}}：</div>
+        <div class="cell-right">
+        {{ form.address(class='cell-input') }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">{{form.contact.label()}}：</div>
+        <div class="cell-right">
+        {{ form.contact(class='cell-input') }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-left">{{form.note.label()}}：</div>
+        <div class="cell-right">
+        {{ form.note(class='cell-input') }} 
+        </div>
+    </div>
+
+    <div class="cell-item">
+        <div class="cell-left">{{form.freight.label()}}：</div>
+        <div class="cell-right">
+        {{ form.freight(class='cell-input') }} 
+        </div>
+    </div>
+
+    <div class="cell-item">
+        <div class="cell-left">{{form.max_price_no_freight.label()}}：</div>
+        <div class="cell-right">
+        {{ form.max_price_no_freight(class='cell-input') }} 
+        </div>
+    </div>
+
+    
+</div>
+    
+  <input type="submit" class="btn-block btn-warning" value="更新">
+   
+
+</form>
+
+
+{%endblock%}
+

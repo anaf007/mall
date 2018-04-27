@@ -1,27 +1,25 @@
 {%extends 'store/base.html'%}
-{% block title %} 盘点列表{%endblock%}
+{% block title %} 盘点列表 {%endblock%}
 {% block body %} 
-<div class="Release_list_box">
 
+<article class="m-list list-theme4">
     {%for i in quantity%}
-    <a href="{{url_for('store.show_quantity_check',id=i.id)}}">
-    <span>ID:{{i.id}}</span>
-    <input class="input"  type="text" value="{{i.title}}">
-    </a> 
+    <a href="{{url_for('store.show_quantity_check',id=i.id)}}" class="list-item">
+        <div class="list-mes">
+            
+            <div class="list-mes-item">
+                <h3 class="list-title">{{i.title}}</h3>
+                <div>{{i.created_at}}</div>
+            </div>
+        </div>
+    </a>
     {%endfor%}
+</article>
 
-</div>
+<button type="button" class="btn-block btn-primary" onclick="window.location = '{{url_for('store.create_quantity_check')}}'">生成盘点表</button>
 
-<div class="blank4"></div>
-
-<!--按钮-->
-<div class="operationBox">
-  
-    <input class="goBuyBtn" type="button" value="生成盘点表" onclick="window.location = '{{url_for('store.create_quantity_check')}}'"  style="width:100%">
-    <!-- <input class="goShoppingcartBtn" type="button" value="导出数据" onclick="window.location = '{{url_for('store.toexcel_location')}}'"> -->
- 
-</div>
 
 
  {%endblock%}
+
 

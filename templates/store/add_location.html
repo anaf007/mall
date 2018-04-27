@@ -1,30 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>add_location</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
+{%extends 'store/base.html'%}
+{% block title %} 添加货位 {%endblock%}
+{% block body %} 
+
+<form action="" method="post">
+
+{{ form.hidden_tag() }}
+ 
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.name(class='cell-input',placeholder="仓库名称") }} 
+        </div>
     </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.sort(class='cell-input',placeholder="排序") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.note(class='cell-input',placeholder="备注") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.warehouse(class='cell-input',placeholder="仓库") }} 
+        </div>
+    </div>
+
+    
 </div>
-{%endfor%}
-add_location
-	添加货位
-	<form action="" method="post">
-		{{ form.hidden_tag() }}
-         {{ form.name.label }} {{ form.name() }} <br>	
-         {{ form.sort.label }} {{ form.sort() }}<br>	
-         {{ form.note.label }} {{ form.note() }}<br>	
-         {{ form.warehouse.label }} {{ form.warehouse() }}<br>	
-         
-         <input type="submit" value="tijiao">
-	</form>
-</body>
-</html>
+    
+  <input type="submit" class="btn-block btn-warning" value="创建">
+   
+
+</form>
+
+
+{%endblock%}
 

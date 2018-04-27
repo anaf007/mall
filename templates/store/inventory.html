@@ -2,37 +2,44 @@
 {% block title %} 库存 {%endblock%}
 {% block body %} 
 
-<!--宝贝管理-->
-<div class="Order_list">
-	<!--出售中-->
-  	<div class="tabconent">
-  		{%for i in kucun%}
-    	<dl>
-	      	<dt><img src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}"></dt>
-	      	<dd><a href="#">{{i.goodsed.title}}</a>
-	      	<span>数量：{{i.count}},货位：{{i.goods_allocation.name}} </span>
-	        <!-- <p><font>商品编号：{{i.id}}</font> <font>是否出售：{{i.is_sell}} </font></p> -->
-      		</dd>
-    	</dl>
-    	{%endfor%}
+<article class="m-list list-theme3">
+    {%for i in kucun%}
+    <a href="javascript:;" class="list-item">
+        <div class="list-img">
+            <img src="{{url_for('public.get_thumbnail',filename=i.goodsed.main_photo)}}">
+        </div>
+        <div class="list-mes">
+            <h3 class="list-title">{{i.goodsed.title}}</h3>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-title">进货数量:{{i.count}}</span>
+                </div>
+                <div>货位:{{i.goods_allocation.name}}</div>
+            </div>
+        </div>
+    </a>
+    {%endfor%}
+</article>
 
-    	
+
+
+<footer class="m-tabbar tabbar-fixed">
+    <!-- <a href="{{url_for('store.quantity_check')}}" class="tabbar-item"> -->
+    <a href="#" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui07.png')}}">
+        </span>
+        <span class="tabbar-txt">盘点</span>
+    </a>
+    <a href="#" class="tabbar-item">
+        <span class="tabbar-icon">
+            <i class="icon-share2"></i>
+        </span>
+        <span class="tabbar-txt">导出</span>
+    </a>
     
     
-    
-  </div>
-  
-</div>
-
-<!-- end -->
-
-
-<div class="blank4"></div>
-<!--按钮-->
-<div class="Baby_Box">
-  <input type="button" value="盘点" onclick="window.location = '{{url_for('store.quantity_check')}}'">
-  <input type="button" value="导出数据" onclick="window.location = '#'" >
-</div>
+</footer>
 
 
  {%endblock%}

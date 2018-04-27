@@ -1028,3 +1028,43 @@ def in_excel_quantity_check():
     return json.dumps({'id':id})
 
 
+@blueprint.route('/setting_store')
+@templated()
+@login_required
+def setting_store(id=0):
+    form = SettingStroeForm()
+    seller = Seller.query.filter_by(users=current_user).first()
+
+    form.name.data  = seller.name
+    form.address.data  = seller.address
+    form.contact.data  = seller.contact
+    form.note.data  = seller.note
+    form.freight.data  = seller.freight
+    form.max_price_no_freight.data  = seller.max_price_no_freight
+
+    return dict(form=form,id=seller.id)
+
+
+
+@blueprint.route('/setting_store',methods=['POST'])
+@templated()
+@login_required
+def setting_store_post(id=0):
+    form = SettingStroeForm()
+    if form.validate_on_submit():
+        seller = Seller.query.get_or_404(request.form.get('id'))
+        if seller.users!=current_user:
+            abort(404)
+        seller.update(
+            name = form.name.data,
+            address = form.address.data,
+            contact = form.contact.data,
+            note = form.note.data,
+            freight = form.freight.data,
+            max_price_no_freight = form.max_price_no_freight.data,
+        )
+        flash('更新完成')
+
+    return redirect(url_for('.home'))
+
+

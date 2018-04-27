@@ -71,22 +71,40 @@
             {%endfor%}
         </article>
 
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 
-
-{%if receipt.order_state==0%}
-<div class="m-grids-2">
-    <a href="#" class="grids-item">
-       <button type="button" class="btn-block btn-warning" onclick="window.location = '{{url_for('store.receipt_add_goods',id=receipt.id)}}'">添加商品</button>
+<footer class="m-tabbar tabbar-fixed">
+    {%if receipt.order_state==0%}
+    <a href="{{url_for('store.receipt_add_goods',id=receipt.id)}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui05.png')}}">
+        </span>
+        <span class="tabbar-txt">添加商品</span>
     </a>
-    <a href="#" class="grids-item">
-       <button type="button" class="btn-block btn-danger" onclick="javascript:if(confirm('确实完成吗?'))location='{{url_for('store.receipt_change',id=receipt.id)}}'">完成订单</button>
+    <a href="{{url_for('store.receipt_change',id=receipt.id)}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui08.png')}}">
+        </span>
+        <span class="tabbar-txt">完成订单</span>
     </a>
-</div>
+    {%else%}
+    <a href="{{url_for('store.receipt_change',id=receipt.id)}}" class="tabbar-item">
+        <span class="tabbar-icon">
+            <img src="{{url_for('static',filename='images/ydui08.png')}}">
+        </span>
+        <span class="tabbar-txt">订单已完成</span>
+    </a>
 
-{%else%}
-   <button type="button" class="btn-block btn-warning">订单已完成</button>
-   {%endif%}
-  
+    {%endif%}
+    
+    
+</footer>
+
+
+
 
 {%endblock%}
 
