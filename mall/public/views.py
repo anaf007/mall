@@ -174,6 +174,7 @@ def logout():
 #购物车提交订单
 @blueprint.route('/submit_order')
 @templated()
+@login_required
 def submit_order():
 	#购物车信息
 	# buys_car = BuysCar.query.filter_by(users=current_user).all()
