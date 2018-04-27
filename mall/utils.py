@@ -4,7 +4,14 @@ from flask import flash, request, render_template, current_app
 from functools import wraps
 
 from PIL import Image
-import PIL,os,time,random,hashlib
+import PIL,os,time,random,hashlib,random
+
+import datetime as dt
+
+#生成无重复随机数
+gen_rnd_filename = lambda :"%s%s" %(dt.datetime.now().strftime('%Y%m%d%H%M%S'), str(random.randrange(1000, 10000)))
+#文件名合法性验证
+allowed_file_lambda = lambda filename: '.' in filename and filename.rsplit('.', 1)[1] in set(['txt', 'xls', 'xlsx', 'gif', 'bmp'])
 
 
 

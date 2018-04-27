@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from flask_login import current_user
 
 from .models import SystemVersion,Category,BaseProducts
-from mall.utils import templated,flash_errors,allowed_file
+from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename
 from . import blueprint
 from .forms import AddCategoryForm,AddBaseProductForm
 
@@ -92,7 +92,7 @@ def add_base_product_post():
     form=AddBaseProductForm()
     if form.validate_on_submit():
         f = request.files['image']
-        filename = secure_filename(f.filename)
+        filename = secure_filename(gen_rnd_filename() + "." + f.filename.split('.')[-1])
         if not filename:
             flash(u'请选择图片','error')
             return redirect(url_for('.home'))
@@ -102,10 +102,9 @@ def add_base_product_post():
 
         dataetime = dt.datetime.today().strftime('%Y%m%d')
         file_dir = 'superadmin/%s/base_products/%s/'%(current_user.id,dataetime)
-        if not os.path.isdir(current_app.config['UPLOADED_PATH']+file_dir):
-            os.makedirs(current_app.config['UPLOADED_PATH']+file_dir)
+        if not os.path.isdir(os.getcwd()+'/'+current_app.config['UPLOADED_PATH']+file_dir):
+            os.makedirs(os.getcwd()+'/'+current_app.config['UPLOADED_PATH']+file_dir)
         f.save(current_app.config['UPLOADED_PATH'] +file_dir+filename)
-
 
         BaseProducts.create(
             title=form.title.data,

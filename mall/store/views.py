@@ -15,7 +15,7 @@ from mall.user.models import User
 from mall.public.models import Follow,UserOrder
 from mall.superadmin.models import BaseProducts
 from mall.extensions import db,wechat
-from mall.utils import allowed_file,create_thumbnail
+from mall.utils import allowed_file,create_thumbnail,gen_rnd_filename,allowed_file_lambda
 from mall.extensions import csrf_protect
 
 import datetime as dt
@@ -143,8 +143,8 @@ def commodity_data_post():
 
         dataetime = dt.datetime.today().strftime('%Y%m%d')
         file_dir = 'store/%s/main_photo/%s/'%(current_user.id,dataetime)
-        if not os.path.isdir(current_app.config['UPLOADED_PATH']+file_dir):
-            os.makedirs(current_app.config['UPLOADED_PATH']+file_dir)
+        if not os.path.isdir(os.getcwd()+'/'+current_app.config['UPLOADED_PATH']+file_dir):
+            os.makedirs(os.getcwd()+'/'+current_app.config['UPLOADED_PATH']+file_dir)
         f.save(current_app.config['UPLOADED_PATH'] +file_dir+filename)
 
         create_thumbnail(f,80,file_dir,filename)
@@ -1008,10 +1008,6 @@ def to_excel_quantity_check(id=0):
 
 
 
-#生成无重复随机数
-gen_rnd_filename = lambda :"%s%s" %(dt.datetime.now().strftime('%Y%m%d%H%M%S'), str(random.randrange(1000, 10000)))
-#文件名合法性验证
-allowed_file_lambda = lambda filename: '.' in filename and filename.rsplit('.', 1)[1] in set(['txt', 'xls', 'xlsx', 'gif', 'bmp'])
 
 
 
@@ -1023,7 +1019,6 @@ def in_excel_quantity_check():
     f = request.files['file']
     if f and allowed_file_lambda(f.filename):
         filename = secure_filename(gen_rnd_filename() + "." + f.filename.split('.')[-1]) #随机命名
-        print(filename)
 
     return json.dumps({'id':id})
 
