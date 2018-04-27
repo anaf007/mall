@@ -36,7 +36,7 @@ def home():
     follow = Follow.query.filter_by(users=current_user).all()
     len_follow = len(follow)
     if len_follow == 1:
-    	return redirect(url_for('.show_store',seller_id=follow[0].id))
+    	return redirect(url_for('.show_store',seller_id=follow[0].seller_id))
     if len_follow<1:
     	flash('您还未关注店铺。')
     return dict(follow=follow)
