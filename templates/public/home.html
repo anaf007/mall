@@ -1,23 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>home</title>
+    <title>主页</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='bootstrap4/css/bootstrap.css')}}" />
+    <script type="text/javascript" src="{{url_for('static',filename='js/jquery.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='bootstrap4/js/bootstrap.min.js')}}"></script>
 </head>
 <body>
+<div class="alert alert-danger"><i class="icon-feedback"></i>错误！请进行一些更改。</div>
 
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        不带 title 的面板标题
+    </div>
+    <div class="panel-body">
+        面板内容
     </div>
 </div>
-{%endfor%}
+ 
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            带有 title 的面板标题
+        </h3>
+    </div>
+    <div class="panel-body">
+        面板内容
+    </div>
+</div>
 
-<br>
-  public home
-   <a href="{{url_for('store.home')}}">store</a>
+
 </body>
 </html>

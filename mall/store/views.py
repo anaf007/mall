@@ -1063,3 +1063,10 @@ def setting_store_post(id=0):
     return redirect(url_for('.home'))
 
 
+
+@blueprint.route('/service_store')
+@templated()
+@login_required
+def service_store(id=0):
+    return dict()
+
