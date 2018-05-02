@@ -141,10 +141,11 @@ def autoregister(wechat_id=''):
 
 	if not wechat_id:
 		wechat_id = session.get('wechat_user_id','')
-
-
-	user = User.query.filter_by(wechat_id=wechat_id).first()
+		user = User.query.filter_by(wechat_id=wechat_id).first()
+	else:
+		users = [] 
 	if user:
+		login_user(user,True)
 		return user 
 	user = User.query.filter_by(username=username).first()
 	if user is None:
@@ -170,7 +171,7 @@ def autologin(name=''):
 
 	wechat_id = session.get('wechat_user_id','')
 	if wechat_id:
-		user = User.query.filter_by(wechat_id=session.get('wechat_user_id')).first()
+		user = User.query.filter_by(wechat_id=wechat_id).first()
 	else: 
 		user = []
 	if user :

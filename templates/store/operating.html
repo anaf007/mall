@@ -1,0 +1,58 @@
+{%extends 'store/base.html'%}
+
+{% block title %}后台主页{% endblock %}
+{% block body %}
+<script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<div class="g-view" id="g-view" style="height:50%;">
+    
+</div>
+<script type="text/javascript">
+     var myChart = echarts.init(document.getElementById('g-view'));
+     
+     
+
+    //  // 异步加载数据
+    $.ajax({
+         type: "GET",
+         url: '{{url_for("store.get_operating_json",_external=True)}}',
+         dataType: "json",
+         success: function(data){
+            
+            var option = {
+                    title: {
+                        text: '销售数据(元)'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['进货','销售']
+                    },
+                    xAxis: {
+                        data: ['今天','本周','本月']
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销售',
+                        type: 'bar',
+                        data: [data.price[0][0],data.price[1][0],data.price[2][0]]
+                    },{
+                        name: '进货',
+                        type: 'bar',
+                        data: [data.price[0][1],data.price[1][1],data.price[2][1]]
+                    }]
+                };
+                 myChart.setOption(option);
+
+    
+            
+         }
+       
+
+
+    });
+   
+ 
+
+</script>
+{% endblock%}
+

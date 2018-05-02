@@ -135,11 +135,12 @@ class Goods(SurrogatePK, Model):
 	main_photo = Column(db.String(200))
 	
 	#出售记录
-	sale_id = relationship('Sale', backref='goodsed')
+	# sale_id = relationship('Sale', backref='goodsed')
 	#库存
 	inventory_id = relationship('Inventory', backref='goodsed')
 	#进货的商品
-	stock_id = relationship('Stock', backref='goodsed')
+	# stock_id = relationship('Stock', backref='goodsed')
+	#购物车中的商品
 	buys_car_id = relationship('BuysCar', backref='goodsed')
 	
     
@@ -165,10 +166,22 @@ class Sale(SurrogatePK,Model):
 	__tablename__ = 'sales'
 	#店铺
 	seller_id = reference_col('sellers')
-	#商品
-	goods_id = reference_col('goodsed')
+	#商品 2018-04-30修改不外键商品表否则更改价格以往的都会更改。
+	# goods_id = reference_col('goodsed')
+	#商品名称
+	goods_id = Column(db.Integer()) 
+	goods_title = Column(db.String(100)) 
+	#销售价
+	original_price = Column(db.Numeric(precision=10,scale=2,\
+		asdecimal=True, decimal_return_scale=None))
+	#优惠价进货价
+	special_price = Column(db.Numeric(precision=10,scale=2,\
+		asdecimal=True, decimal_return_scale=None))
+	#首页展示图
+	main_photo = Column(db.String(200))
 	#货位
-	goods_allocation_id = reference_col('goods_allocation')
+	goods_allocation_name = Column(db.String(100)) 
+
 	#订单
 	UserOrder_id = reference_col('user_order')
 	#出售数量
@@ -224,16 +237,27 @@ class Receipt(SurrogatePK,Model):
 	stock_id = relationship('Stock', backref='receipts')
     
 
-#进货
+#进货货
 class Stock(SurrogatePK,Model):
 
 	__tablename__ = 'stocks'
 	#用户
 	user_id = reference_col('users')
-	#商品
-	goods_id = reference_col('goodsed')
+
+	#商品名称
+	goods_id = Column(db.Integer()) 
+	goods_title = Column(db.String(100)) 
+	#销售价
+	original_price = Column(db.Numeric(precision=10,scale=2,\
+		asdecimal=True, decimal_return_scale=None))
+	#优惠价进货价
+	special_price = Column(db.Numeric(precision=10,scale=2,\
+		asdecimal=True, decimal_return_scale=None))
+	#首页展示图
+	main_photo = Column(db.String(200))
 	#货位
-	goods_allocation_id = reference_col('goods_allocation')
+	goods_allocation_name = Column(db.String(100)) 
+
 	#订单
 	receipts_id = reference_col('receipts')
 	#进货数量
@@ -280,16 +304,14 @@ class GoodsAllocation(SurrogatePK,Model):
 	#所属用户，不然每次查询都要join很多关联
 	user_id = reference_col('users')
 
-	sale_id = relationship('Sale', backref='goodsed_allocation')
+	# sale_id = relationship('Sale', backref='goodsed_allocation')
 	#库存
 	inventory_id = relationship('Inventory', backref='goods_allocation')
 	#出售的商品
-	stock_id = relationship('Stock', backref='goods_allocation')
+	# stock_id = relationship('Stock', backref='goods_allocation')
 	
 
-	# def to_dict(self):
-	# 	return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
-    
+	
 
 #库存
 class Inventory(SurrogatePK,Model):

@@ -51,30 +51,32 @@
     {%endif%}
 </div>
 
-
+<div class="g-view">
         <article class="m-list list-theme3">
             {%for i in receipt.stock_id%}
             <a href="javascript:;" class="list-item">
                 <div class="list-img">
-                    <img src="{{url_for('public.get_image',filename=i.goodsed.main_photo)}}">
+                    <img src="{{url_for('public.get_image',filename=i.main_photo)}}">
                 </div>
                 <div class="list-mes">
-                    <h3 class="list-title">{{i.goodsed.title}}</h3>
+                    <h3 class="list-title">{{i.goods_title}}</h3>
                     <div class="list-mes-item">
                         <div>
                             <span class="list-title">进货数量:{{i.stock_count}}</span>
                         </div>
-                        <div>货位{{i.goods_allocation.name}}</div>
+                        <div>货位{{i.goods_allocation_name}}</div>
+                    </div>
+                    <div class="list-mes-item">
+                        <div>
+                            <span class="list-title">销售价:{{i.original_price}}</span>
+                        </div>
+                        <div>进货价:{{i.special_price}}</div>
                     </div>
                 </div>
             </a>
             {%endfor%}
         </article>
-
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+</div>
 
 <footer class="m-tabbar tabbar-fixed">
     {%if receipt.order_state==0%}

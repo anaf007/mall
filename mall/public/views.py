@@ -37,8 +37,8 @@ def home():
     len_follow = len(follow)
     if len_follow == 1:
     	return redirect(url_for('.show_store',seller_id=follow[0].seller_id))
-    if len_follow<1:
-    	flash('您还未关注店铺。')
+    # if len_follow<1:
+    # 	flash('您还未关注店铺。')
     return dict(follow=follow)
 
 
@@ -223,7 +223,8 @@ def confirm_order():
 		.with_entities(
 			BuysCar.id,BuysCar.count,BuysCar.goods_id,\
 			Goods.title,Goods.original_price,Goods.sellers_id,\
-			Seller.name,Seller.freight,Seller.max_price_no_freight\
+			Seller.name,Seller.freight,Seller.max_price_no_freight,\
+			Goods.main_photo,Goods.special_price\
 		)\
 		.join(Goods,Goods.id==BuysCar.goods_id)\
 		.join(Seller,Seller.id==Goods.sellers_id)\
@@ -319,7 +320,14 @@ def confirm_order():
 			#销售的商品记录
 			sale = Sale()
 			sale.seller_id = seller
+
 			sale.goods_id = i[2]
+
+			sale.goods_title = i[3]
+			sale.original_price = i[4]
+			sale.special_price = i[10]
+			sale.main_photo = i[9]
+
 			sale.count = i[1]
 			sale.residue_count = seller
 			sale.user_order = user_order
@@ -328,7 +336,7 @@ def confirm_order():
 			if j.count - count >= 0:
 				#出售记录表
 				sale.residue_count = j.count - count
-				sale.goods_allocation_id = j.goods_allocation_id
+				sale.goods_allocation_name = j.goods_allocation.name
 				
 				#更新库存
 				j.count = j.count - count
@@ -338,7 +346,7 @@ def confirm_order():
 			#如果库存数量少于购物车数量
 			if j.count - count < 0:
 				sale.residue_count = 0
-				sale.goods_allocation_id = j.goods_allocation_id
+				sale.goods_allocation_name = j.goods_allocation.name
 				count = count - j.count
 				
 				#删除库存

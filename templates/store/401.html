@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width" />
 <title>{% block title %}店铺后台{% endblock %}</title>
 
-<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}" />
-    <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+<link rel="stylesheet" href="{{url_for('static',filename='ydui/css/ydui.css')}}" />
+
+<script type="text/javascript" src="{{url_for('static',filename='ydui/js/ydui.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static',filename='ydui/js/ydui.flexible.js')}}"></script>
 
 </head>
 
@@ -17,7 +18,7 @@
 {% block body %}
 {%for message in get_flashed_messages()%}
   
-<div class="panel panel-danger text-center">
+<div class="panel panel-dangir text-center">
     <div class="panel-heading">
         <h1 class="panel-title">
             禁止访问
@@ -30,7 +31,6 @@
 {%endfor%}
 
 <a href="javascript:history.back(-1)" class="btn btn-primary btn-lg btn-block">返回上一页</a>
-<a href="{{url_for('public.home')}}" class="btn btn-warning btn-lg btn-block">返回主页</a>
 {% endblock %}
 
 

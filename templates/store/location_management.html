@@ -1,7 +1,13 @@
 {%extends 'store/base.html'%}
 {% block title %} 货位管理-所有货位 {%endblock%}
 {% block body %} 
-
+<style type="text/css">
+    .g-view:before {
+    display: block;
+     height: .0rem; 
+}
+</style>
+<div class="g-view">
 <article class="m-list list-theme4">
     {%for i in goods_allocation%}
     <a href="#" class="list-item">
@@ -35,7 +41,7 @@
         </div>
     </a>
 </article>
-
+</div>
 
 
 

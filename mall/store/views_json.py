@@ -6,9 +6,11 @@ from . import blueprint
 from mall.superadmin.models import BaseProducts
 from mall.extensions import db
 from .models import Goods,GoodsAllocation
+from mall.public.models import UserOrder
 
 # import json,simplejson
 import simplejson as json
+import datetime
 
 
 
@@ -80,6 +82,66 @@ def get_base_product_one(id=0):
     return json.dumps({'pr':base_product})
 
 
+#经营数据销售数据
+@blueprint.route('/get_operating_json')
+@login_required
+def get_operating_json():
+
+    #当天
+    start_day = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+    end_day = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+    day_order = UserOrder.query.filter_by(seller_id=current_user.seller_id[0].id).filter(UserOrder.buy_time.between(start_day,end_day)).all()
+
+    #本周
+    start_weekday = datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
+    end_weekday = datetime.date.today()
+    weekday_order = UserOrder.query.filter_by(seller_id=current_user.seller_id[0].id).filter(UserOrder.buy_time.between(start_weekday,end_weekday)).all()
+
+    #本月
+    start_mon = datetime.date.today() - datetime.timedelta(days=datetime.datetime.now().day - 1)
+    mon_order = UserOrder.query.filter_by(seller_id=current_user.seller_id[0].id).filter(UserOrder.buy_time.between(start_mon,end_weekday)).all()
+
+    #计算天
+    day_original_price = 0
+    day_special_price = 0
+    for i in day_order:
+        for j in i.sale_id:
+            if not j.original_price:
+                j.original_price = 0
+            if not j.special_price:
+                j.special_price = 0
+            day_original_price += j.original_price
+            day_special_price += j.special_price
+
+    #计算周
+    weekday_original_price = 0
+    weekday_special_price = 0
+    for i in weekday_order:
+        for j in i.sale_id:
+            if not j.original_price:
+                j.original_price = 0
+            if not j.special_price:
+                j.special_price = 0
+            weekday_original_price += j.original_price
+            weekday_special_price += j.special_price
+
+    #计算月
+    mon_original_price = 0
+    mon_special_price = 0
+    for i in mon_order:
+        for j in i.sale_id:
+            if not j.original_price:
+                j.original_price = 0
+            if not j.special_price:
+                j.special_price = 0
+            mon_original_price += j.original_price
+            mon_special_price += j.special_price
+
+    day_prict = [day_original_price,day_special_price]
+    weekday_prict = [weekday_original_price,weekday_special_price]
+    mon_prict = [mon_original_price,mon_special_price]
+
+    return json.dumps({'price':[day_prict,weekday_prict,mon_prict]})
 
 
 

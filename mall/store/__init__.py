@@ -4,4 +4,4 @@ from flask import Blueprint
 
 blueprint = Blueprint('store', __name__, url_prefix='/store')
 
-from . import views, models,views_json  # noqa
+from . import views, models,views_json,errors  # noqa

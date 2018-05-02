@@ -1,7 +1,13 @@
 {%extends 'store/base.html'%}
 {% block title %} 销售单列表 {%endblock%}
 {% block body %} 
-
+<style type="text/css">
+    .g-view:before {
+    display: block;
+     height: .0rem; 
+}
+</style>
+<div class="g-view">
 
         <article class="m-list list-theme4">
             {%for i in buy_users%}
@@ -20,7 +26,7 @@
             {%endfor%}
         </article>
 
-
+</div>  
 
 
 

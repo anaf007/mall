@@ -36,9 +36,8 @@ from . import blueprint
 
 @blueprint.route('/')
 @templated()
-# @login_required
+@login_required
 def home():
-    
     try:
         store = current_user.seller_id[0]
     except:
@@ -284,9 +283,7 @@ def toexcel_location():
 
     return send_file(output, attachment_filename=f"{excel_name_title}_goods_allocation.xlsx", as_attachment=True)
 
-
-
-    
+ 
 #导出商品基础数据
 @blueprint.route('/toexcel_commodity_data')
 @login_required
@@ -610,73 +607,79 @@ def receipt_add_goods(id=0):
 @templated()
 @login_required
 def receipt_add_goods_post(id=0):
-	receipt_id = request.form.get('receipt_id')
-	goods_name = request.form.get('goods_name')
-	allocation_name = request.form.get('allocation_name')
-	count = int(request.form.get('count'))
-	note = request.form.get('note')
+    receipt_id = request.form.get('receipt_id')
+    goods_name = request.form.get('goods_name')
+    allocation_name = request.form.get('allocation_name')
+    count = int(request.form.get('count'))
+    note = request.form.get('note')
 
-	#入库单信息
-	receipt = Receipt.query.get_or_404(id)
-	if receipt.users !=current_user:
-		abort(404)
-	
-	#商品信息
-	success_goodsed = Goods.query.filter_by(seller=current_user.seller_id[0]).filter_by(title=goods_name).first()
-	#货位信息
-	success_alllocation = GoodsAllocation.query.filter_by(users=current_user).filter_by(name=allocation_name).first()
+    #入库单信息
+    receipt = Receipt.query.get_or_404(id)
+    if receipt.users !=current_user:
+       abort(404)
+    
+    #商品信息
+    success_goodsed = Goods.query.filter_by(seller=current_user.seller_id[0]).filter_by(title=goods_name).first()
+    #货位信息
+    success_alllocation = GoodsAllocation.query.filter_by(users=current_user).filter_by(name=allocation_name).first()
 
-	if not success_goodsed:
-		flash('信息错误。，没有这个商品，请检查名称是否输入正确')
-		return redirect(url_for('.show_receipt',id=id))
-	if not success_alllocation:
-		flash('信息错误。，没有这个货位，请检查名称是否输入正确')
-		return redirect(url_for('.show_receipt',id=id))
+    if not success_goodsed:
+       flash('信息错误。，没有这个商品，请检查名称是否输入正确')
+       return redirect(url_for('.show_receipt',id=id))
+    if not success_alllocation:
+       flash('信息错误。，没有这个货位，请检查名称是否输入正确')
+       return redirect(url_for('.show_receipt',id=id))
 
-	receipt.variety += 1
-	receipt.goods_sum += count
-	receipt.price_sum += success_goodsed.special_price*count
+    receipt.variety += 1
+    receipt.goods_sum += count
+    receipt.price_sum += success_goodsed.special_price*count
 
-	#进货商品信息
-	save_stock = Stock()
-	save_stock.users = current_user
-	save_stock.goodsed = success_goodsed
-	save_stock.goods_allocation = success_alllocation
-	save_stock.receipts = receipt
-	save_stock.stock_count = count
-	save_stock.users = current_user
+    #进货商品信息
+    save_stock = Stock()
+    save_stock.users = current_user
+    #商品数据
+    save_stock.goods_id = success_goodsed.id
+    save_stock.goods_title = success_goodsed.title
+    save_stock.original_price = success_goodsed.original_price
+    save_stock.special_price = success_goodsed.special_price
+    save_stock.main_photo = success_goodsed.main_photo
 
-	#库存
-	inventory = Inventory.query\
-		.filter_by(users=current_user)\
-		.filter_by(goodsed=success_goodsed)\
-		.filter_by(goods_allocation=success_alllocation)\
-		.first()
-	if inventory:
-		inventory.count += count
-		save_stock.residue_count = inventory.count
-	else:
-		db.session.add(
-			Inventory(
-				goodsed=success_goodsed,
-				goods_allocation=success_alllocation,
-				users=current_user,
-				count=count,
-				note=note
-				)
-			)
-		save_stock.residue_count = 0
+    save_stock.goods_allocation_name = success_alllocation.name
+    save_stock.receipts = receipt
+    save_stock.stock_count = count
+    save_stock.users = current_user
+
+    #库存
+    inventory = Inventory.query\
+       .filter_by(users=current_user)\
+       .filter_by(goodsed=success_goodsed)\
+       .filter_by(goods_allocation=success_alllocation)\
+       .first()
+    if inventory:
+       inventory.count += count
+       save_stock.residue_count = inventory.count
+    else:
+        db.session.add(
+            Inventory(
+                goodsed=success_goodsed,
+                goods_allocation=success_alllocation,
+                users=current_user,
+                count=count,
+                note=note
+            )
+        )
+        save_stock.residue_count = 0
 
 
-	db.session.add(save_stock)
+    db.session.add(save_stock)
 
-	try:
-		db.session.commit()
-		return redirect(url_for('.show_receipt',id=id))
-	except Exception as e:
-		db.session.rollback()
-		flash('添加失败。')
-		return redirect(url_for('.show_receipt',id=id))
+    try:
+       db.session.commit()
+       return redirect(url_for('.show_receipt',id=id))
+    except Exception as e:
+       db.session.rollback()
+       flash('添加失败。')
+       return redirect(url_for('.show_receipt',id=id))
 
 #完成订单
 @blueprint.route('/receipt_change/<int:id>')
@@ -1069,4 +1072,16 @@ def setting_store_post(id=0):
 @login_required
 def service_store(id=0):
     return dict()
+
+
+
+
+@blueprint.route('/operating')
+@templated()
+@login_required
+def operating():
+    return dict()
+
+
+
 
