@@ -63,6 +63,7 @@ def token_get():
 def token_post():
     msg = request.wechat_msg
     reply = ''
+    logger.info('进入')
 
     if msg.type == 'text':
 
@@ -101,6 +102,7 @@ def token_post():
             return reply
               
 
+    logger.info('过text')
     try:
         msg.event
     except Exception as e:
@@ -108,9 +110,10 @@ def token_post():
         print(str(e))
         return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
 
-
+    logger.info('进入关注')
     #关注事件
     if msg.event == 'subscribe':
+        logger.info(msg.source)
         createmenu()
         user = autoregister(msg.source)
         reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
