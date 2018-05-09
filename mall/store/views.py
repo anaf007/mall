@@ -65,6 +65,9 @@ def home():
 @templated()
 @login_required
 def create_store():
+    if not Seller.query.filter_by(users=current_user).first().enable:
+        flash('您的店铺未启用。')
+        abort(401)
     return dict(form=CreateStoreForm())
 
 
