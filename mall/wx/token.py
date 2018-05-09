@@ -15,13 +15,13 @@ from mall.user.views import autoregister
 
 def createmenu():
     wechat.menu.create({"button":[
-        {"type":"view","name":"买买买","url":'http://mall.anaf.cn'},\
+        {"type":"view","name":"买买买","url":'%s'%url_for('public.home',_external=True)},\
 
         {"type":"view","name":"用户服务","sub_button":[
             {
                 "type":"view",
                 "name":"我的订单",
-                "url":'http://mall.anaf.cn/users/my_order'
+                "url":'%s'%url_for('user.my_order',_external=True)
             },
         ]},\
         
