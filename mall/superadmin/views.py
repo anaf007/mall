@@ -60,7 +60,7 @@ def add_category_post():
 			name=form.name.data,
 			ico=form.ico.data,
 			sort=form.sort.data,
-			note=form.pid.data,
+			category=form.pid.data,
 			active=True,			
 		)
 		flash('添加成功','success')
