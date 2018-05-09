@@ -25,7 +25,7 @@ def get_base_product(id=0):
     base_product =  BaseProducts.query\
         .with_entities(BaseProducts.id,BaseProducts.title,BaseProducts.original_price\
             ,BaseProducts.special_price,BaseProducts.main_photo)\
-        .filter(BaseProducts.title.ilike(f'%{wd}%'))\
+        .filter(BaseProducts.title.ilike(f'%{wd}%') | BaseProducts.ean.ilike(f'%{wd}%'))\
         .all()[0:10]
 
     return json.dumps({'cb':base_product})
