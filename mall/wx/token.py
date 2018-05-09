@@ -11,6 +11,7 @@ from mall.public.models import UserOrder,Follow
 from mall.store.models import Seller
 from mall.user.models import User
 from mall.user.views import autoregister
+from log import logger
 
 
 def createmenu():
@@ -102,7 +103,9 @@ def token_post():
 
     try:
         msg.event
-    except:
+    except Exception as e:
+        logger.info(str(e))
+        print(str(e))
         return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
 
 
