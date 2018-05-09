@@ -113,6 +113,8 @@ def token_post():
         reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
     #扫描二维码关注事件
     if msg.event == 'subscribe_scan':
+        print('scan')
+        print(msg.scene_id)
         createmenu()
         if msg.scene_id:
             seller = Seller.query.get_or_404(msg.scene_id)
