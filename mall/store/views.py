@@ -117,6 +117,11 @@ def commodity_data_post():
     hidden_id = request.form.get('hidden_id')
     if hidden_id:
         base_product = BaseProducts.query.get_or_404(int(hidden_id))
+        is_goods = Goods.query.filter_by(title=base_product.title,seller=current_user.seller_id[0]).first()
+        if is_goods:
+            flash('该商品已存在，请勿重复添加','success')
+            return redirect(url_for('.home'))
+
         Goods.create(
             title=base_product.title,
             original_price=form.original_price.data,
