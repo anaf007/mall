@@ -61,7 +61,7 @@ def add_category_post():
 			ico=form.ico.data,
 			sort=form.sort.data,
 			note=form.pid.data,
-			active=form.active.data,			
+			active=True,			
 		)
 		flash('添加成功','success')
 		return redirect(url_for('.add_category'))
