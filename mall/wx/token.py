@@ -23,6 +23,11 @@ def createmenu():
                 "name":"我的订单",
                 "url":'%s'%url_for('user.my_order',_external=True)
             },
+            {
+                "type":"view",
+                "name":"我的地址",
+                "url":'%s'%url_for('user.my_order',_external=True)
+            },
         ]},\
         
     ]})
@@ -58,7 +63,6 @@ def token_post():
     msg = request.wechat_msg
     reply = ''
 
-    # help(msg)
     if msg.type == 'text':
 
         event_str = msg.content[0:2]
@@ -96,8 +100,6 @@ def token_post():
             return reply
               
 
-
-
     try:
         msg.event
     except:
@@ -107,6 +109,7 @@ def token_post():
     #关注事件
     if msg.event == 'subscribe':
         createmenu()
+        user = autoregister(msg.source)
         reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
     #扫描二维码关注事件
     if msg.event == 'subscribe_scan':
