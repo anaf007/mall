@@ -63,7 +63,6 @@ def token_get():
 def token_post():
     msg = request.wechat_msg
     reply = ''
-    logger.info('进入')
 
     if msg.type == 'text':
 
@@ -100,17 +99,14 @@ def token_post():
             textreply_str = f'<a href="{redirect_url}">点击进入店铺主页。</a>'
             reply = TextReply(content=textreply_str, message=msg)
             return reply
-              
 
-    logger.info('过text')
     try:
         msg.event
     except Exception as e:
         logger.info(str(e))
-        print(str(e))
         return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
 
-    logger.info('进入关注')
+    logger.info(msg.event)
     #关注事件
     if msg.event == 'subscribe':
         logger.info(msg.source)
@@ -128,8 +124,7 @@ def token_post():
             if not user:
                 user = autoregister(msg.source)
             if seller.users == user:
-                reply = TextReply(content='您不能关注自己', message=msg)
-                return reply
+                return TextReply(content='您不能关注自己', message=msg)
             if not Follow.query.filter_by(users=user).filter_by(seller=seller).first():
                 Follow.create(
                     users = user,
@@ -138,14 +133,12 @@ def token_post():
                 seller_name = seller.name
                 redirect_url = url_for('public.home',_external=True)
                 textreply_str = f'您已关注{seller_name}<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
-                reply = TextReply(content=textreply_str, message=msg)
-                return reply
+                return TextReply(content=textreply_str, message=msg)
+                
             else:
                 redirect_url = url_for('public.home',_external=True)
                 textreply_str = f'您已关注关注过该店铺了。<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
-                reply = TextReply(content=textreply_str, message=msg)
-                return reply
-
+                return  TextReply(content=textreply_str, message=msg)
 
 
         reply = TextReply(content=msg.scene_id, message=msg)
