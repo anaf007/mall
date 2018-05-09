@@ -162,7 +162,7 @@ def autoregister(wechat_id=''):
 
 @blueprint.route('/autologin/<string:name>')
 @blueprint.route('/autologin')
-@oauth(scope='snsapi_base')
+# @oauth(scope='snsapi_base')
 def autologin(name=''):
 	if name:
 		user = User.query.filter_by(username=name).first()
