@@ -107,6 +107,7 @@ def token_post():
         return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
 
     logger.info(msg.event)
+    print(msg.event)
     #关注事件
     if msg.event == 'subscribe':
         createmenu()
