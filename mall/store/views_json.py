@@ -104,20 +104,15 @@ def get_operating_json():
     #计算天
     day_original_price = 0
     day_special_price = 0
-    print(day_order)
-    print('====')
     for i in day_order:
         for j in i.sale_id:
             if not j.original_price:
                 j.original_price = 0
             if not j.special_price:
                 j.special_price = 0
-            print(j.id,'----',j.original_price,'===',j.special_price)
             day_original_price += j.original_price*j.count
             day_special_price += j.special_price*j.count
 
-    print(day_original_price)
-    print(day_special_price)
 
     #计算周
     weekday_original_price = 0
@@ -128,8 +123,8 @@ def get_operating_json():
                 j.original_price = 0
             if not j.special_price:
                 j.special_price = 0
-            weekday_original_price += j.original_price
-            weekday_special_price += j.special_price
+            weekday_original_price += j.original_price*j.count
+            weekday_special_price += j.special_price*j.count
 
     #计算月
     mon_original_price = 0
@@ -140,8 +135,8 @@ def get_operating_json():
                 j.original_price = 0
             if not j.special_price:
                 j.special_price = 0
-            mon_original_price += j.original_price
-            mon_special_price += j.special_price
+            mon_original_price += j.original_price*j.count
+            mon_special_price += j.special_price*j.count
 
     day_prict = [day_original_price,day_special_price]
     weekday_prict = [weekday_original_price,weekday_special_price]
