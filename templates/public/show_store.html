@@ -2,6 +2,27 @@
 {% block title %}产品列表{% endblock %}
 {% block body %}
 
+
+<script type="text/javascript">
+function addFly(event) {
+	alert();
+    var offset = $('#amount').offset(), flyer = $('<img class="u-flyer" src="/static/images/add_icon.png"/>');
+    flyer.fly({
+        start: {
+            left: event.pageX-40,
+            top: event.pageY-20
+        },
+        end: {
+            left: offset.left,
+            top: offset.top,
+            width: 24,
+            height: 24,
+        }
+    });
+}
+</script>
+
+
 <div class="goodsListTitle">
 	<div class="nametit">{{seller[0]}}</div>
 	<div class="jiage">{{seller[1]}} </div>
@@ -105,24 +126,7 @@
 	</div>
 </div>
 
-<script type="text/javascript">
-function addFly(event) {
-	alert();
-    var offset = $('#amount').offset(), flyer = $('<img class="u-flyer" src="/static/images/add_icon.png"/>');
-    flyer.fly({
-        start: {
-            left: event.pageX-40,
-            top: event.pageY-20
-        },
-        end: {
-            left: offset.left,
-            top: offset.top,
-            width: 24,
-            height: 24,
-        }
-    });
-}
-</script>
+
 <script>
 
 	$(function() {
