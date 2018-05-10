@@ -1,39 +1,40 @@
 {%extends 'store/base.html'%}
-{% block title %}添加收货地址{%endblock%}
+{% block title %} 添加收货地址 {%endblock%}
 {% block body %} 
+
 <form action="" method="post">
 
 {{ form.hidden_tag() }}
 
-<div class="Release_list_box">
+<div class="m-cell">
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.name(class='cell-input',placeholder="收货人姓名") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.phone(class='cell-input',placeholder="收货人电话") }} 
+        </div>
+    </div>
+    <div class="cell-item">
+        <div class="cell-right">
+        {{ form.addess(class='cell-input',placeholder="收货地址") }} 
+        </div>
+    </div>
+    
 
     
-    <a href="#"> {{ form.name.label }} {{ form.name() }}  </a> 
-    <a href="#"> {{ form.phone.label }} {{ form.phone() }}  </a> 
-    <a href="#"> {{ form.address.label }} {{ form.address() }}  </a>
-
 </div>
+    
+  <input type="submit" class="btn-block btn-warning" value="添加">
+   
 
-<div class="blank4"></div>
-
-<!--按钮-->
-<div class="Baby_Box">
-
-<input type="submit" value="添加" style="width:100%;">
-  
-    <!-- <input class="goBuyBtn" type="button" value="添加仓库" onclick="window.location = '{{url_for('store.add_warehouse')}}'"> -->
-    <!-- <input class="goShoppingcartBtn" type="button" value="导出数据" onclick="window.location = '{{url_for('store.toexcel_location')}}'"> -->
- 
-</div>
 </form>
-<style>
-   .Baby_Box input[type="submit"] { float: left; background: #ff4900; line-height: 50px; width: 50%; font-size: 14px; color: #fff;  border-right: 1px solid white; }
- 
-</style>
- {%endblock%}
 
 
+{%endblock%}
 
 
-
-
+</body>
+</html>
