@@ -26,14 +26,16 @@
 			{%for  j in v[1]%}
 			<li>
 
-				<a href="{{url_for('public.show_goods',id=j[0][0].id)}}">
+				<!-- <a href="{{url_for('public.show_goods',id=j[0][0].id)}}"> -->
+				<a href="#">
 					<div class="goodimg">
 						<img src="{{url_for('public.get_image',filename=j[0][0].main_photo)}}">
 					</div>
 				</a>
 				
 				<div class="jieshao">
-					<a href="{{url_for('public.show_goods',id=j[0][0].id)}}">
+					<!-- <a href="{{url_for('public.show_goods',id=j[0][0].id)}}"> -->
+					<a href="#">
 						<div class="sku">{{j[0][0].title}}</div>
 					</a>
 
