@@ -311,8 +311,6 @@ class GoodsAllocation(SurrogatePK,Model):
 	# stock_id = relationship('Stock', backref='goods_allocation')
 	
 
-	
-
 #库存
 class Inventory(SurrogatePK,Model):
 
