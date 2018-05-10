@@ -8,14 +8,18 @@ function addFly(event) {
     var offset = $('#amount').offset(), flyer = $('<img class="u-flyer" src="/static/images/add_icon.png"/>');
     flyer.fly({
         start: {
-            left: event.pageX-40,
-            top: event.pageY-20
+            left: event.pageX,
+            top: event.pageY
         },
         end: {
             left: offset.left,
             top: offset.top,
             width: offset.left +1,
             height: offset.top +1,
+        }
+        onEnd: function() { 
+        	$("#amount").show().animate({width: '200px'},300).fadeOut(500);
+        	this.destory();
         }
     });
 }
