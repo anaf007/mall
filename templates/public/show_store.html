@@ -16,7 +16,7 @@ function addFly(event) {
             top: offset.top,
             width: offset.left +1,
             height: offset.top +1,
-        }
+        },
         onEnd: function() { 
         	$("#amount").show().animate({width: '200px'},300).fadeOut(500);
         	this.destory();
