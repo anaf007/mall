@@ -150,9 +150,7 @@ function addFly(event) {
 				 data:{'id':goods_id.val()},
 				 dataType: "json",
 				 success: function(data){
-				 	alert(1);
-				 	addFly(event);
-				 	alert(2);
+
 				 }
 			});
 		});
@@ -204,6 +202,7 @@ function addFly(event) {
 			 data:{'id':t.val()},
 			 dataType: "json",
 			 success: function(data){
+			 	addFly(event);
 			 	// alert('您已添加 '+data.title+' 至购物车。\n销售火爆，购物车信息将在刷新后更新。');
 			 }
 		});
