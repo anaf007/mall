@@ -138,7 +138,7 @@ function addFly(event) {
 		});
 			//加
 		$(".add").click(function() {
-			addFly(event);
+			
 
 			var t = $(this).parent().find('input[class*=count]');
 			var goods_id = $(this).parent().find('input[id*=goods_id]');
@@ -150,7 +150,9 @@ function addFly(event) {
 				 data:{'id':goods_id.val()},
 				 dataType: "json",
 				 success: function(data){
-				 	
+				 	alert(1);
+				 	addFly(event);
+				 	alert(2);
 				 }
 			});
 		});
