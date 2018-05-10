@@ -112,7 +112,7 @@ def get_operating_json():
                 j.original_price = 0
             if not j.special_price:
                 j.special_price = 0
-            print(j.id,'----'j.original_price,'===',j.special_price)
+            print(j.id,'----',j.original_price,'===',j.special_price)
             day_original_price += j.original_price*j.count
             day_special_price += j.special_price*j.count
 
