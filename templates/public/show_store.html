@@ -68,7 +68,7 @@
 <div class="operationBox">
 	<div class="operation">
 		<a class="ShopDetailsLink  goShoppingcartBtn" href="javascript:;"></a>
-		<!-- <div class="moneybox">￥178 </div> -->
+		<div class="moneybox">￥178 </div>
 		<input class="goBuyBtn" type="button" value="去结算" onclick="javascript:window.location.href='{{url_for('public.submit_order')}}'">
 	</div>
 </div>
@@ -105,8 +105,24 @@
 	</div>
 </div>
 
-
+<script src="{{url_for('static',filename='js/jquery.fly.min.js')}}"></script>
 <script>
+function addFly(event) {
+    var offset = $('.ShopDetailsLink').offset(), flyer = $('<img class="u-flyer" src="/static/images/logo.png"/>');
+    flyer.fly({
+        start: {
+            left: event.pageX-40,
+            top: event.pageY-20
+        },
+        end: {
+            left: offset.left,
+            top: offset.top,
+            width: 24,
+            height: 24,
+        }
+    });
+}
+
 	$(function() {
 
 		//价格选择
@@ -128,6 +144,8 @@
 					 	
 					 }
 				});
+
+				addFly(event);
 
 			});
 			//减
@@ -164,9 +182,6 @@
 
 			}
 			t.val(parseInt(t.val()) - 1);
-			
-				
-				
 
 		});
 
@@ -181,7 +196,7 @@
 			 data:{'id':t.val()},
 			 dataType: "json",
 			 success: function(data){
-			 	alert('您已添加 '+data.title+' 至购物车。\n销售火爆，购物车信息将在刷新后更新。');
+			 	// alert('您已添加 '+data.title+' 至购物车。\n销售火爆，购物车信息将在刷新后更新。');
 			 }
 		});
 	  
