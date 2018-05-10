@@ -68,7 +68,7 @@
 <div class="operationBox">
 	<div class="operation">
 		<a class="ShopDetailsLink  goShoppingcartBtn" href="javascript:;"><span id="amount"></span></a>
-		<div class="moneybox">￥178 </div>
+		<!-- <div class="moneybox">￥178 </div> -->
 		<input class="goBuyBtn" type="button" value="去结算" onclick="javascript:window.location.href='{{url_for('public.submit_order')}}'">
 	</div>
 </div>
@@ -108,6 +108,7 @@
 
 <script>
 function addFly(event) {
+	alert();
     var offset = $('#amount').offset(), flyer = $('<img class="u-flyer" src="/static/images/add_icon.png"/>');
     flyer.fly({
         start: {
@@ -127,27 +128,27 @@ function addFly(event) {
 
 		//价格选择
 		$(".jiantou li").click(function() {
-				$(this).addClass('caret-on').siblings().removeClass('caret-on');
+			$(this).addClass('caret-on').siblings().removeClass('caret-on');
 
-			});
+		});
 			//加
 		$(".add").click(function() {
-				var t = $(this).parent().find('input[class*=count]');
-				var goods_id = $(this).parent().find('input[id*=goods_id]');
-				t.val(parseInt(t.val()) + 1);
-				$.ajax({
-					 type: "GET",
-					 url: "/add_car/",
-					 data:{'id':goods_id.val()},
-					 dataType: "json",
-					 success: function(data){
-					 	
-					 }
-				});
+			addFly(event);
 
-				addFly(event);
+			var t = $(this).parent().find('input[class*=count]');
+			var goods_id = $(this).parent().find('input[id*=goods_id]');
+			t.val(parseInt(t.val()) + 1);
 
+			$.ajax({
+				 type: "GET",
+				 url: "/add_car/",
+				 data:{'id':goods_id.val()},
+				 dataType: "json",
+				 success: function(data){
+				 	
+				 }
 			});
+		});
 			//减
 		$(".minus").click(function() {
 			var t = $(this).parent().find('input[class*=count]');
