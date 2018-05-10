@@ -1021,8 +1021,6 @@ def to_excel_quantity_check(id=0):
 
 
 
-
-
 @csrf_protect.exempt
 @blueprint.route('/in_excel_quantity_check/',methods=['POST'])
 @login_required
@@ -1035,6 +1033,7 @@ def in_excel_quantity_check():
     return json.dumps({'id':id})
 
 
+#店铺设置
 @blueprint.route('/setting_store')
 @templated()
 @login_required
@@ -1053,6 +1052,7 @@ def setting_store(id=0):
 
 
 
+#店铺设置
 @blueprint.route('/setting_store',methods=['POST'])
 @templated()
 @login_required
@@ -1075,7 +1075,7 @@ def setting_store_post(id=0):
     return redirect(url_for('.home'))
 
 
-
+#店铺服务条款
 @blueprint.route('/service_store')
 @templated()
 @login_required
@@ -1084,7 +1084,7 @@ def service_store(id=0):
 
 
 
-
+#经营数据
 @blueprint.route('/operating')
 @templated()
 @login_required

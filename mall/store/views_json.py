@@ -113,6 +113,9 @@ def get_operating_json():
             day_original_price += j.original_price
             day_special_price += j.special_price
 
+    print(day_original_price)
+    print(day_special_price)
+
     #计算周
     weekday_original_price = 0
     weekday_special_price = 0
