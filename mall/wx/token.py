@@ -106,14 +106,13 @@ def token_post():
         logger.info(str(e))
         return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
 
-    logger.info(msg.event)
-    print(msg.event)
     #关注事件
     if msg.event == 'subscribe':
         createmenu()
         user = autoregister(msg.source)
         reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
     #扫描二维码关注事件?20180510变成了scan,之前是subscribe_scan
+    #scan为带场景值 subscribe_scan为普通的扫码关注
     if msg.event == 'scan' or msg.event == 'subscribe_scan':   #?
     
         createmenu()
