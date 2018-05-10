@@ -43,6 +43,7 @@ def my_order():
 		.with_entities(
 			UserOrder.id,UserOrder.number,UserOrder.buy_time,UserOrder.pay_price,UserOrder.order_state,UserOrder.goods_number\
 		)\
+		.filter_by(users_buy=current_user)\
 		.order_by(desc(UserOrder.id))\
 		.all()
 	return dict(order=user_order)
