@@ -633,10 +633,10 @@ def receipt_add_goods_post(id=0):
     success_alllocation = GoodsAllocation.query.filter_by(users=current_user).filter_by(name=allocation_name).first()
 
     if not success_goodsed:
-       flash('信息错误。，没有这个商品，请检查名称是否输入正确')
+       flash('信息错误。没有这个商品，请检查名称是否输入正确')
        return redirect(url_for('.show_receipt',id=id))
     if not success_alllocation:
-       flash('信息错误。，没有这个货位，请检查名称是否输入正确')
+       flash('信息错误。没有这个货位，请检查名称是否输入正确')
        return redirect(url_for('.show_receipt',id=id))
 
     receipt.variety += 1

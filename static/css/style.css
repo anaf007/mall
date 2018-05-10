@@ -114,7 +114,7 @@
 		
 		.goodsList{ display: none;}
 		.goodsList li{background: #fff;overflow: hidden; padding: 10px;border-bottom: 1px solid #ccc;}
-		.goodsList li .goodimg{ width: 100px; height: 100px; text-align: center; border: 1px solid #eee; float: left; margin-right: 0px; position: relative;}
+		.goodsList li .goodimg{ width: 100px; height: 100px; text-align: center;  float: left; margin-right: 0px; position: relative;}
 		.goodsList li .goodimg img{ width: 90px; height: 90px;}
 		/*.goodsList li .jieshao{ margin-left: 110px;}*/
 		.goodsList li .title{ height: 17px; font-size: 14px; color: #333;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}

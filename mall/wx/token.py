@@ -109,18 +109,19 @@ def token_post():
     logger.info(msg.event)
     #关注事件
     if msg.event == 'subscribe':
-        logger.info(msg.source)
         createmenu()
         user = autoregister(msg.source)
         reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
-    #扫描二维码关注事件?20180510变成了scan
+    #扫描二维码关注事件?20180510变成了scan,之前是subscribe_scan
     if msg.event == 'scan':   #?
-        print('scan')
-        print(msg.scene_id)
+    
         createmenu()
+
         if msg.scene_id:
+
             seller = Seller.query.get_or_404(msg.scene_id)
             user = User.query.filter_by(wechat_id=msg.source).first()
+
             if not user:
                 user = autoregister(msg.source)
             if seller.users == user:
@@ -130,6 +131,7 @@ def token_post():
                     users = user,
                     seller = seller
                 )
+
                 seller_name = seller.name
                 redirect_url = url_for('public.home',_external=True)
                 textreply_str = f'您已关注{seller_name}<a href="{redirect_url}">点击进入店铺购买东西吧。</a>'
