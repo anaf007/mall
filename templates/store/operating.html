@@ -11,7 +11,7 @@
      var myChart = echarts.init(document.getElementById('g-view'));
      
      
-     myChart.showLoading();
+    myChart.showLoading();
     //  // 异步加载数据
     $.ajax({
          type: "GET",
@@ -50,6 +50,8 @@
 
 
     });
+
+    myChart.hideLoading(); // 隐藏加载动画
    
  
 
