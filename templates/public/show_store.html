@@ -5,6 +5,7 @@
 
 <script type="text/javascript">
 function addFly(event) {
+	alert(3);
     var offset = $('#amount').offset(), flyer = $('<img class="u-flyer" src="/static/images/add_icon.png"/>');
     flyer.fly({
         start: {
@@ -18,6 +19,7 @@ function addFly(event) {
             height: 24,
         }
     });
+    alert(4);
 }
 </script>
 
@@ -194,6 +196,11 @@ function addFly(event) {
 
 	// 商品展示添加到购物车
 	$(".main_add").click(function(){
+
+		alert('1')
+	 	addFly(event);
+	 	alert(2);
+
 		var t = $(this).parent().find('input[id*=goods_id]');
 		$.ajax({
 			 type: "GET",
@@ -201,7 +208,7 @@ function addFly(event) {
 			 data:{'id':t.val()},
 			 dataType: "json",
 			 success: function(data){
-			 	addFly(event);
+
 			 	// alert('您已添加 '+data.title+' 至购物车。\n销售火爆，购物车信息将在刷新后更新。');
 			 }
 		});
