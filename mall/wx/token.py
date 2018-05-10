@@ -113,7 +113,7 @@ def token_post():
         user = autoregister(msg.source)
         reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
     #扫描二维码关注事件?20180510变成了scan,之前是subscribe_scan
-    if msg.event == 'scan':   #?
+    if msg.event == 'scan' or msg.event == 'subscribe_scan':   #?
     
         createmenu()
 
