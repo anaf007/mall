@@ -19,9 +19,10 @@ function addFly(event) {
         },
         onEnd: function() { 
         	$("#amount").show().animate({width: '200px'},300).fadeOut(500);
-        	this.destory();
+        	
         }
     });
+    flyer.destroy();
 }
 </script>
 
@@ -210,7 +211,6 @@ function addFly(event) {
 			 dataType: "json",
 			 success: function(data){
 
-			 	// alert('您已添加 '+data.title+' 至购物车。\n销售火爆，购物车信息将在刷新后更新。');
 			 }
 		});
 	  
