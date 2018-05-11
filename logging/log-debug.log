@@ -1,0 +1,6 @@
+2018-05-12 00:55:10 werkzeug DEBUG 88 Initializing Flask-DebugToolbar log handler
+2018-05-12 00:55:10 werkzeug INFO 88 192.168.31.13 - - [12/May/2018 00:55:10] "GET / HTTP/1.1" 302 -
+2018-05-12 00:55:10 werkzeug INFO 88 192.168.31.13 - - [12/May/2018 00:55:10] "GET /users/autologin?next=%2F HTTP/1.1" 302 -
+2018-05-12 00:57:51 werkzeug DEBUG 88 Initializing Flask-DebugToolbar log handler
+2018-05-12 00:57:51 werkzeug INFO 88 192.168.31.221 - - [12/May/2018 00:57:51] "GET / HTTP/1.1" 302 -
+2018-05-12 00:57:51 werkzeug INFO 88 192.168.31.221 - - [12/May/2018 00:57:51] "GET /users/autologin?next=%2F HTTP/1.1" 302 -
