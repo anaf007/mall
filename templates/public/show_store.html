@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 function addFly(event) {
-    var offset = $('#amount').offset()
+    var offset = $('#amount').offset();
     var flyer = $('<img class="u-flyer" src="/static/images/add_icon.png"/>');
     flyer.fly({
         start: {
@@ -18,8 +18,8 @@ function addFly(event) {
             width: 1,
             height: 1,
         },
+        onEnd: function() { this.destory()}
     });
-    flyer.destroy();
 }
 </script>
 
