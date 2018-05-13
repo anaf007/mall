@@ -53,7 +53,7 @@ env/
 /mall/webpack/manifest.json
 
 data/
-loging/
+logging/
 
 .DS_Store
 
