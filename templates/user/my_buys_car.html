@@ -1,15 +1,226 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
-	my_buys_car: <br>
-	{%for i in buys_car%}
-		商品：{{i.goods_id}}:count:{{i.count}} <br>	
-	{%endfor%}
+{%extends 'store/base.html'%}
+{% block title %}我的购物车{% endblock %}
+{% block body %}
 
-	<a href="{{url_for('public.submit_order')}}">结算</a>
-</body>
-</html>
+<link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}" />
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.2.4.min.js')}}"></script>
+
+
+    <section class="g-scrollview">
+
+        <div class="m-cell demo-small-pitch">
+        
+           
+
+            <div class="cell-item">
+                <div class="cell-left">{{seller.name}}</div>
+                <div class="cell-right">{{seller.contact}}</div>
+            </div>
+
+        </div>
+
+
+        <article class="m-list list-theme4" style="margin-bottom:60px;">
+
+            {%for i in buys_car%}
+            <a href="javascript:;" class="list-item">
+                <div class="list-img">
+                    <img src="{{url_for('public.get_image',filename=i[1].main_photo)}}">
+                </div>
+                <div class="list-mes">
+                    <h3 class="list-title">{{i[1].title}}</h3>
+                    <div class="list-mes-item">
+                        <div>
+                            <span class="list-price"><em>¥</em>{{i[1].original_price}}</span>
+                            <!-- <span class="list-price-price"></span> -->
+                        </div>
+                        <div>
+
+                            <div class="attr_ope">
+                                <span class="minus"></span>
+                                <input type="text" class="count" value="{{i[0].count}}">
+                                <span class="main_add"></span>
+                                <input type="hidden" name="goods_id" id="goods_id" value="{{i[1].id}}">
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            {%endfor%}
+
+            
+            
+        </article>
+
+    </section>
+
+    
+
+    
+<!-- </div> -->
+
+<footer class="m-tabbar tabbar-fixed operationBox">
+    <div class="operation">
+    
+        <a href="{{url_for('public.submit_order')}}" class="goBuyBtn">结算</a>
+    </div>
+
+</footer>
+
+</form>
+
+<script type="text/javascript">
+        //加
+        $(".main_add").click(function() {
+            
+
+            var t = $(this).parent().find('input[class*=count]');
+            var goods_id = $(this).parent().find('input[id*=goods_id]');
+            t.val(parseInt(t.val()) + 1);
+
+            $.ajax({
+                 type: "GET",
+                 url: "/add_car/",
+                 data:{'id':goods_id.val()},
+                 dataType: "json",
+                 success: function(data){
+
+                 }
+            });
+        });
+
+            //减
+        $(".minus").click(function() {
+            var t = $(this).parent().find('input[class*=count]');
+            
+            var goods_id = $(this).parent().find('input[id*=goods_id]');
+            if(parseInt(t.val()) <= 1) {
+                t.val(0);
+                if(parseInt(t.val()) == 0) {
+                    $.ajax({
+                         type: "GET",
+                         url: "/delete_car/",
+                         data:{'id':goods_id.val()},
+                         dataType: "json",
+                         success: function(data){
+                            
+                         }
+                    });
+
+                }
+                
+                return;
+            }else{
+                $.ajax({
+                     type: "GET",
+                     url: "/sub_car/",
+                     data:{'id':goods_id.val()},
+                     dataType: "json",
+                     success: function(data){
+                        
+                     }
+                });
+
+            }
+            t.val(parseInt(t.val()) - 1);
+
+        });
+
+
+</script>
+
+
+<style type="text/css">
+.cell-left{white-space:normal;}
+.g-scrollview:after {
+    display: block;
+    height: 0.12rem;
+}
+.m-tabbar{padding: 0}
+.operationBox {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    background: #333;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    z-index: 1111;
+}
+.tabbar-fixed{
+    background: #333;
+}
+.operation {
+    margin-left: 12px;
+    width: 100%;
+}
+.totalprice {
+    float: left;
+    line-height: 50px;
+    font-size: 18px;
+}
+.goBuyBtn {
+    -webkit-appearance: none;
+    border-radius: 0px;
+    cursor: pointer;
+    float: right;
+    background: #eb0672;
+    line-height: 50px;
+    font-size: 18px;
+    color: #fff;
+    padding: 0 5%;
+    border: none;
+}
+
+.top-adrees {
+    padding: 15px;
+    /*padding-top: 21px;*/
+    margin-bottom: 5px;
+    color: #333;
+    background: #fff url({{url_for('static',filename='images/border.png')}}) repeat-x top;
+    overflow: hidden;
+}
+.fl {
+    float: left;
+}
+.top-adrees p {
+    font-size: 16px;
+    line-height: 30px;
+}
+.adr {
+    font-size: 16px;
+    line-height: 35px;
+}
+.adr img {
+    vertical-align: top;
+    width: 30px;
+    float: left;
+}
+.top-adrees p span {
+    margin: 0px 35px 0 3px;
+}
+i{font-size: 22px;color: #0fbce6}
+.list-price-self{
+    padding-left: .06rem;
+    font-size: .2rem;
+    margin-left: .02rem;
+    color: #8C8C8C;
+}
+.count{width: 25px;}
+.attr_ope {
+    float: right;
+    overflow: hidden;
+    zoom: 1;
+    margin-top: 4px;
+}
+</style>
+
+{% endblock %}
+
+        
+

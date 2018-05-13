@@ -91,18 +91,45 @@
 		.hot-con li .attr_ope>span.minus{ margin-left: 2px; display: inline-block; width: 23px; height: 23px; background: url(../images/minus_icon.png) no-repeat -0px -0px; background-size: 22px auto; float: left; cursor: pointer;}
 		.hot-con li .attr_ope>.count{ color: #000; float: left; width: 30px; line-height: 22px; text-align: center; border: none;}
 		/*首页 end*/
-		/*产品列表*/
 		
-		.goodsListBox{ width: 100%; display: table; height: 100%; table-layout: fixed;margin-bottom: 70px;}
-		.goodsListLeft{ display: table-cell; vertical-align: top; background: #efefef; width: 90px; position: relative;border-right:1px solid #ccc /*float: left; background: #efefef; width: 90px; overflow-y: auto;*/
-			}
+		/*产品列表*/.goodsListBox{ width: 100%;  height: 100%; max-width: 640px; margin: 0 auto; position: relative;}
+		.goodsListLeft{ background: #f3f5f7;
+    position: fixed;
+    left: 0;
+    top: 53px;
+    bottom: 0;
+    margin-bottom: 50px;
+    overflow-y: scroll;}
+		.goodsListLeft>li{  cursor: pointer; border-bottom: 1px solid #dcdcdc; width:90px}
+		.GLindex{height: 50px; line-height: 50px; color: #666; display: block; font-size: 16px; font-weight: bold; text-align: center; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; padding: 0 5px;}
+		.GLindexClick{ color: #333; background: #fff;}
+		.goodsListRight{position: fixed; 
+    left: 0;
+    top: 53px;
+    bottom: 0;
+  min-width: 17.5rem;
+    overflow-y: scroll;
+    background: #fff;
+    margin-left:91px;
+    margin-bottom: 50px; 
+   }
+.jieshao{ display: block; width: 100% }
+
+		.goodsList{ overflow: hidden;}
+		.goodsListTitle{ overflow: hidden; padding: 15px 0;font-size: 16px; font-weight: 700; background: #fff; color: #333; margin-bottom: 3px;}
+		.goodsListTitle .nametit{ float: left; margin-left: 15px; padding-left: 10px; border-left: 5px solid #ce9544;line-height: 20px;}
+		
+		/*.goodsListBox{ width: 100%; display: table; height: 100%; table-layout: fixed;margin-bottom: 170px;}
+		.goodsListLeft{ display: table-cell; vertical-align: top; background: #efefef; width: 90px; position: relative;border-right:1px solid #ccc /*float: left; background: #efefef; width: 90px; overflow-y: auto;}
 		.goodsListLeft>li{ cursor: pointer; border-bottom: 1px solid #dcdcdc;}
 		.GLindex{height: 50px; line-height: 50px; color: #666; display: block; font-size: 16px; font-weight: bold; text-align: center; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; padding: 0 5px;}
 		.GLindexClick{ color: #333; background: #fff;}
-		.goodsListRight{ background: #e9e9e9; position: relative; display: table-cell; vertical-align: top; width: 100%; box-sizing: border-box;/*overflow-y: auto;*/
+		.goodsListRight{ background: #e9e9e9;margin-bottom: 50px; position: relative; display: table-cell; vertical-align: top; width: 100%; box-sizing: border-box;
 			}
+		.goodsList{margin-bottom: 50px;}
 		.goodsListTitle{ overflow: hidden; padding: 15px 0;font-size: 16px; font-weight: 700; background: #fff; color: #333; margin-bottom: 3px;}
 		.goodsListTitle .nametit{ float: left; margin-left: 15px; padding-left: 10px; border-left: 5px solid #ce9544;line-height: 20px;}
+		*/
 		/*价格箭头*/
 		
 		.jiage{ float: right; margin-right: 15px; font-size: 14px;line-height: 20px;}
@@ -113,12 +140,17 @@
 		/*价格箭头 end*/
 		
 		.goodsList{ display: none;}
-		.goodsList li{background: #fff;overflow: hidden; padding: 10px;border-bottom: 1px solid #ccc;}
+		.goodsList li{width: 100%;display: flex;
+    float: left;
+    padding: .2rem;
+    box-sizing: border-box;
+    position: relative;}.goodsList li a{ display: block; float: left;}
 		.goodsList li .goodimg{ width: 100px; height: 100px; text-align: center;  float: left; margin-right: 0px; position: relative;}
 		.goodsList li .goodimg img{ width: 90px; height: 90px;}
 		/*.goodsList li .jieshao{ margin-left: 110px;}*/
 		.goodsList li .title{ height: 17px; font-size: 14px; color: #333;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
 		.goodsList li .sku{ font-size: 14px; color: #999;font-size: 18px;color: #333;}
+	
 		.goodsList li .sku p{ line-height: 25px;}
 
 		.goodsList li .sku span, del{ color: #999; font-size: 14px;}
@@ -127,7 +159,7 @@
 		.goodsList li .attr{ position: relative;line-height: 25px;}
 		.goodsList li .attr span{color: #999; font-size: 14px;}
 		.goodsList li .attr .price{ color: #333; font-size: 12px; margin-right: 5px;}
-		.goodsList li .attr .price .intPrice{ color: #e60044;font-size: 16px;}
+		.goodsList li .attr .price .intPrice{ float: left; color: #e60044;font-size: 16px;}
 		.goodsList li .attr_ope{ margin-top: 7px; overflow: hidden;}
 		.goodsList li .attr_ope{ float: right; overflow: hidden; zoom: 1; margin-top: 4px;}
 		.goodsList li .attr_ope>span.main_add{ margin: 0px 2px; display: inline-block; width: 22px; height: 22px; background: url(../images/add_icon.png) no-repeat; background-size: 21px auto; float: left; cursor: pointer;}

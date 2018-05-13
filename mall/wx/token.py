@@ -38,12 +38,14 @@ def createmenu():
 @blueprint.route('/token',methods=['GET'])
 @wechat_required
 def token_get():
+    print('ok')
     signature = request.args.get('signature','')
     timestamp = request.args.get('timestamp','')
     nonce = request.args.get('nonce','')
     echostr = request.args.get('echostr','')
-    token = current_app.config['SCHOOL_WECHAT_TOKEN']
+    token = current_app.config['MALL_WECHAT_TOKEN']
     sortlist = [token, timestamp, nonce]
+    print(token)
     sortlist.sort()
     sha1 = hashlib.sha1()
     map(sha1.update, sortlist)

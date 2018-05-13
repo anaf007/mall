@@ -1,1 +1,3950 @@
-!function(t){"use strict";function o(t){return{set:function(e,i){t.setItem(e,n.serialize(i))},get:function(e){return n.deserialize(t.getItem(e))},remove:function(e){t.removeItem(e)},clear:function(){t.clear()}}}var e=t.document,i={};$(t).on("load",function(){"function"==typeof FastClick&&FastClick.attach(e.body)});var n=i.util={parseOptions:function(t){if($.isPlainObject(t))return t;var e=t?t.indexOf("{"):-1,i={};if(-1!=e)try{i=new Function("","var json = "+t.substr(e)+"; return JSON.parse(JSON.stringify(json));")()}catch(t){}return i},pageScroll:function(){var t=function(t){t.preventDefault(),t.stopPropagation()},i=!1;return{lock:function(){i||(i=!0,e.addEventListener("touchmove",t))},unlock:function(){i=!1,e.removeEventListener("touchmove",t)}}}(),localStorage:function(){return o(t.localStorage)}(),sessionStorage:function(){return o(t.sessionStorage)}(),serialize:function(t){return"string"==typeof t?t:JSON.stringify(t)},deserialize:function(t){if("string"==typeof t)try{return JSON.parse(t)}catch(e){return t||void 0}}};$.fn.emulateTransitionEnd=function(t){var e=!1,i=this;$(this).one("webkitTransitionEnd",function(){e=!0});var n=function(){e||$(i).trigger("webkitTransitionEnd")};setTimeout(n,t)},"function"==typeof define?define(i):t.YDUI=i}(window),function(t){var e=t.document,i=t.YDUI,n=t.navigator&&t.navigator.userAgent||"",o=!!n.match(/(iPad).*OS\s([\d_]+)/),a=!!n.match(/(iPod)(.*OS\s([\d_]+))?/),r=!o&&!!n.match(/(iPhone\sOS)\s([\d_]+)/);i.device={isMobile:!!n.match(/AppleWebKit.*Mobile.*/)||"ontouchstart"in e.documentElement,isIOS:!!n.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),isAndroid:!!n.match(/(Android);?[\s\/]+([\d.]+)?/),isIpad:o,isIpod:a,isIphone:r,isWebView:(r||o||a)&&!!n.match(/.*AppleWebKit(?!.*Safari)/i),isWeixin:n.indexOf("MicroMessenger")>-1,isMozilla:/firefox/.test(navigator.userAgent.toLowerCase()),pixelRatio:t.devicePixelRatio||1}}(window),function(t){t.document.addEventListener("touchstart",function(t){},!1)}(window),function(t){"use strict";function i(t,e){this.$element=$(t),this.options=$.extend({},i.DEFAULTS,e||{}),this.init()}function n(t){return this.each(function(){new i(this,t)})}var e=t.YDUI.util;i.DEFAULTS={binder:t,initLoad:!0,pageSize:0,loadingHtml:"加载中...",doneTxt:"没有更多数据了",backposition:!1,jumpLink:"",loadListFn:null,loadStorageListFn:null},i.prototype.init=function(){var i=this,n=i.options,o=t.location;if(~~n.pageSize<=0)return void console.error("[YDUI warn]: 需指定pageSize参数【即每页请求数据的长度】");var a=o.pathname.toUpperCase().replace(/\/?\.?/g,"");a||(a="YDUI_"+o.host.toUpperCase().replace(/\/?\.?:?/g,"")),i.backParamsKey=a+"_BACKPARAMS",i.backParamsListKey=a+"_LIST_",i.$element.append(i.$tag=$('<div class="J_InfiniteScrollTag"></div>')),i.listOffsetTop=i.$element.offset().top,i.initLoadingTip(),n.initLoad&&(n.backposition?!e.sessionStorage.get(i.backParamsKey)&&i.loadList():i.loadList()),i.bindScrollEvent(),n.backposition&&(i.loadListFromStorage(),i.bindLinkEvent())},i.prototype.initLoadingTip=function(){var t=this;t.$element.append(t.$loading=$('<div class="list-loading">'+t.options.loadingHtml+"</div>"))},i.prototype.scrollPosition=function(){var t=this,i=t.options,n=$(i.binder),o=e.sessionStorage.get(t.backParamsKey);o&&n.stop().animate({scrollTop:o.offsetTop},0,function(){t.scrolling=!1}),i.backposition&&t.bindLinkEvent(),e.pageScroll.unlock(),e.sessionStorage.remove(t.backParamsKey)},i.prototype.bindScrollEvent=function(){var e=this,i=$(e.options.binder),n=i.get(0)===t,o=n?$(t).height():i.height();i.on("scroll.ydui.infinitescroll",function(){if(!e.loading&&!e.isDone){var a=n?$(t).scrollTop():i.offset().top;e.$tag.offset().top<=a+o+o/10&&e.loadList()}})},i.prototype.bindLinkEvent=function(){var t=this;if(!t.options.jumpLink)return void console.error("[YDUI warn]: 需指定跳转详情页链接元素");$(t.options.binder).on("click.ydui.infinitescroll",t.options.jumpLink,function(i){i.preventDefault();var n=$(this),o=n.data("page");if(!o)return void console.error('[YDUI warn]: 跳转链接元素需添加属性[data-page="其所在页码"]');e.sessionStorage.set(t.backParamsKey,{offsetTop:$(t.options.binder).scrollTop()+n.offset().top-t.listOffsetTop,page:o}),location.href=n.attr("href")})},i.prototype.loadList=function(){var t=this,i=t.options;t.loading=!0,t.$loading.show(),"function"==typeof i.loadListFn&&i.loadListFn().done(function(n,o){var a=n.length;if(~~a<=0)return void console.error("[YDUI warn]: 需在 resolve() 方法里回传本次获取记录集合");a<i.pageSize&&(t.$element.append('<div class="list-donetip">'+i.doneTxt+"</div>"),t.isDone=!0),t.$loading.hide(),t.loading=!1,i.backposition&&e.sessionStorage.set(t.backParamsListKey+o,n)})},i.prototype.loadListFromStorage=function(){var t=this,i=e.sessionStorage.get(t.backParamsKey);if(i){e.pageScroll.lock();for(var n=i.page,o=[],a=1;a<=n;a++){var r=e.sessionStorage.get(t.backParamsListKey+a);o.push({page:a,list:r}),a==n&&r.length<t.options.pageSize&&(t.$element.append('<div class="list-donetip">'+t.options.doneTxt+"</div>"),t.$loading.hide(),t.loading=!1,t.isDone=!0)}t.options.loadStorageListFn(o,n+1).done(function(){t.scrollPosition()})}},$.fn.infiniteScroll=n}(window),function(t){"use strict";function e(t,i){this.$element=$(t),this.options=$.extend({},e.DEFAULTS,i||{}),this.init()}function i(t){return this.each(function(){new e(this,t)})}e.DEFAULTS={loadListFn:null,initLoad:!0,distance:100},e.prototype.init=function(){var t=this,e=t.touches;t.$dragTip=$('<div class="pullrefresh-dragtip"><span></span></div>'),t.$element.after(t.$dragTip),t.offsetTop=t.$element.offset().top,t.initTip(),t.bindEvent(),t.options.initLoad&&(e.loading=!0,"function"==typeof t.options.loadListFn&&t.options.loadListFn().done(function(){e.loading=!1}))},e.prototype.bindEvent=function(){var t=this;t.$element.on("touchstart.ydui.pullrefresh",function(e){t.onTouchStart(e)}).on("touchmove.ydui.pullrefresh",function(e){t.onTouchMove(e)}).on("touchend.ydui.pullrefresh",function(e){t.onTouchEnd(e)}),t.stopWeixinDrag()},e.prototype.touches={loading:!1,startClientY:0,moveOffset:0,isDraging:!1},e.prototype.stopWeixinDrag=function(){var t=this;$(document.body).on("touchmove.ydui.pullrefresh",function(e){t.touches.isDraging&&e.preventDefault()})},e.prototype.onTouchStart=function(t){var e=this;if(e.touches.loading)return void t.preventDefault();e.$element.offset().top<e.offsetTop||(e.touches.startClientY=t.originalEvent.touches[0].clientY)},e.prototype.onTouchMove=function(t){var e=this,i=t.originalEvent.touches[0];if(e.touches.loading)return void t.preventDefault();if(!(e.touches.startClientY>i.clientY||e.$element.offset().top<e.offsetTop||e.touches.loading)){e.touches.isDraging=!0;var n=i.clientY-e.touches.startClientY;e.$dragTip.find("span").css("opacity",n/100),n>=e.options.distance&&(n=e.options.distance),e.$dragTip.find("span").css("transform","rotate("+n/.25+"deg)"),e.touches.moveOffset=n,e.moveDragTip(n)}},e.prototype.onTouchEnd=function(t){var e=this,i=e.touches;if(i.loading)return void t.preventDefault();if(!(e.$element.offset().top<e.offsetTop)){if(e.$dragTip.addClass("pullrefresh-animation-timing"),i.moveOffset>=e.options.distance)return e.moveDragTip(e.options.distance/1.5),e.$dragTip.find("span").addClass("pullrefresh-loading"),void e.triggerLoad();e.touches.isDraging=!1,e.resetDragTip(),e.resetLoading()}},e.prototype.triggerLoad=function(){var t=this;t.touches.loading=!0,"function"==typeof t.options.loadListFn&&t.options.loadListFn().done(function(){setTimeout(function(){t.$dragTip.css({transform:"translate3d(0px, "+t.options.distance/1.5+"px, 0px) scale(0)"}),t.resetDragTip()},200)})},e.prototype.resetLoading=function(){var t=this;t.moveDragTip(0),t.$dragTip.find("span").removeClass("pullrefresh-loading").css({opacity:.5,transform:"rotate(0deg)"})},e.prototype.resetDragTip=function(){var t=this,e=t.touches;setTimeout(function(){e.isDraging=!1,e.loading=!1,e.moveOffset=0,t.moveDragTip(0),t.resetLoading(),t.$dragTip.removeClass("pullrefresh-animation-timing")},150)},e.prototype.moveDragTip=function(t){this.$dragTip.css({transform:"translate3d(0,"+t+"px,0) scale(1)"})},e.prototype.initTip=function(){var e=this,i=t.localStorage;"YDUI"!=i.getItem("LIST-PULLREFRESH-TIP")&&(e.$tip=$('<div class="pullrefresh-draghelp"><div><span>下拉更新</span></div></div>'),e.$tip.on("click.ydui.pullrefresh",function(){$(this).remove()}),e.$element.after(e.$tip),i.setItem("LIST-PULLREFRESH-TIP","YDUI"),setTimeout(function(){e.$tip.remove()},5e3))},$.fn.pullRefresh=i}(window),function(t){"use strict";function e(t,i){this.$element=$(t),this.options=$.extend({},e.DEFAULTS,i||{}),this.init()}e.DEFAULTS={attr:"data-url",binder:t,placeholder:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQIHWN4BQAA7ADrKJeAMwAAAABJRU5ErkJggg=="},e.prototype.init=function(){var e=this;e.bindImgEvent(),e.loadImg(),$(e.options.binder).on("scroll.ydui.lazyload",function(){e.loadImg()}),$(t).on("resize.ydui.lazyload",function(){e.loadImg()})},e.prototype.loadImg=function(){var e=this,i=e.options,n=$(i.binder),o=n.height(),a=n.get(0)===t?$(t).scrollTop():n.offset().top;e.$element.each(function(){var t=$(this),e=t.offset().top-a,i=e+t.height();(e>=0&&e<o||i>0&&i<=o)&&t.trigger("appear.ydui.lazyload")})},e.prototype.bindImgEvent=function(){var t=this,e=t.options;t.$element.each(function(){var t=$(this);t.is("img")&&!t.attr("src")&&t.attr("src",e.placeholder),t.one("appear.ydui.lazyload",function(){t.is("img")&&t.attr("src",t.attr(e.attr))})})},$.fn.lazyLoad=function(t){new e(this,t)}}(window),function(t){"use strict";function o(t,e){this.$element=$(t),this.options=$.extend({},o.DEFAULTS,e||{}),this.init()}function a(t){var e=Array.prototype.slice.call(arguments,1);return this.each(function(){var i=$(this),n=i.data("ydui.keyboard");n||i.data("ydui.keyboard",n=new o(this,t)),"string"==typeof t&&n[t]&&n[t].apply(n,e)})}var e=$(t.document.body),i=!!(t.navigator&&t.navigator.userAgent||"").match(/AppleWebKit.*Mobile.*/)||"ontouchstart"in t.document.documentElement,n=i?"touchstart":"click";o.DEFAULTS={disorder:!1,title:"安全键盘"},o.prototype.init=function(){function e(){for(var t="",e=0;e<6;e++)t+="<li><i></i></li>";return t}var t=this;t.inputNums="",t.toggleClass="keyboard-show";var i='<div class="keyboard-head"><strong>输入数字密码</strong></div><div class="keyboard-error"></div><ul class="keyboard-password J_FillPwdBox">'+e()+"</ul>",n='<div class="keyboard-content">   <div class="keyboard-title">'+t.options.title+'</div>   <ul class="keyboard-numbers"></ul></div>';t.$element.prepend(i).append(n),t.$numsBox=t.$element.find(".keyboard-numbers"),t.$mask=$('<div class="mask-black"></div>')},o.prototype.open=function(){var t=this,i=t.$element,n=t.$numsBox;YDUI.device.isIOS&&$(".g-scrollview").addClass("g-fix-ios-overflow-scrolling-bug"),i.addClass(t.toggleClass),(t.options.disorder||1!=n.data("loaded-nums"))&&n.data("loaded-nums",1).html(t.createNumsHtml()),e.append(t.$mask),t.bindEvent()},o.prototype.close=function(){var t=this;YDUI.device.isIOS&&$(".g-scrollview").removeClass("g-fix-ios-overflow-scrolling-bug"),t.$mask.remove(),t.$element.removeClass(t.toggleClass),t.unbindEvent(),t.inputNums="",t.fillPassword(),t.clearError()},o.prototype.bindEvent=function(){var t=this,e=t.$element;t.$mask.on(n+".ydui.keyboard.mask",function(e){e.preventDefault(),t.close()}),e.on(n+".ydui.keyboard.nums",".J_Nums",function(e){t.inputNums.length>=6||(t.inputNums=t.inputNums+$(this).html(),t.clearError(),t.fillPassword())}),e.on(n+".ydui.keyboard.backspace",".J_Backspace",function(e){e.preventDefault(),t.backspace()}),e.on(n+".ydui.keyboard.cancel",".J_Cancel",function(e){e.preventDefault(),t.close()})},o.prototype.unbindEvent=function(){this.$element.off(n+".ydui.keyboard"),$(t).off("hashchange.ydui.keyboard")},o.prototype.fillPassword=function(){var t=this,e=t.inputNums,i=e.length,n=t.$element.find(".J_FillPwdBox").find("li");n.find("i").hide(),n.filter(":lt("+i+")").find("i").css("display","block"),i>=6&&t.$element.trigger($.Event("done.ydui.keyboard",{password:e}))},o.prototype.clearError=function(){this.$element.find(".keyboard-error").html("")},o.prototype.error=function(t){var e=this;e.$element.find(".keyboard-error").html(t),e.inputNums="",e.fillPassword()},o.prototype.backspace=function(){var t=this,e=t.inputNums;e&&(t.inputNums=e.substr(0,e.length-1)),t.fillPassword()},o.prototype.createNumsHtml=function(){var t=this,e=t.createNums();t.options.disorder&&t.upsetOrder(e);var i=[];return $.each(e,function(t){t%3==0&&(t>=e.length-2?i.push('<li><a href="javascript:;" class="J_Cancel">取消</a>'+e.slice(t,t+3).join("")+'<a href="javascript:;" class="J_Backspace"></a></li>'):i.push("<li>"+e.slice(t,t+3).join("")+"</li>"))}),i.join("")},o.prototype.createNums=function(){var t=this,e=t.options.disorder;if(e&&t.cacheNums)return t.cacheNums;for(var i=[],n=1;n<=10;n++)i.push('<a href="javascript:;" class="J_Nums">'+n%10+"</div>");return e||(t.cacheNums=i),i},o.prototype.upsetOrder=function(t){for(var o,a,r,e=Math.floor,i=Math.random,n=t.length,s=e(n/2)+1;s--;)o=e(i()*n),a=e(i()*n),o!==a&&(r=t[o],t[o]=t[a],t[a]=r);return t},$.fn.keyBoard=a}(window),function(t){"use strict";function i(t,e){this.$element=$(t),this.options=$.extend({},i.DEFAULTS,e||{}),this.init()}function n(t){var e=Array.prototype.slice.call(arguments,1);return this.each(function(){var n=$(this),o=n.data("ydui.cityselect");o||n.data("ydui.cityselect",o=new i(this,t)),"string"==typeof t&&o[t]&&o[t].apply(o,e)})}var e=$(t.document.body);i.DEFAULTS={provance:"",city:"",area:""},i.prototype.init=function(){var t=this,e=t.options;if("undefined"==typeof YDUI_CITYS)return void console.error("请在ydui.js前引入ydui.citys.js。下载地址：http://cityselect.ydui.org");t.citys=YDUI_CITYS,t.createDOM(),t.defaultSet={provance:e.provance,city:e.city,area:e.area}},i.prototype.open=function(){var t=this;e.append(t.$mask),YDUI.device.isMozilla&&t.$element.blur(),t.$mask.on("click.ydui.cityselect.mask",function(){t.close()});var i=t.$cityElement,n=t.defaultSet;i.find(".cityselect-content").removeClass("cityselect-move-animate cityselect-next cityselect-prev"),t.loadProvance(),n.provance?t.setNavTxt(0,n.provance):i.find(".cityselect-nav a").eq(0).addClass("crt").html("请选择"),n.city&&(t.loadCity(),t.setNavTxt(1,n.city)),n.area&&(t.loadArea(),t.ForwardView(!1),t.setNavTxt(2,n.area)),i.addClass("brouce-in")},i.prototype.close=function(){var t=this;t.$mask.remove(),t.$cityElement.removeClass("brouce-in").find(".cityselect-nav a").removeClass("crt").html(""),t.$itemBox.html("")},i.prototype.createDOM=function(){var t=this;t.$mask=$('<div class="mask-black"></div>'),t.$cityElement=$('<div class="m-cityselect">    <div class="cityselect-header">        <p class="cityselect-title">所在地区</p>        <div class="cityselect-nav">            <a href="javascript:;" ></a>            <a href="javascript:;"></a>            <a href="javascript:;"></a>        </div>    </div>    <ul class="cityselect-content">        <li class="cityselect-item">            <div class="cityselect-item-box"></div>        </li>        <li class="cityselect-item">            <div class="cityselect-item-box"></div>        </li>        <li class="cityselect-item">            <div class="cityselect-item-box"></div>        </li>    </ul></div>'),e.append(t.$cityElement),t.$itemBox=t.$cityElement.find(".cityselect-item-box"),t.$cityElement.on("click.ydui.cityselect",".cityselect-nav a",function(){var e=$(this);e.addClass("crt").siblings().removeClass("crt"),e.index()<2?t.backOffView():t.ForwardView(!0)})},i.prototype.setNavTxt=function(t,e){var i=this.$cityElement.find(".cityselect-nav a");t<2&&i.removeClass("crt"),i.eq(t).html(e),i.eq(t+1).addClass("crt").html("请选择"),i.eq(t+2).removeClass("crt").html("")},i.prototype.backOffView=function(){this.$cityElement.find(".cityselect-content").removeClass("cityselect-next").addClass("cityselect-move-animate cityselect-prev")},i.prototype.ForwardView=function(t){this.$cityElement.find(".cityselect-content").removeClass("cityselect-move-animate cityselect-prev").addClass((t?"cityselect-move-animate":"")+" cityselect-next")},i.prototype.bindItemEvent=function(){var t=this,e=t.$cityElement;e.on("click.ydui.cityselect",".cityselect-item-box a",function(){var i=$(this);if(!i.hasClass("crt")){i.addClass("crt").siblings().removeClass("crt");var n=i.data("tag");t.setNavTxt(n,i.text());var o=e.find(".cityselect-nav a"),a=t.defaultSet;0==n?(t.loadCity(),e.find(".cityselect-item-box").eq(1).find("a").removeClass("crt")):1==n?(t.loadArea(),t.ForwardView(!0),e.find(".cityselect-item-box").eq(2).find("a").removeClass("crt")):(a.provance=o.eq(0).html(),a.city=o.eq(1).html(),a.area=o.eq(2).html(),t.returnValue())}})},i.prototype.returnValue=function(){var t=this,e=t.defaultSet;t.$element.trigger($.Event("done.ydui.cityselect",{provance:e.provance,city:e.city,area:e.area})),t.close()},i.prototype.scrollPosition=function(t){var e=this,i=e.$itemBox.eq(t),n=i.find("a.crt").height(),o=i.parent().height();i.parent().animate({scrollTop:i.find("a.crt").index()*n-o/3},0,function(){e.bindItemEvent()})},i.prototype.fillItems=function(t,e){var i=this;i.$itemBox.eq(t).html(e).parent().animate({scrollTop:0},10),i.scrollPosition(t)},i.prototype.loadProvance=function(){var t=this,e=[];$.each(t.citys,function(i,n){e.push($('<a class="'+(n.n==t.defaultSet.provance?"crt":"")+'" href="javascript:;"><span>'+n.n+"</span></a>").data({citys:n.c,tag:0}))}),t.fillItems(0,e)},i.prototype.loadCity=function(){var t=this,e=t.$itemBox.eq(0).find("a.crt").data("citys"),i=[];$.each(e,function(e,n){i.push($('<a class="'+(n.n==t.defaultSet.city?"crt":"")+'" href="javascript:;"><span>'+n.n+"</span></a>").data({citys:n.a,tag:1}))}),t.fillItems(1,i)},i.prototype.loadArea=function(){var t=this,e=t.$itemBox.eq(1).find("a.crt").data("citys"),i=[];$.each(e,function(e,n){i.push($('<a class="'+(n==t.defaultSet.area?"crt":"")+'" href="javascript:;"><span>'+n+"</span></a>").data({tag:2}))}),i.length<=0&&i.push($('<a href="javascript:;"><span>全区</span></a>').data({tag:2})),t.fillItems(2,i)},$.fn.citySelect=n}(window),function(t){"use strict";function e(t,i){this.$element=$(t),this.options=$.extend({},e.DEFAULTS,i||{}),this.init()}function i(t){var i=Array.prototype.slice.call(arguments,1);return this.each(function(){var n=$(this),o=n.data("ydui.spinner");o||n.data("ydui.spinner",o=new e(this,t)),"string"==typeof t&&o[t]&&o[t].apply(o,i)})}e.DEFAULTS={input:".J_Input",add:".J_Add",minus:".J_Del",unit:1,max:0,min:-1,longpress:!0,callback:null},e.prototype.init=function(){var t=this,e=t.options;t.$input=$(e.input,t.$element),t.$add=$(e.add,t.$element),t.$minus=$(e.minus,t.$element),t.changeParameters(),t.checkParameters(),t.bindEvent()},e.prototype.tapParams={},e.prototype.isNumber=function(t){return/^\d*$/.test(t)},e.prototype.FixNumber=function(t){return parseInt(t)},e.prototype.changeParameters=function(){var t=this,e=t.options,i=[{param:"unit",default:1},{param:"max",default:0}];$.each(i,function(i,n){var o=e[n.param],a=t.$input.data(n.param);if(a)o=a,t.isNumber(a)||"function"==typeof(o=e[n.param])&&(o=o());else if("function"==typeof e[n.param]){var r=e[n.param]();o=r,t.isNumber(r)||(o=e[n.param])}t.isNumber(o)||(o=n.default),e[n.param]=t.FixNumber(o)})},e.prototype.checkParameters=function(){var t=this,e=t.options,i=t.$input.val();i?t.setValue(i):(e.max<e.min&&0!=e.max&&(e.max=e.min),e.min<e.unit&&e.min>0&&(e.min=e.unit),e.min%e.unit!=0&&e.min>0&&(e.min=e.min-e.min%e.unit),e.max<e.unit&&0!=e.max&&(e.max=e.unit),e.max%e.unit!=0&&(e.max=e.max-e.max%e.unit),e.min<0&&(e.min=e.unit),t.setValue(e.min))},e.prototype.calculation=function(t){var e=this,i=e.options,n=i.max,o=i.unit,a=i.min,r=e.$input,s=e.FixNumber(r.val());if(!r.attr("readonly")&&!r.attr("disabled")){var c;if("add"==t){if(c=s+o,0!=n&&c>n)return}else if((c=s-o)<a)return;e.setValue(c),i.longpress&&e.longpressHandler(t)}},e.prototype.longpressHandler=function(t){var e=this,i=(new Date).getTime()/1e3,n=i-e.tapStartTime;n<1&&(n=.5);var o=10*n;30==n&&(o=50),n>=40&&(o=100),e.tapParams.timer=setTimeout(function(){e.calculation(t)},1e3/o)},e.prototype.setValue=function(t){var e=this,i=e.options,n=i.max,o=i.unit,a=i.min<0?o:i.min;/^(([1-9]\d*)|0)$/.test(t)||(t=n),t>n&&0!=n&&(t=n),t%o>0&&(t=t-t%o+o)>n&&0!=n&&(t-=o),t<a&&(t=a-a%o),e.$input.val(t),"function"==typeof i.callback&&i.callback(t,e.$input)},e.prototype.bindEvent=function(){var t=this,e=t.options,i=YDUI.device.isMobile,n="mousedown.ydui.spinner",o="mouseup.ydui.spinner";i&&(n="touchstart.ydui.spinner",o="touchend.ydui.spinner"),t.$add.on(n,function(i){e.longpress&&(i.preventDefault(),i.stopPropagation(),t.tapStartTime=(new Date).getTime()/1e3,t.$add.on(o,function(){t.clearTapTimer()})),t.calculation("add")}),t.$minus.on(n,function(i){e.longpress&&(i.preventDefault(),i.stopPropagation(),t.tapStartTime=(new Date).getTime()/1e3,t.$minus.on(o,function(){t.clearTapTimer()})),t.calculation("minus")}),t.$input.on("change.ydui.spinner",function(){t.setValue($(this).val())}).on("keydown",function(e){if(13==e.keyCode)return t.setValue($(this).val()),!1})},e.prototype.clearTapTimer=function(){var t=this;clearTimeout(t.tapParams.timer)},$(t).on("load.ydui.spinner",function(){$("[data-ydui-spinner]").each(function(){var e=$(this);e.spinner(t.YDUI.util.parseOptions(e.data("ydui-spinner")))})}),$.fn.spinner=i}(window),function(t){"use strict";function e(t,i){this.$element=$(t),this.options=$.extend({},e.DEFAULTS,i||{}),this.init()}function i(t){return this.each(function(){var i=$(this);i.data("ydui.slider")||i.data("ydui.slider",new e(this,t))})}e.DEFAULTS={speed:300,autoplay:3e3,lazyLoad:!1,pagination:".slider-pagination",wrapperClass:"slider-wrapper",slideClass:"slider-item",bulletClass:"slider-pagination-item",bulletActiveClass:"slider-pagination-item-active"},e.prototype.init=function(){var t=this,e=t.options,i=t.$element;t.index=1,t.autoPlayTimer=null,t.$pagination=i.find(e.pagination),t.$wrapper=i.find("."+e.wrapperClass),t.itemNums=t.$wrapper.find("."+e.slideClass).length,e.lazyLoad&&t.loadImage(0),t.createBullet(),t.cloneItem().bindEvent()},e.prototype.bindEvent=function(){var e=this,i=e.touchEvents();e.$wrapper.find("."+e.options.slideClass).on(i.start,function(t){e.onTouchStart(t)}).on(i.move,function(t){e.onTouchMove(t)}).on(i.end,function(t){e.onTouchEnd(t)}),$(t).on("resize.ydui.slider",function(){e.setSlidesSize()}),~~e.options.autoplay>0&&e.autoPlay(),e.$wrapper.on("click.ydui.slider",function(t){e.touches.allowClick||t.preventDefault()})},e.prototype.cloneItem=function(){var t=this,e=t.$wrapper,i=t.$wrapper.find("."+t.options.slideClass),n=i.filter(":first-child").clone(),o=i.filter(":last-child").clone();return e.prepend(o),e.append(n),t.setSlidesSize(),t},e.prototype.createBullet=function(){var t=this;if(t.$pagination[0]){var e='<span class="'+t.options.bulletClass+" "+t.options.bulletActiveClass+'"></span>';t.$pagination.append(e+new Array(t.itemNums).join('<span class="'+t.options.bulletClass+'"></span>'))}},e.prototype.activeBullet=function(){var t=this;if(t.$pagination[0]){var e=t.itemNums,i=t.index%e>=e?0:t.index%e-1,n=t.options.bulletActiveClass;!!t.$pagination[0]&&t.$pagination.find("."+t.options.bulletClass).removeClass(n).eq(i).addClass(n)}},e.prototype.setSlidesSize=function(){var t=this,e=t.$wrapper.width();t.$wrapper.css("transform","translate3d(-"+e+"px,0,0)"),t.$wrapper.find("."+t.options.slideClass).css({width:e})},e.prototype.autoPlay=function(){var t=this;t.autoPlayTimer=setInterval(function(){t.index>t.itemNums&&(t.index=1,t.setTranslate(0,-t.$wrapper.width())),t.setTranslate(t.options.speed,-++t.index*t.$wrapper.width())},t.options.autoplay)},e.prototype.stopAutoplay=function(){var t=this;return clearInterval(t.autoPlayTimer),t},e.prototype.loadImage=function(t){var e=this,i=e.$wrapper.find("."+e.options.slideClass).eq(t).find("img"),n=i.data("src");1!=i.data("load")&&!!n&&i.attr("src",n).data("load",1)},e.prototype.setTranslate=function(t,e){var i=this;i.options.lazyLoad&&i.loadImage(i.index),i.activeBullet(),i.$wrapper.css({transitionDuration:t+"ms",transform:"translate3d("+e+"px,0,0)"})},e.prototype.touches={moveTag:0,startClientX:0,moveOffset:0,touchStartTime:0,isTouchEvent:!1,allowClick:!1},e.prototype.onTouchStart=function(t){t.originalEvent.touches&&(t=t.originalEvent.touches[0]);var e=this,i=e.touches;if(i.allowClick=!0,i.isTouchEvent="touchstart"===t.type,(i.isTouchEvent||!("which"in t)||3!==t.which)&&0==i.moveTag){i.moveTag=1,i.startClientX=t.clientX,i.touchStartTime=Date.now();var n=e.itemNums;if(0==e.index)return e.index=n,void e.setTranslate(0,-n*e.$wrapper.width());e.index>n&&(e.index=1,e.setTranslate(0,-e.$wrapper.width()))}},e.prototype.onTouchMove=function(t){t.preventDefault(),t.originalEvent.touches&&(t=t.originalEvent.touches[0]);var e=this,i=e.touches;if(i.allowClick=!1,!i.isTouchEvent||"mousemove"!==t.type){var n=i.moveOffset=t.clientX-i.startClientX;0!=n&&0!=i.moveTag&&(1==i.moveTag&&(e.stopAutoplay(),i.moveTag=2),2==i.moveTag&&e.setTranslate(0,-e.index*e.$wrapper.width()+n))}},e.prototype.onTouchEnd=function(){var t=this,e=t.options.speed,i=t.$wrapper.width(),n=t.touches,o=n.moveOffset;if(setTimeout(function(){n.allowClick=!0},0),1==n.moveTag&&(n.moveTag=0),2==n.moveTag){n.moveTag=0;Date.now()-n.touchStartTime>300&&Math.abs(o)<=.5*t.$wrapper.width()?t.setTranslate(e,-t.index*t.$wrapper.width()):t.setTranslate(e,-(o>0?--t.index:++t.index)*i),t.autoPlay()}},e.prototype.touchEvents=function(){var e=t.Modernizr&&!!t.Modernizr.touch||function(){return!!("ontouchstart"in t||t.DocumentTouch&&document instanceof DocumentTouch)}();return{start:e?"touchstart.ydui.slider":"mousedown.ydui.slider",move:e?"touchmove.ydui.slider":"mousemove.ydui.slider",end:e?"touchend.ydui.slider":"mouseup.ydui.slider"}},$(t).on("load.ydui.slider",function(){$("[data-ydui-slider]").each(function(){var e=$(this);e.slider(t.YDUI.util.parseOptions(e.data("ydui-slider")))})}),$.fn.slider=i}(window),function(t,e){"use strict";var i=e.dialog=e.dialog||{},n=$(t.document.body);i.confirm=function(t,i,o){var a="YDUI_CONFRIM";$("#"+a).remove();var r=arguments.length;if(r<2)return void console.error("From YDUI's confirm: Please set two or three parameters!!!");if("function"!=typeof arguments[1]&&2==r&&!arguments[1]instanceof Array)return void console.error("From YDUI's confirm: The second parameter must be a function or array!!!");2==r&&(o=i,i=t,t="提示");var s=o;"function"==typeof o&&(s=[{txt:"取消",color:!1},{txt:"确定",color:!0,callback:function(){o&&o()}}]);var c=$('<div class="mask-black-dialog" id="'+a+'">   <div class="m-confirm">       <div class="confirm-hd"><strong class="confirm-title">'+t+'</strong></div>       <div class="confirm-bd">'+i+"</div>   </div></div>"),l=$('<div class="confirm-ft"></div>');$.each(s,function(t,i){var n;"boolean"==typeof i.color?n=$('<a href="javascript:;" class="confirm-btn '+(i.color?"primary":"default")+'">'+(i.txt||"")+"</a>"):"string"==typeof i.color&&(n=$('<a href="javascript:;" style="color: '+i.color+'">'+(i.txt||"")+"</a>")),function(t){n.on("click",function(i){i.stopPropagation(),s[t].stay||(e.util.pageScroll.unlock(),c.remove()),s[t].callback&&s[t].callback()})}(t),l.append(n)}),c.find(".m-confirm").append(l),e.util.pageScroll.lock(),n.append(c)},i.alert=function(t,i){var o="YDUI_ALERT";$("#"+o).remove();var a=$('<div id="'+o+'">   <div class="mask-black-dialog">       <div class="m-confirm m-alert">           <div class="confirm-bd">'+(t||"YDUI Touch")+'</div>           <div class="confirm-ft">               <a href="javascript:;" class="confirm-btn primary">确定</a>           </div>       </div>   </div></div>');e.util.pageScroll.lock(),n.append(a),a.find("a").on("click",function(){a.remove(),e.util.pageScroll.unlock(),"function"==typeof i&&i()})},i.toast=function(){var t=null;return function(i,o,a,r){clearTimeout(t);var s="YDUI_TOAST";if($("#"+s).remove(),arguments.length<2)return void console.error("From YDUI's toast: Please set two or more parameters!!!");var l="";"success"!=o&&"error"!=o||(l='<div class="'+("error"==o?"toast-error-ico":"toast-success-ico")+'"></div>');var u=$('<div class="mask-white-dialog" id="'+s+'">    <div class="m-toast '+(""==l?"none-icon":"")+'">'+l+'        <p class="toast-content">'+(i||"")+"</p>    </div></div>");e.util.pageScroll.lock(),n.append(u),"function"==typeof a&&arguments.length>=3&&(r=a,a=2e3),t=setTimeout(function(){clearTimeout(t),e.util.pageScroll.unlock(),u.remove(),"function"==typeof r&&r()},(~~a||2e3)+100)}}(),i.notify=function(){var t=null;return function(e,i,o){clearTimeout(t);var a="YDUI_NOTIFY";$("#"+a).remove();var r=$('<div id="'+a+'"><div class="m-notify">'+(e||"")+"</div></div>");n.append(r);var s=function(){r.remove(),"function"==typeof o&&o()},c=function(){clearTimeout(t),r.find(".m-notify").addClass("notify-out"),r.one("webkitTransitionEnd",s).emulateTransitionEnd(150)};r.on("click",c),~~i>0&&(t=setTimeout(c,i+200))}}(),i.loading=function(){var t="YDUI_LOADING";return{open:function(i){$("#"+t).remove();var o=$('<div class="mask-white-dialog" id="'+t+'">   <div class="m-loading">       <div class="loading-icon"></div>       <div class="loading-txt">'+(i||"数据加载中")+"</div>   </div></div>").remove();e.util.pageScroll.lock(),n.append(o)},close:function(){e.util.pageScroll.unlock(),$("#"+t).remove()}}}()}(window,YDUI),function(t){"use strict";function n(t,e){this.pathTemplate="M 50,50 m 0,-{radius} a {radius},{radius} 0 1 1 0,{2radius} a {radius},{radius} 0 1 1 0,-{2radius}",a.apply(this,arguments)}function o(t,e){this.pathTemplate="M 0,{center} L 100,{center}",a.apply(this,arguments)}function a(t,e){this.$element=$(t),this.options=$.extend({},a.DEFAULTS,e||{})}function r(t){var e=Array.prototype.slice.call(arguments,1);return this.each(function(){var i=$(this),a=i.data("ydui.progressbar");a||("line"==t.type?i.data("ydui.progressbar",a=new o(this,t)):i.data("ydui.progressbar",a=new n(this,t)),t&&"object"!=typeof t||a.appendView()),"string"==typeof t&&a[t]&&a[t].apply(a,e)})}var e=t.document,i=t.YDUI.util;n.prototype=new a,n.prototype.getPathString=function(t){var e=this,i=50-t/2;return e.render(e.pathTemplate,{radius:i,"2radius":2*i})},n.prototype.initSvg=function(t){t.setAttribute("viewBox","0 0 100 100"),t.style.display="block",t.style.width="100%"},o.prototype=new a,o.prototype.getPathString=function(t){var e=this;return e.render(e.pathTemplate,{center:t/2})},o.prototype.initSvg=function(t,e){t.setAttribute("viewBox","0 0 100 "+e.strokeWidth),t.setAttribute("preserveAspectRatio","none"),t.style.width="100%",t.style.height="100%"},a.DEFAULTS={type:"circle",strokeWidth:0,strokeColor:"#E5E5E5",trailWidth:0,trailColor:"#646464",fill:"",progress:0,delay:!0,binder:t},a.prototype.set=function(t){var e=this,i=e.trailPath.getTotalLength();t||(t=e.options.progress),t>1&&(t=1),e.trailPath.style.strokeDashoffset=i-t*i},a.prototype.appendView=function(){var e=this,i=e.options,n=i.progress,o=e.createSvgView(),a=e.$element;e.$binder=i.binder===t||"window"==i.binder?$(t):$(i.binder);var r=o.trailPath,s=r.getTotalLength();r.style.strokeDasharray=s+" "+s;var c=$(o.svg);return c.one("appear.ydui.progressbar",function(){e.set(n)}),a.append(c),i.delay?(e.checkInView(c),e.$binder.on("scroll.ydui.progressbar",function(){e.checkInView(c)}),$(t).on("resize",function(){e.checkInView(c)})):c.trigger("appear.ydui.progressbar"),this},a.prototype.checkInView=function(e){var i=this,n=i.$binder,o=n.height(),a=n.get(0)===t?$(t).scrollTop():n.offset().top,r=e.offset().top-a,s=r+e.height();(r>=0&&r<o||s>0&&s<=o)&&e.trigger("appear.ydui.progressbar")},a.prototype.createSvgView=function(){var t=this,i=t.options,n=e.createElementNS("http://www.w3.org/2000/svg","svg");t.initSvg(n,i);var o=t.createPath(i);n.appendChild(o);var a=null;return(i.trailColor||i.trailWidth)&&(a=t.createTrailPath(i),a.style.strokeDashoffset=a.getTotalLength(),n.appendChild(a)),t.svg=n,t.trailPath=a,{svg:n,trailPath:a}},a.prototype.createTrailPath=function(t){var e=this;0==t.trailWidth&&(t.trailWidth=t.strokeWidth);var i=e.getPathString(t.trailWidth);return e.createPathElement(i,t.trailColor,t.trailWidth)},a.prototype.createPath=function(t){var e=this,i=t.strokeWidth;t.trailWidth&&t.trailWidth>t.strokeWidth&&(i=t.trailWidth);var n=e.getPathString(i);return e.createPathElement(n,t.strokeColor,t.strokeWidth,t.fill)},a.prototype.createPathElement=function(t,i,n,o){var a=e.createElementNS("http://www.w3.org/2000/svg","path");return a.setAttribute("d",t),a.setAttribute("stroke",i),a.setAttribute("stroke-width",n),o?a.setAttribute("fill",o):a.setAttribute("fill-opacity","0"),a},a.prototype.render=function(t,e){var i=t;for(var n in e)if(e.hasOwnProperty(n)){var o=e[n],a="\\{"+n+"\\}",r=new RegExp(a,"g");i=i.replace(r,o)}return i},$("[data-ydui-progressbar]").each(function(){var t=$(this);r.call(t,i.parseOptions(t.data("ydui-progressbar")))}),$.fn.progressBar=r}(window),function(t){"use strict";function a(t,e){this.$element=$(t),this.closeElement=e,this.toggleClass="actionsheet-toggle"}function r(t){var e=Array.prototype.slice.call(arguments,1);return this.each(function(){var i=$(this),n=i.data("ydui.actionsheet");n||(i.data("ydui.actionsheet",n=new a(this,t.closeElement)),t&&"object"!=typeof t||n.open()),"string"==typeof t&&n[t]&&n[t].apply(n,e)})}var e=t.document,i=$(e),n=$(e.body),o=$('<div class="mask-black"></div>');a.prototype.open=function(){YDUI.device.isIOS&&$(".g-scrollview").addClass("g-fix-ios-overflow-scrolling-bug");var t=this;n.append(o),o.on("click.ydui.actionsheet.mask",function(){t.close()}),t.closeElement&&i.on("click.ydui.actionsheet",t.closeElement,function(){t.close()}),t.$element.addClass(t.toggleClass).trigger("open.ydui.actionsheet")},a.prototype.close=function(){var t=this;YDUI.device.isIOS&&$(".g-scrollview").removeClass("g-fix-ios-overflow-scrolling-bug"),o.off("click.ydui.actionsheet.mask").remove(),t.$element.removeClass(t.toggleClass).trigger("close.ydui.actionsheet")},i.on("click.ydui.actionsheet.data-api","[data-ydui-actionsheet]",function(e){e.preventDefault();var i=t.YDUI.util.parseOptions($(this).data("ydui-actionsheet")),n=$(i.target),o=n.data("ydui.actionsheet")?"open":i;r.call(n,o)}),$.fn.actionSheet=r}(window),function(window){"use strict";var util=window.YDUI.util=window.YDUI.util||{},doc=window.document;util.timestampTotime=function(t,e){var i={},n=Math.floor;i.f=e%1e3,e=n(e/1e3),i.s=e%60,e=n(e/60),i.m=e%60,e=n(e/60),i.h=e%24,i.d=n(e/24);var o=function(t){return t<=0?"":"$1"+(t<10?"0"+t:t)+"$2"};return t=t.replace(/\{([^{]*?)%d(.*?)\}/g,o(i.d)),t=t.replace(/\{([^{]*?)%h(.*?)\}/g,o(i.h)),t=t.replace(/\{([^{]*?)%m(.*?)\}/g,o(i.m)),t=t.replace(/\{([^{]*?)%s(.*?)\}/g,o(i.s)),t=t.replace(/\{([^{]*?)%f(.*?)\}/g,o(i.f))},util.countdown=function(t,e,i,n){var o=this,a=setInterval(function(){var i=e-(new Date).getTime();i>0?n(o.timestampTotime(t,i)):(clearInterval(a),"function"==typeof n&&n(""))},i)},util.calc=function(arg1,op,arg2){var ra=1,rb=1,m;try{ra=arg1.toString().split(".")[1].length}catch(t){}try{rb=arg2.toString().split(".")[1].length}catch(t){}switch(m=Math.pow(10,Math.max(ra,rb)),op){case"+":case"-":arg1=Math.round(arg1*m),arg2=Math.round(arg2*m);break;case"*":ra=Math.pow(10,ra),rb=Math.pow(10,rb),m=ra*rb,arg1=Math.round(arg1*ra),arg2=Math.round(arg2*rb);break;case"/":arg1=Math.round(arg1*m),arg2=Math.round(arg2*m),m=1}try{var result=eval("(("+arg1+")"+op+"("+arg2+"))/"+m)}catch(t){}return result},util.getImgBase64=function(t,e){var i=this,n="",o=t.files[0];if(o){if(!/image\/\w+/.test(o.type))return void i.tipMes("请上传图片文件","error");var a=new FileReader;a.readAsDataURL(o),a.onload=function(){n=this.result,"function"==typeof e&&e(n)}}},util.getQueryString=function(t){var e=new RegExp("(^|&)"+t+"=([^&]*)(&|$)"),i=window.location.search.substr(1).match(e),n="";return null!=i&&(n=decodeURIComponent(i[2])),n},util.cookie=function(){return{get:function(t){var e=doc.cookie.match("(?:^|;)\\s*"+t+"=([^;]*)");return e&&e[1]?decodeURIComponent(e[1]):""},set:function(t,e,i,n,o,a){var r=String(encodeURIComponent(e)),s=i;"number"==typeof s&&(s=new Date,s.setTime(s.getTime()+1e3*i)),s instanceof Date&&(r+="; expires="+s.toUTCString()),!!n&&(r+="; domain="+n),r+="; path="+(o||"/"),a&&(r+="; secure"),doc.cookie=t+"="+r}}}()}(window),function(t){"use strict";function e(t,i){this.$element=$(t),this.options=$.extend({},e.DEFAULTS,i||{}),this.init(),this.bindEvent(),this.transitioning=!1}function i(t){var i=Array.prototype.slice.call(arguments,1);return this.each(function(){var n=this,o=$(n),a=o.data("ydui.tab");a||o.data("ydui.tab",a=new e(n,t)),"string"==typeof t&&a[t]&&a[t].apply(a,i)})}e.TRANSITION_DURATION=150,e.DEFAULTS={nav:".tab-nav-item",panel:".tab-panel-item",activeClass:"tab-active"},e.prototype.init=function(){var t=this,e=t.$element;t.$nav=e.find(t.options.nav),t.$panel=e.find(t.options.panel)},e.prototype.bindEvent=function(){var t=this;t.$nav.each(function(e){$(this).on("click.ydui.tab",function(){t.open(e)})})},e.prototype.open=function(t){var e=this;t="number"==typeof t?t:e.$nav.filter(t).index();var i=e.$nav.eq(t);e.transitioning||i.hasClass(e.options.activeClass)||(e.transitioning=!0,i.trigger($.Event("open.ydui.tab",{index:t})),e.active(i,e.$nav),e.active(e.$panel.eq(t),e.$panel,function(){i.trigger({type:"opened.ydui.tab",index:t}),e.transitioning=!1}))},e.prototype.active=function(t,i,n){function s(){"function"==typeof n&&n()}var o=this,a=o.options.activeClass,r=i.filter("."+a);t.one("webkitTransitionEnd",s).emulateTransitionEnd(e.TRANSITION_DURATION),r.removeClass(a),t.addClass(a)},$(t).on("load.ydui.tab",function(){$("[data-ydui-tab]").each(function(){var e=$(this);e.tab(t.YDUI.util.parseOptions(e.data("ydui-tab")))})}),$.fn.tab=i}(window),function(){"use strict";function t(e,n){function a(t,e){return function(){return t.apply(e,arguments)}}var o;if(n=n||{},this.trackingClick=!1,this.trackingClickStart=0,this.targetElement=null,this.touchStartX=0,this.touchStartY=0,this.lastTouchIdentifier=0,this.touchBoundary=n.touchBoundary||10,this.layer=e,this.tapDelay=n.tapDelay||200,this.tapTimeout=n.tapTimeout||700,!t.notNeeded(e)){for(var r=["onMouse","onClick","onTouchStart","onTouchMove","onTouchEnd","onTouchCancel"],s=this,c=0,l=r.length;c<l;c++)s[r[c]]=a(s[r[c]],s);i&&(e.addEventListener("mouseover",this.onMouse,!0),e.addEventListener("mousedown",this.onMouse,!0),e.addEventListener("mouseup",this.onMouse,!0)),e.addEventListener("click",this.onClick,!0),e.addEventListener("touchstart",this.onTouchStart,!1),e.addEventListener("touchmove",this.onTouchMove,!1),e.addEventListener("touchend",this.onTouchEnd,!1),e.addEventListener("touchcancel",this.onTouchCancel,!1),Event.prototype.stopImmediatePropagation||(e.removeEventListener=function(t,i,n){var o=Node.prototype.removeEventListener;"click"===t?o.call(e,t,i.hijacked||i,n):o.call(e,t,i,n)},e.addEventListener=function(t,i,n){var o=Node.prototype.addEventListener;"click"===t?o.call(e,t,i.hijacked||(i.hijacked=function(t){t.propagationStopped||i(t)}),n):o.call(e,t,i,n)}),"function"==typeof e.onclick&&(o=e.onclick,e.addEventListener("click",function(t){o(t)},!1),e.onclick=null)}}var e=navigator.userAgent.indexOf("Windows Phone")>=0,i=navigator.userAgent.indexOf("Android")>0&&!e,n=/iP(ad|hone|od)/.test(navigator.userAgent)&&!e,o=n&&/OS 4_\d(_\d)?/.test(navigator.userAgent),a=n&&/OS [6-7]_\d/.test(navigator.userAgent),r=navigator.userAgent.indexOf("BB10")>0;t.prototype.needsClick=function(t){switch(t.nodeName.toLowerCase()){case"button":case"select":case"textarea":if(t.disabled)return!0;break;case"input":if(n&&"file"===t.type||t.disabled)return!0;break;case"label":case"iframe":case"video":return!0}return/\bneedsclick\b/.test(t.className)},t.prototype.needsFocus=function(t){switch(t.nodeName.toLowerCase()){case"textarea":return!0;case"select":return!i;case"input":switch(t.type){case"button":case"checkbox":case"file":case"image":case"radio":case"submit":return!1}return!t.disabled&&!t.readOnly;default:return/\bneedsfocus\b/.test(t.className)}},t.prototype.sendClick=function(t,e){var i,n;document.activeElement&&document.activeElement!==t&&document.activeElement.blur(),n=e.changedTouches[0],i=document.createEvent("MouseEvents"),i.initMouseEvent(this.determineEventType(t),!0,!0,window,1,n.screenX,n.screenY,n.clientX,n.clientY,!1,!1,!1,!1,0,null),i.forwardedTouchEvent=!0,t.dispatchEvent(i)},t.prototype.determineEventType=function(t){return i&&"select"===t.tagName.toLowerCase()?"mousedown":"click"},t.prototype.focus=function(t){var e;n&&t.setSelectionRange&&0!==t.type.indexOf("date")&&"time"!==t.type&&"month"!==t.type?(e=t.value.length,t.setSelectionRange(e,e)):t.focus()},t.prototype.updateScrollParent=function(t){var e,i;if(!(e=t.fastClickScrollParent)||!e.contains(t)){i=t;do{if(i.scrollHeight>i.offsetHeight){e=i,t.fastClickScrollParent=i;break}i=i.parentElement}while(i)}e&&(e.fastClickLastScrollTop=e.scrollTop)},t.prototype.getTargetElementFromEventTarget=function(t){return t.nodeType===Node.TEXT_NODE?t.parentNode:t},t.prototype.onTouchStart=function(t){var e,i,a;if(t.targetTouches.length>1)return!0;if(e=this.getTargetElementFromEventTarget(t.target),i=t.targetTouches[0],n){if(a=window.getSelection(),a.rangeCount&&!a.isCollapsed)return!0;if(!o){if(i.identifier&&i.identifier===this.lastTouchIdentifier)return t.preventDefault(),!1;this.lastTouchIdentifier=i.identifier,this.updateScrollParent(e)}}return this.trackingClick=!0,this.trackingClickStart=t.timeStamp,this.targetElement=e,this.touchStartX=i.pageX,this.touchStartY=i.pageY,t.timeStamp-this.lastClickTime<this.tapDelay&&t.preventDefault(),!0},t.prototype.touchHasMoved=function(t){var e=t.changedTouches[0],i=this.touchBoundary;return Math.abs(e.pageX-this.touchStartX)>i||Math.abs(e.pageY-this.touchStartY)>i},t.prototype.onTouchMove=function(t){return!this.trackingClick||((this.targetElement!==this.getTargetElementFromEventTarget(t.target)||this.touchHasMoved(t))&&(this.trackingClick=!1,this.targetElement=null),!0)},t.prototype.findControl=function(t){return void 0!==t.control?t.control:t.htmlFor?document.getElementById(t.htmlFor):t.querySelector("button, input:not([type=hidden]), keygen, meter, output, progress, select, textarea")},t.prototype.onTouchEnd=function(t){var e,r,s,c,l,u=this.targetElement;if(!this.trackingClick)return!0;if(t.timeStamp-this.lastClickTime<this.tapDelay)return this.cancelNextClick=!0,!0;if(t.timeStamp-this.trackingClickStart>this.tapTimeout)return!0;if(this.cancelNextClick=!1,this.lastClickTime=t.timeStamp,r=this.trackingClickStart,this.trackingClick=!1,this.trackingClickStart=0,a&&(l=t.changedTouches[0],u=document.elementFromPoint(l.pageX-window.pageXOffset,l.pageY-window.pageYOffset)||u,u.fastClickScrollParent=this.targetElement.fastClickScrollParent),"label"===(s=u.tagName.toLowerCase())){if(e=this.findControl(u)){if(this.focus(u),i)return!1;u=e}}else if(this.needsFocus(u))return t.timeStamp-r>100||n&&window.top!==window&&"input"===s?(this.targetElement=null,!1):(this.focus(u),this.sendClick(u,t),n&&"select"===s||(this.targetElement=null,t.preventDefault()),!1);return!(!n||o||!(c=u.fastClickScrollParent)||c.fastClickLastScrollTop===c.scrollTop)||(this.needsClick(u)||(t.preventDefault(),this.sendClick(u,t)),!1)},t.prototype.onTouchCancel=function(){this.trackingClick=!1,this.targetElement=null},t.prototype.onMouse=function(t){return!this.targetElement||(!!t.forwardedTouchEvent||(!t.cancelable||(!(!this.needsClick(this.targetElement)||this.cancelNextClick)||(t.stopImmediatePropagation?t.stopImmediatePropagation():t.propagationStopped=!0,t.stopPropagation(),t.preventDefault(),!1))))},t.prototype.onClick=function(t){var e;return this.trackingClick?(this.targetElement=null,this.trackingClick=!1,!0):"submit"===t.target.type&&0===t.detail||(e=this.onMouse(t),e||(this.targetElement=null),e)},t.prototype.destroy=function(){var t=this.layer;i&&(t.removeEventListener("mouseover",this.onMouse,!0),t.removeEventListener("mousedown",this.onMouse,!0),t.removeEventListener("mouseup",this.onMouse,!0)),t.removeEventListener("click",this.onClick,!0),t.removeEventListener("touchstart",this.onTouchStart,!1),t.removeEventListener("touchmove",this.onTouchMove,!1),t.removeEventListener("touchend",this.onTouchEnd,!1),t.removeEventListener("touchcancel",this.onTouchCancel,!1)},t.notNeeded=function(t){var e,n,o;if(void 0===window.ontouchstart)return!0;if(n=+(/Chrome\/([0-9]+)/.exec(navigator.userAgent)||[,0])[1]){if(!i)return!0;if(e=document.querySelector("meta[name=viewport]")){if(-1!==e.content.indexOf("user-scalable=no"))return!0;if(n>31&&document.documentElement.scrollWidth<=window.outerWidth)return!0}}if(r&&(o=navigator.userAgent.match(/Version\/([0-9]*)\.([0-9]*)/),o[1]>=10&&o[2]>=3&&(e=document.querySelector("meta[name=viewport]")))){if(-1!==e.content.indexOf("user-scalable=no"))return!0;if(document.documentElement.scrollWidth<=window.outerWidth)return!0}return"none"===t.style.msTouchAction||"manipulation"===t.style.touchAction||(!!(+(/Firefox\/([0-9]+)/.exec(navigator.userAgent)||[,0])[1]>=27&&(e=document.querySelector("meta[name=viewport]"))&&(-1!==e.content.indexOf("user-scalable=no")||document.documentElement.scrollWidth<=window.outerWidth))||("none"===t.style.touchAction||"manipulation"===t.style.touchAction))},t.attach=function(e,i){return new t(e,i)},"function"==typeof define&&"object"==typeof define.amd&&define.amd?define(function(){return t}):"undefined"!=typeof module&&module.exports?(module.exports=t.attach,module.exports.FastClick=t):window.FastClick=t}(),function(t){"use strict";function e(t,i){this.$element=$(t),this.options=$.extend({},e.DEFAULTS,i||{}),this.init()}function i(t){var i=Array.prototype.slice.call(arguments,1);return this.each(function(){var n=this,o=$(n),a=o.data("ydui.scrolltab");a||o.data("ydui.scrolltab",a=new e(n,t)),"string"==typeof t&&a[t]&&a[t].apply(a,i)})}e.DEFAULTS={navItem:".scrolltab-item",content:".scrolltab-content",contentItem:".scrolltab-content-item",initIndex:0},e.prototype.init=function(){var t=this,e=t.$element,i=t.options;t.$navItem=e.find(i.navItem),t.$content=e.find(i.content),t.$contentItem=e.find(i.contentItem),t.scrolling=!1,t.contentOffsetTop=t.$content.offset().top,t.bindEvent(),t.movePosition(t.options.initIndex,!1)},e.prototype.bindEvent=function(){var t=this;t.$content.on("resize.ydui.scrolltab scroll.ydui.scrolltab",function(){t.checkInView()}),t.$navItem.on("click.ydui.scrolltab",function(){t.movePosition($(this).index(),!0)})},e.prototype.movePosition=function(t,e){var i=this;if(!i.scrolling){i.scrolling=!0,i.$navItem.removeClass("crt"),i.$navItem.eq(t).addClass("crt");var n=i.$contentItem.eq(t);if(n[0]){var o=n.offset().top,a=o+i.$content.scrollTop()-i.contentOffsetTop+1;i.$content.stop().animate({scrollTop:a},e?200:0,function(){i.scrolling=!1})}}},e.prototype.checkInView=function(){var t=this;if(!t.scrolling)return t.isScrollTop()?void t.setClass(0):t.isScrollBottom()?void t.setClass(t.$navItem.length-1):void t.$contentItem.each(function(){var e=$(this);e.offset().top<=t.contentOffsetTop&&t.setClass(e.index())})},e.prototype.setClass=function(t){this.$navItem.removeClass("crt").eq(t).addClass("crt")},e.prototype.isScrollTop=function(){return 0==this.$content.scrollTop()},e.prototype.isScrollBottom=function(){var t=this;return t.$content.scrollTop()+3>=t.$contentItem.height()*t.$contentItem.length-t.$content.height()},$(t).on("load.ydui.scrolltab",function(){$("[data-ydui-scrolltab]").each(function(){var e=$(this);e.scrollTab(t.YDUI.util.parseOptions(e.data("ydui-scrolltab")))})}),$.fn.scrollTab=i}(window),function(){"use strict";function t(e,i){this.$btn=$(e),this.options=$.extend({},t.DEFAULTS,i||{})}function e(e){var i=Array.prototype.slice.call(arguments,1);return this.each(function(){var n=$(this),o=n.data("ydui.sendcode");o||(n.data("ydui.sendcode",o=new t(this,e)),"object"==typeof e&&e.run&&o.start()),"string"==typeof e&&o[e]&&o[e].apply(o,i)})}t.DEFAULTS={run:!1,secs:60,disClass:"",runStr:"{%s}秒后重新获取",resetStr:"重新获取验证码"},t.timer=null,t.prototype.start=function(){var t=this,e=t.options,i=e.secs;t.$btn.html(t.getStr(i)).css("pointer-events","none").addClass(e.disClass),t.timer=setInterval(function(){i--,t.$btn.html(t.getStr(i)),i<=0&&(t.resetBtn(),clearInterval(t.timer))},1e3)},t.prototype.getStr=function(t){return this.options.runStr.replace(/\{([^{]*?)%s(.*?)\}/g,t)},t.prototype.resetBtn=function(){var t=this,e=t.options;t.$btn.html(e.resetStr).css("pointer-events","auto").removeClass(e.disClass)},$.fn.sendCode=e}();
+/**
+ * ydui main
+ */
+!function (window) {
+    "use strict";
+
+    var doc = window.document,
+        ydui = {};
+
+    /**
+     * 直接绑定FastClick
+     */
+    $(window).on('load', function () {
+        typeof FastClick == 'function' && FastClick.attach(doc.body);
+    });
+
+    var util = ydui.util = {
+        /**
+         * 格式化参数
+         * @param string
+         */
+        parseOptions: function (string) {
+            if ($.isPlainObject(string)) {
+                return string;
+            }
+
+            var start = (string ? string.indexOf('{') : -1),
+                options = {};
+
+            if (start != -1) {
+                try {
+                    options = (new Function('', 'var json = ' + string.substr(start) + '; return JSON.parse(JSON.stringify(json));'))();
+                } catch (e) {
+                }
+            }
+            return options;
+        },
+        /**
+         * 页面滚动方法【移动端】
+         * @type {{lock, unlock}}
+         * lock：禁止页面滚动, unlock：释放页面滚动
+         */
+        pageScroll: function () {
+                var fn = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+                var islock = false;
+
+                return {
+                    lock: function () {
+                        if (islock)return;
+                        islock = true;
+                        doc.addEventListener('touchmove', fn);
+                    },
+                    unlock: function () {
+                        islock = false;
+                        doc.removeEventListener('touchmove', fn);
+                    }
+                };
+            }(),
+        /**
+         * 本地存储
+         */
+        localStorage: function () {
+            return storage(window.localStorage);
+        }(),
+        /**
+         * Session存储
+         */
+        sessionStorage: function () {
+            return storage(window.sessionStorage);
+        }(),
+        /**
+         * 序列化
+         * @param value
+         * @returns {string}
+         */
+        serialize: function (value) {
+            if (typeof value === 'string') return value;
+            return JSON.stringify(value);
+        },
+        /**
+         * 反序列化
+         * @param value
+         * @returns {*}
+         */
+        deserialize: function (value) {
+            if (typeof value !== 'string') return undefined;
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                return value || undefined;
+            }
+        }
+    };
+
+    /**
+     * HTML5存储
+     */
+    function storage (ls) {
+        return {
+            set: function (key, value) {
+                ls.setItem(key, util.serialize(value));
+            },
+            get: function (key) {
+                return util.deserialize(ls.getItem(key));
+            },
+            remove: function (key) {
+                ls.removeItem(key);
+            },
+            clear: function () {
+                ls.clear();
+            }
+        };
+    }
+
+    /**
+     * 判断css3动画是否执行完毕
+     * @git http://blog.alexmaccaw.com/css-transitions
+     * @param duration
+     */
+    $.fn.emulateTransitionEnd = function (duration) {
+        var called = false,
+            $el = this;
+
+        $(this).one('webkitTransitionEnd', function () {
+            called = true;
+        });
+
+        var callback = function () {
+            if (!called) $($el).trigger('webkitTransitionEnd');
+        };
+
+        setTimeout(callback, duration);
+    };
+
+    if (typeof define === 'function') {
+        define(ydui);
+    } else {
+        window.YDUI = ydui;
+    }
+
+}(window);
+
+/**
+ * ActionSheet Plugin
+ */
+!function (window) {
+    "use strict";
+
+    var doc = window.document,
+        $doc = $(doc),
+        $body = $(doc.body),
+        $mask = $('<div class="mask-black"></div>');
+
+    function ActionSheet (element, closeElement) {
+        this.$element = $(element);
+        this.closeElement = closeElement;
+        this.toggleClass = 'actionsheet-toggle';
+    }
+
+    ActionSheet.prototype.open = function () {
+
+        YDUI.device.isIOS && $('.g-scrollview').addClass('g-fix-ios-overflow-scrolling-bug');
+
+        var _this = this;
+        $body.append($mask);
+
+        // 点击遮罩层关闭窗口
+        $mask.on('click.ydui.actionsheet.mask', function () {
+            _this.close();
+        });
+
+        // 第三方关闭窗口操作
+        if (_this.closeElement) {
+            $doc.on('click.ydui.actionsheet', _this.closeElement, function () {
+                _this.close();
+            });
+        }
+
+        _this.$element.addClass(_this.toggleClass).trigger('open.ydui.actionsheet');
+    };
+
+    ActionSheet.prototype.close = function () {
+        var _this = this;
+
+        YDUI.device.isIOS && $('.g-scrollview').removeClass('g-fix-ios-overflow-scrolling-bug');
+
+        $mask.off('click.ydui.actionsheet.mask').remove();
+        _this.$element.removeClass(_this.toggleClass).trigger('close.ydui.actionsheet');
+        //$doc.off('click.ydui.actionsheet', _this.closeElement);
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var $this = $(this),
+                actionsheet = $this.data('ydui.actionsheet');
+
+            if (!actionsheet) {
+                $this.data('ydui.actionsheet', (actionsheet = new ActionSheet(this, option.closeElement)));
+                if (!option || typeof option == 'object') {
+                    actionsheet.open();
+                }
+            }
+
+            if (typeof option == 'string') {
+                actionsheet[option] && actionsheet[option].apply(actionsheet, args);
+            }
+        });
+    }
+
+    $doc.on('click.ydui.actionsheet.data-api', '[data-ydui-actionsheet]', function (e) {
+        e.preventDefault();
+
+        var options = window.YDUI.util.parseOptions($(this).data('ydui-actionsheet')),
+            $target = $(options.target),
+            option = $target.data('ydui.actionsheet') ? 'open' : options;
+
+        Plugin.call($target, option);
+    });
+
+    $.fn.actionSheet = Plugin;
+
+}(window);
+
+/**
+ * 解决:active这个高端洋气的CSS伪类不能使用问题
+ */
+!function (window) {
+    window.document.addEventListener('touchstart', function (event) {
+        /* Do Nothing */
+    }, false);
+}(window);
+
+/**
+ * CitySelect Plugin
+ */
+!function (window) {
+    "use strict";
+
+    var $body = $(window.document.body);
+
+    function CitySelect (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, CitySelect.DEFAULTS, options || {});
+        this.init();
+    }
+
+    CitySelect.DEFAULTS = {
+        provance: '',
+        city: '',
+        area: ''
+    };
+
+    CitySelect.prototype.init = function () {
+        var _this = this,
+            options = _this.options;
+
+        if (typeof YDUI_CITYS == 'undefined') {
+            console.error('请在ydui.js前引入ydui.citys.js。下载地址：http://cityselect.ydui.org');
+            return;
+        }
+
+        _this.citys = YDUI_CITYS;
+
+        _this.createDOM();
+
+        _this.defaultSet = {
+            provance: options.provance,
+            city: options.city,
+            area: options.area
+        };
+    };
+
+    CitySelect.prototype.open = function () {
+        var _this = this;
+
+        $body.append(_this.$mask);
+
+        // 防止火狐浏览器文本框丑丑的一坨小水滴
+        YDUI.device.isMozilla && _this.$element.blur();
+
+        _this.$mask.on('click.ydui.cityselect.mask', function () {
+            _this.close();
+        });
+
+        var $cityElement = _this.$cityElement,
+            defaultSet = _this.defaultSet;
+
+        $cityElement.find('.cityselect-content').removeClass('cityselect-move-animate cityselect-next cityselect-prev');
+
+        _this.loadProvance();
+
+        if (defaultSet.provance) {
+            _this.setNavTxt(0, defaultSet.provance);
+        } else {
+            $cityElement.find('.cityselect-nav a').eq(0).addClass('crt').html('请选择');
+        }
+
+        if (defaultSet.city) {
+            _this.loadCity();
+            _this.setNavTxt(1, defaultSet.city)
+        }
+
+        if (defaultSet.area) {
+            _this.loadArea();
+            _this.ForwardView(false);
+            _this.setNavTxt(2, defaultSet.area);
+        }
+
+        $cityElement.addClass('brouce-in');
+    };
+
+    CitySelect.prototype.close = function () {
+        var _this = this;
+
+        _this.$mask.remove();
+        _this.$cityElement.removeClass('brouce-in').find('.cityselect-nav a').removeClass('crt').html('');
+        _this.$itemBox.html('');
+    };
+
+    CitySelect.prototype.createDOM = function () {
+        var _this = this;
+
+        _this.$mask = $('<div class="mask-black"></div>');
+
+        _this.$cityElement = $('' +
+            '<div class="m-cityselect">' +
+            '    <div class="cityselect-header">' +
+            '        <p class="cityselect-title">所在地区</p>' +
+            '        <div class="cityselect-nav">' +
+            '            <a href="javascript:;" ></a>' +
+            '            <a href="javascript:;"></a>' +
+            '            <a href="javascript:;"></a>' +
+            '        </div>' +
+            '    </div>' +
+            '    <ul class="cityselect-content">' +
+            '        <li class="cityselect-item">' +
+            '            <div class="cityselect-item-box"></div>' +
+            '        </li>' +
+            '        <li class="cityselect-item">' +
+            '            <div class="cityselect-item-box"></div>' +
+            '        </li>' +
+            '        <li class="cityselect-item">' +
+            '            <div class="cityselect-item-box"></div>' +
+            '        </li>' +
+            '    </ul>' +
+            '</div>');
+
+        $body.append(_this.$cityElement);
+
+        _this.$itemBox = _this.$cityElement.find('.cityselect-item-box');
+
+        _this.$cityElement.on('click.ydui.cityselect', '.cityselect-nav a', function () {
+            var $this = $(this);
+
+            $this.addClass('crt').siblings().removeClass('crt');
+
+            $this.index() < 2 ? _this.backOffView() : _this.ForwardView(true);
+        });
+    };
+
+    CitySelect.prototype.setNavTxt = function (index, txt) {
+
+        var $nav = this.$cityElement.find('.cityselect-nav a');
+
+        index < 2 && $nav.removeClass('crt');
+
+        $nav.eq(index).html(txt);
+        $nav.eq(index + 1).addClass('crt').html('请选择');
+        $nav.eq(index + 2).removeClass('crt').html('');
+    };
+
+    CitySelect.prototype.backOffView = function () {
+        this.$cityElement.find('.cityselect-content').removeClass('cityselect-next')
+        .addClass('cityselect-move-animate cityselect-prev');
+    };
+
+    CitySelect.prototype.ForwardView = function (animate) {
+        this.$cityElement.find('.cityselect-content').removeClass('cityselect-move-animate cityselect-prev')
+        .addClass((animate ? 'cityselect-move-animate' : '') + ' cityselect-next');
+    };
+
+    CitySelect.prototype.bindItemEvent = function () {
+        var _this = this,
+            $cityElement = _this.$cityElement;
+
+        $cityElement.on('click.ydui.cityselect', '.cityselect-item-box a', function () {
+            var $this = $(this);
+
+            if ($this.hasClass('crt'))return;
+            $this.addClass('crt').siblings().removeClass('crt');
+
+            var tag = $this.data('tag');
+
+            _this.setNavTxt(tag, $this.text());
+
+            var $nav = $cityElement.find('.cityselect-nav a'),
+                defaultSet = _this.defaultSet;
+
+            if (tag == 0) {
+
+                _this.loadCity();
+                $cityElement.find('.cityselect-item-box').eq(1).find('a').removeClass('crt');
+
+            } else if (tag == 1) {
+
+                _this.loadArea();
+                _this.ForwardView(true);
+                $cityElement.find('.cityselect-item-box').eq(2).find('a').removeClass('crt');
+
+            } else {
+
+                defaultSet.provance = $nav.eq(0).html();
+                defaultSet.city = $nav.eq(1).html();
+                defaultSet.area = $nav.eq(2).html();
+
+                _this.returnValue();
+            }
+        });
+    };
+
+    CitySelect.prototype.returnValue = function () {
+        var _this = this,
+            defaultSet = _this.defaultSet;
+
+        _this.$element.trigger($.Event('done.ydui.cityselect', {
+            provance: defaultSet.provance,
+            city: defaultSet.city,
+            area: defaultSet.area
+        }));
+
+        _this.close();
+    };
+
+    CitySelect.prototype.scrollPosition = function (index) {
+
+        var _this = this,
+            $itemBox = _this.$itemBox.eq(index),
+            itemHeight = $itemBox.find('a.crt').height(),
+            itemBoxHeight = $itemBox.parent().height();
+
+        $itemBox.parent().animate({
+            scrollTop: $itemBox.find('a.crt').index() * itemHeight - itemBoxHeight / 3
+        }, 0, function () {
+            _this.bindItemEvent();
+        });
+    };
+
+    CitySelect.prototype.fillItems = function (index, arr) {
+        var _this = this;
+
+        _this.$itemBox.eq(index).html(arr).parent().animate({scrollTop: 0}, 10);
+
+        _this.scrollPosition(index);
+    };
+
+    CitySelect.prototype.loadProvance = function () {
+        var _this = this;
+
+        var arr = [];
+        $.each(_this.citys, function (k, v) {
+            arr.push($('<a class="' + (v.n == _this.defaultSet.provance ? 'crt' : '') + '" href="javascript:;"><span>' + v.n + '</span></a>').data({
+                citys: v.c,
+                tag: 0
+            }));
+        });
+        _this.fillItems(0, arr);
+    };
+
+    CitySelect.prototype.loadCity = function () {
+        var _this = this;
+
+        var cityData = _this.$itemBox.eq(0).find('a.crt').data('citys');
+
+        var arr = [];
+        $.each(cityData, function (k, v) {
+            arr.push($('<a class="' + (v.n == _this.defaultSet.city ? 'crt' : '') + '" href="javascript:;"><span>' + v.n + '</span></a>').data({
+                citys: v.a,
+                tag: 1
+            }));
+        });
+        _this.fillItems(1, arr);
+    };
+
+    CitySelect.prototype.loadArea = function () {
+        var _this = this;
+
+        var areaData = _this.$itemBox.eq(1).find('a.crt').data('citys');
+
+        var arr = [];
+        $.each(areaData, function (k, v) {
+            arr.push($('<a class="' + (v == _this.defaultSet.area ? 'crt' : '') + '" href="javascript:;"><span>' + v + '</span></a>').data({tag: 2}));
+        });
+
+        if (arr.length <= 0) {
+            arr.push($('<a href="javascript:;"><span>全区</span></a>').data({tag: 2}));
+        }
+        _this.fillItems(2, arr);
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var $this = $(this),
+                citySelect = $this.data('ydui.cityselect');
+
+            if (!citySelect) {
+                $this.data('ydui.cityselect', (citySelect = new CitySelect(this, option)));
+            }
+
+            if (typeof option == 'string') {
+                citySelect[option] && citySelect[option].apply(citySelect, args);
+            }
+        });
+    }
+
+    $.fn.citySelect = Plugin;
+
+}(window);
+
+/**
+ * Device
+ */
+!function (window) {
+    var doc = window.document,
+        ydui = window.YDUI,
+        ua = window.navigator && window.navigator.userAgent || '';
+
+    var ipad = !!ua.match(/(iPad).*OS\s([\d_]+)/),
+        ipod = !!ua.match(/(iPod)(.*OS\s([\d_]+))?/),
+        iphone = !ipad && !!ua.match(/(iPhone\sOS)\s([\d_]+)/);
+
+    ydui.device = {
+        /**
+         * 是否移动终端
+         * @return {Boolean}
+         */
+        isMobile: !!ua.match(/AppleWebKit.*Mobile.*/) || 'ontouchstart' in doc.documentElement,
+        /**
+         * 是否IOS终端
+         * @returns {boolean}
+         */
+        isIOS: !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),
+        /**
+         * 是否Android终端
+         * @returns {boolean}
+         */
+        isAndroid: !!ua.match(/(Android);?[\s\/]+([\d.]+)?/),
+        /**
+         * 是否ipad终端
+         * @returns {boolean}
+         */
+        isIpad: ipad,
+        /**
+         * 是否ipod终端
+         * @returns {boolean}
+         */
+        isIpod: ipod,
+        /**
+         * 是否iphone终端
+         * @returns {boolean}
+         */
+        isIphone: iphone,
+        /**
+         * 是否webview
+         * @returns {boolean}
+         */
+        isWebView: (iphone || ipad || ipod) && !!ua.match(/.*AppleWebKit(?!.*Safari)/i),
+        /**
+         * 是否微信端
+         * @returns {boolean}
+         */
+        isWeixin: ua.indexOf('MicroMessenger') > -1,
+        /**
+         * 是否火狐浏览器
+         */
+        isMozilla: /firefox/.test(navigator.userAgent.toLowerCase()),
+        /**
+         * 设备像素比
+         */
+        pixelRatio: window.devicePixelRatio || 1
+    };
+}(window);
+
+/**
+ * Dialog
+ */
+!function (window, ydui) {
+    "use strict";
+
+    var dialog = ydui.dialog = ydui.dialog || {},
+        $body = $(window.document.body);
+
+    /**
+     * 确认提示框
+     * @param title 标题String 【可选】
+     * @param mes   内容String 【必填】
+     * @param opts  按钮们Array 或 “确定按钮”回调函数Function 【必填】
+     * @constructor
+     */
+    dialog.confirm = function (title, mes, opts) {
+        var ID = 'YDUI_CONFRIM';
+
+        $('#' + ID).remove();
+
+        var args = arguments.length;
+        if (args < 2) {
+            console.error('From YDUI\'s confirm: Please set two or three parameters!!!');
+            return;
+        }
+
+        if (typeof arguments[1] != 'function' && args == 2 && !arguments[1] instanceof Array) {
+            console.error('From YDUI\'s confirm: The second parameter must be a function or array!!!');
+            return;
+        }
+
+        if (args == 2) {
+            opts = mes;
+            mes = title;
+            title = '提示';
+        }
+
+        var btnArr = opts;
+        if (typeof opts === 'function') {
+            btnArr = [{
+                txt: '取消',
+                color: false
+            }, {
+                txt: '确定',
+                color: true,
+                callback: function () {
+                    opts && opts();
+                }
+            }];
+        }
+
+        var $dom = $('' +
+            '<div class="mask-black-dialog" id="' + ID + '">' +
+            '   <div class="m-confirm">' +
+            '       <div class="confirm-hd"><strong class="confirm-title">' + title + '</strong></div>' +
+            '       <div class="confirm-bd">' + mes + '</div>' +
+            '   </div>' +
+            '</div>');
+
+        // 遍历按钮数组
+        var $btnBox = $('<div class="confirm-ft"></div>');
+
+        $.each(btnArr, function (i, val) {
+            var $btn;
+            // 指定按钮颜色
+            if (typeof val.color == 'boolean') {
+                $btn = $('<a href="javascript:;" class="' + 'confirm-btn ' + (val.color ? 'primary' : 'default') + '">' + (val.txt || '') + '</a>');
+            } else if (typeof val.color == 'string') {
+                $btn = $('<a href="javascript:;" style="color: ' + val.color + '">' + (val.txt || '') + '</a>');
+            }
+
+            // 给对应按钮添加点击事件
+            (function (p) {
+                $btn.on('click', function (e) {
+                    e.stopPropagation();
+
+                    // 是否保留弹窗
+                    if (!btnArr[p].stay) {
+                        // 释放页面滚动
+                        ydui.util.pageScroll.unlock();
+                        $dom.remove();
+                    }
+                    btnArr[p].callback && btnArr[p].callback();
+                });
+            })(i);
+            $btnBox.append($btn);
+        });
+
+        $dom.find('.m-confirm').append($btnBox);
+
+        // 禁止滚动屏幕【移动端】
+        ydui.util.pageScroll.lock();
+
+        $body.append($dom);
+    };
+
+    /**
+     * 弹出警示框
+     * @param mes       提示文字String 【必填】
+     * @param callback  回调函数Function 【可选】
+     */
+    dialog.alert = function (mes, callback) {
+
+        var ID = 'YDUI_ALERT';
+
+        $('#' + ID).remove();
+
+        var $dom = $('' +
+            '<div id="' + ID + '">' +
+            '   <div class="mask-black-dialog">' +
+            '       <div class="m-confirm m-alert">' +
+            '           <div class="confirm-bd">' + (mes || 'YDUI Touch') + '</div>' +
+            '           <div class="confirm-ft">' +
+            '               <a href="javascript:;" class="confirm-btn primary">确定</a>' +
+            '           </div>' +
+            '       </div>' +
+            '   </div>' +
+            '</div>');
+
+        ydui.util.pageScroll.lock();
+
+        $body.append($dom);
+
+        $dom.find('a').on('click', function () {
+            $dom.remove();
+            ydui.util.pageScroll.unlock();
+            typeof callback === 'function' && callback();
+        });
+    };
+
+    /**
+     * 弹出提示层
+     */
+    dialog.toast = function () {
+        var timer = null;
+        /**
+         * @param mes       提示文字String 【必填】
+         * @param type      类型String success or error 【必填】
+         * @param timeout   多久后消失Number 毫秒 【默认：2000ms】【可选】
+         * @param callback  回调函数Function 【可选】
+         */
+        return function (mes, type, timeout, callback) {
+
+            clearTimeout(timer);
+
+            var ID = 'YDUI_TOAST';
+
+            $('#' + ID).remove();
+
+            var args = arguments.length;
+            if (args < 2) {
+                console.error('From YDUI\'s toast: Please set two or more parameters!!!');
+                return;
+            }
+
+            var iconHtml = '';
+            if (type == 'success' || type == 'error') {
+                iconHtml = '<div class="' + (type == 'error' ? 'toast-error-ico' : 'toast-success-ico') + '"></div>';
+            }
+
+            var $dom = $('' +
+                '<div class="mask-white-dialog" id="' + ID + '">' +
+                '    <div class="m-toast ' + (iconHtml == '' ? 'none-icon' : '') + '">' + iconHtml +
+                '        <p class="toast-content">' + (mes || '') + '</p>' +
+                '    </div>' +
+                '</div>');
+
+            ydui.util.pageScroll.lock();
+
+            $body.append($dom);
+
+            if (typeof timeout === 'function' && arguments.length >= 3) {
+                callback = timeout;
+                timeout = 2000;
+            }
+
+            timer = setTimeout(function () {
+                clearTimeout(timer);
+                ydui.util.pageScroll.unlock();
+                $dom.remove();
+                typeof callback === 'function' && callback();
+            }, (~~timeout || 2000) + 100);//100为动画时间
+        };
+    }();
+
+    /**
+     * 顶部提示层
+     */
+    dialog.notify = function () {
+
+        var timer = null;
+
+        /**
+         * @param mes       提示文字String 【必填】
+         * @param timeout   多久后消失Number 毫秒 【默认：2000ms】【可选】
+         */
+        return function (mes, timeout, callback) {
+
+            clearTimeout(timer);
+
+            var ID = 'YDUI_NOTIFY';
+
+            $('#' + ID).remove();
+
+            var $dom = $('<div id="' + ID + '"><div class="m-notify">' + (mes || '') + '</div></div>');
+
+            $body.append($dom);
+
+            var next = function () {
+                $dom.remove();
+                typeof callback == 'function' && callback();
+            };
+
+            var closeNotify = function () {
+                clearTimeout(timer);
+
+                $dom.find('.m-notify').addClass('notify-out');
+
+                $dom.one('webkitTransitionEnd', next).emulateTransitionEnd(150);
+            };
+
+            $dom.on('click', closeNotify);
+
+            if (~~timeout > 0) {
+                timer = setTimeout(closeNotify, timeout + 200);
+            }
+        }
+    }();
+
+    /**
+     * 加载中提示框
+     */
+    dialog.loading = function () {
+
+        var ID = 'YDUI_LOADING';
+
+        return {
+            /**
+             * 加载中 - 显示
+             * @param text 显示文字String 【可选】
+             */
+            open: function (text) {
+                $('#' + ID).remove();
+
+                var $dom = $('' +
+                    '<div class="mask-white-dialog" id="' + ID + '">' +
+                    '   <div class="m-loading">' +
+                    '       <div class="loading-icon"></div>' +
+                    '       <div class="loading-txt">' + (text || '数据加载中') + '</div>' +
+                    '   </div>' +
+                    '</div>').remove();
+
+                ydui.util.pageScroll.lock();
+                $body.append($dom);
+            },
+            /**
+             * 加载中 - 隐藏
+             */
+            close: function () {
+                ydui.util.pageScroll.unlock();
+                $('#' + ID).remove();
+            }
+        };
+    }();
+}(window, YDUI);
+
+;(function () {
+    'use strict';
+
+    /**
+     * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
+     *
+     * @codingstandard ftlabs-jsv2
+     * @copyright The Financial Times Limited [All Rights Reserved]
+     * @license MIT License (see LICENSE.txt)
+     */
+
+    /*jslint browser:true, node:true*/
+    /*global define, Event, Node*/
+
+
+    /**
+     * Instantiate fast-clicking listeners on the specified layer.
+     *
+     * @constructor
+     * @param {Element} layer The layer to listen on
+     * @param {Object} [options={}] The options to override the defaults
+     */
+    function FastClick(layer, options) {
+        var oldOnClick;
+
+        options = options || {};
+
+        /**
+         * Whether a click is currently being tracked.
+         *
+         * @type boolean
+         */
+        this.trackingClick = false;
+
+
+        /**
+         * Timestamp for when click tracking started.
+         *
+         * @type number
+         */
+        this.trackingClickStart = 0;
+
+
+        /**
+         * The element being tracked for a click.
+         *
+         * @type EventTarget
+         */
+        this.targetElement = null;
+
+
+        /**
+         * X-coordinate of touch start event.
+         *
+         * @type number
+         */
+        this.touchStartX = 0;
+
+
+        /**
+         * Y-coordinate of touch start event.
+         *
+         * @type number
+         */
+        this.touchStartY = 0;
+
+
+        /**
+         * ID of the last touch, retrieved from Touch.identifier.
+         *
+         * @type number
+         */
+        this.lastTouchIdentifier = 0;
+
+
+        /**
+         * Touchmove boundary, beyond which a click will be cancelled.
+         *
+         * @type number
+         */
+        this.touchBoundary = options.touchBoundary || 10;
+
+
+        /**
+         * The FastClick layer.
+         *
+         * @type Element
+         */
+        this.layer = layer;
+
+        /**
+         * The minimum time between tap(touchstart and touchend) events
+         *
+         * @type number
+         */
+        this.tapDelay = options.tapDelay || 200;
+
+        /**
+         * The maximum time for a tap
+         *
+         * @type number
+         */
+        this.tapTimeout = options.tapTimeout || 700;
+
+        if (FastClick.notNeeded(layer)) {
+            return;
+        }
+
+        // Some old versions of Android don't have Function.prototype.bind
+        function bind(method, context) {
+            return function() { return method.apply(context, arguments); };
+        }
+
+
+        var methods = ['onMouse', 'onClick', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'onTouchCancel'];
+        var context = this;
+        for (var i = 0, l = methods.length; i < l; i++) {
+            context[methods[i]] = bind(context[methods[i]], context);
+        }
+
+        // Set up event handlers as required
+        if (deviceIsAndroid) {
+            layer.addEventListener('mouseover', this.onMouse, true);
+            layer.addEventListener('mousedown', this.onMouse, true);
+            layer.addEventListener('mouseup', this.onMouse, true);
+        }
+
+        layer.addEventListener('click', this.onClick, true);
+        layer.addEventListener('touchstart', this.onTouchStart, false);
+        layer.addEventListener('touchmove', this.onTouchMove, false);
+        layer.addEventListener('touchend', this.onTouchEnd, false);
+        layer.addEventListener('touchcancel', this.onTouchCancel, false);
+
+        // Hack is required for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+        // which is how FastClick normally stops click events bubbling to callbacks registered on the FastClick
+        // layer when they are cancelled.
+        if (!Event.prototype.stopImmediatePropagation) {
+            layer.removeEventListener = function(type, callback, capture) {
+                var rmv = Node.prototype.removeEventListener;
+                if (type === 'click') {
+                    rmv.call(layer, type, callback.hijacked || callback, capture);
+                } else {
+                    rmv.call(layer, type, callback, capture);
+                }
+            };
+
+            layer.addEventListener = function(type, callback, capture) {
+                var adv = Node.prototype.addEventListener;
+                if (type === 'click') {
+                    adv.call(layer, type, callback.hijacked || (callback.hijacked = function(event) {
+                            if (!event.propagationStopped) {
+                                callback(event);
+                            }
+                        }), capture);
+                } else {
+                    adv.call(layer, type, callback, capture);
+                }
+            };
+        }
+
+        // If a handler is already declared in the element's onclick attribute, it will be fired before
+        // FastClick's onClick handler. Fix this by pulling out the user-defined handler function and
+        // adding it as listener.
+        if (typeof layer.onclick === 'function') {
+
+            // Android browser on at least 3.2 requires a new reference to the function in layer.onclick
+            // - the old one won't work if passed to addEventListener directly.
+            oldOnClick = layer.onclick;
+            layer.addEventListener('click', function(event) {
+                oldOnClick(event);
+            }, false);
+            layer.onclick = null;
+        }
+    }
+
+    /**
+     * Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
+     *
+     * @type boolean
+     */
+    var deviceIsWindowsPhone = navigator.userAgent.indexOf("Windows Phone") >= 0;
+
+    /**
+     * Android requires exceptions.
+     *
+     * @type boolean
+     */
+    var deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0 && !deviceIsWindowsPhone;
+
+
+    /**
+     * iOS requires exceptions.
+     *
+     * @type boolean
+     */
+    var deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !deviceIsWindowsPhone;
+
+
+    /**
+     * iOS 4 requires an exception for select elements.
+     *
+     * @type boolean
+     */
+    var deviceIsIOS4 = deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
+
+
+    /**
+     * iOS 6.0-7.* requires the target element to be manually derived
+     *
+     * @type boolean
+     */
+    var deviceIsIOSWithBadTarget = deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
+
+    /**
+     * BlackBerry requires exceptions.
+     *
+     * @type boolean
+     */
+    var deviceIsBlackBerry10 = navigator.userAgent.indexOf('BB10') > 0;
+
+    /**
+     * Determine whether a given element requires a native click.
+     *
+     * @param {EventTarget|Element} target Target DOM element
+     * @returns {boolean} Returns true if the element needs a native click
+     */
+    FastClick.prototype.needsClick = function(target) {
+        switch (target.nodeName.toLowerCase()) {
+
+            // Don't send a synthetic click to disabled inputs (issue #62)
+            case 'button':
+            case 'select':
+            case 'textarea':
+                if (target.disabled) {
+                    return true;
+                }
+
+                break;
+            case 'input':
+
+                // File inputs need real clicks on iOS 6 due to a browser bug (issue #68)
+                if ((deviceIsIOS && target.type === 'file') || target.disabled) {
+                    return true;
+                }
+
+                break;
+            case 'label':
+            case 'iframe': // iOS8 homescreen apps can prevent events bubbling into frames
+            case 'video':
+                return true;
+        }
+
+        return (/\bneedsclick\b/).test(target.className);
+    };
+
+
+    /**
+     * Determine whether a given element requires a call to focus to simulate click into element.
+     *
+     * @param {EventTarget|Element} target Target DOM element
+     * @returns {boolean} Returns true if the element requires a call to focus to simulate native click.
+     */
+    FastClick.prototype.needsFocus = function(target) {
+        switch (target.nodeName.toLowerCase()) {
+            case 'textarea':
+                return true;
+            case 'select':
+                return !deviceIsAndroid;
+            case 'input':
+                switch (target.type) {
+                    case 'button':
+                    case 'checkbox':
+                    case 'file':
+                    case 'image':
+                    case 'radio':
+                    case 'submit':
+                        return false;
+                }
+
+                // No point in attempting to focus disabled inputs
+                return !target.disabled && !target.readOnly;
+            default:
+                return (/\bneedsfocus\b/).test(target.className);
+        }
+    };
+
+
+    /**
+     * Send a click event to the specified element.
+     *
+     * @param {EventTarget|Element} targetElement
+     * @param {Event} event
+     */
+    FastClick.prototype.sendClick = function(targetElement, event) {
+        var clickEvent, touch;
+
+        // On some Android devices activeElement needs to be blurred otherwise the synthetic click will have no effect (#24)
+        if (document.activeElement && document.activeElement !== targetElement) {
+            document.activeElement.blur();
+        }
+
+        touch = event.changedTouches[0];
+
+        // Synthesise a click event, with an extra attribute so it can be tracked
+        clickEvent = document.createEvent('MouseEvents');
+        clickEvent.initMouseEvent(this.determineEventType(targetElement), true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);
+        clickEvent.forwardedTouchEvent = true;
+        targetElement.dispatchEvent(clickEvent);
+    };
+
+    FastClick.prototype.determineEventType = function(targetElement) {
+
+        //Issue #159: Android Chrome Select Box does not open with a synthetic click event
+        if (deviceIsAndroid && targetElement.tagName.toLowerCase() === 'select') {
+            return 'mousedown';
+        }
+
+        return 'click';
+    };
+
+
+    /**
+     * @param {EventTarget|Element} targetElement
+     */
+    FastClick.prototype.focus = function(targetElement) {
+        var length;
+
+        // Issue #160: on iOS 7, some input elements (e.g. date datetime month) throw a vague TypeError on setSelectionRange. These elements don't have an integer value for the selectionStart and selectionEnd properties, but unfortunately that can't be used for detection because accessing the properties also throws a TypeError. Just check the type instead. Filed as Apple bug #15122724.
+        if (deviceIsIOS && targetElement.setSelectionRange && targetElement.type.indexOf('date') !== 0 && targetElement.type !== 'time' && targetElement.type !== 'month') {
+            length = targetElement.value.length;
+            targetElement.setSelectionRange(length, length);
+        } else {
+            targetElement.focus();
+        }
+    };
+
+
+    /**
+     * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
+     *
+     * @param {EventTarget|Element} targetElement
+     */
+    FastClick.prototype.updateScrollParent = function(targetElement) {
+        var scrollParent, parentElement;
+
+        scrollParent = targetElement.fastClickScrollParent;
+
+        // Attempt to discover whether the target element is contained within a scrollable layer. Re-check if the
+        // target element was moved to another parent.
+        if (!scrollParent || !scrollParent.contains(targetElement)) {
+            parentElement = targetElement;
+            do {
+                if (parentElement.scrollHeight > parentElement.offsetHeight) {
+                    scrollParent = parentElement;
+                    targetElement.fastClickScrollParent = parentElement;
+                    break;
+                }
+
+                parentElement = parentElement.parentElement;
+            } while (parentElement);
+        }
+
+        // Always update the scroll top tracker if possible.
+        if (scrollParent) {
+            scrollParent.fastClickLastScrollTop = scrollParent.scrollTop;
+        }
+    };
+
+
+    /**
+     * @param {EventTarget} targetElement
+     * @returns {Element|EventTarget}
+     */
+    FastClick.prototype.getTargetElementFromEventTarget = function(eventTarget) {
+
+        // On some older browsers (notably Safari on iOS 4.1 - see issue #56) the event target may be a text node.
+        if (eventTarget.nodeType === Node.TEXT_NODE) {
+            return eventTarget.parentNode;
+        }
+
+        return eventTarget;
+    };
+
+
+    /**
+     * On touch start, record the position and scroll offset.
+     *
+     * @param {Event} event
+     * @returns {boolean}
+     */
+    FastClick.prototype.onTouchStart = function(event) {
+        var targetElement, touch, selection;
+
+        // Ignore multiple touches, otherwise pinch-to-zoom is prevented if both fingers are on the FastClick element (issue #111).
+        if (event.targetTouches.length > 1) {
+            return true;
+        }
+
+        targetElement = this.getTargetElementFromEventTarget(event.target);
+        touch = event.targetTouches[0];
+
+        if (deviceIsIOS) {
+
+            // Only trusted events will deselect text on iOS (issue #49)
+            selection = window.getSelection();
+            if (selection.rangeCount && !selection.isCollapsed) {
+                return true;
+            }
+
+            if (!deviceIsIOS4) {
+
+                // Weird things happen on iOS when an alert or confirm dialog is opened from a click event callback (issue #23):
+                // when the user next taps anywhere else on the page, new touchstart and touchend events are dispatched
+                // with the same identifier as the touch event that previously triggered the click that triggered the alert.
+                // Sadly, there is an issue on iOS 4 that causes some normal touch events to have the same identifier as an
+                // immediately preceeding touch event (issue #52), so this fix is unavailable on that platform.
+                // Issue 120: touch.identifier is 0 when Chrome dev tools 'Emulate touch events' is set with an iOS device UA string,
+                // which causes all touch events to be ignored. As this block only applies to iOS, and iOS identifiers are always long,
+                // random integers, it's safe to to continue if the identifier is 0 here.
+                if (touch.identifier && touch.identifier === this.lastTouchIdentifier) {
+                    event.preventDefault();
+                    return false;
+                }
+
+                this.lastTouchIdentifier = touch.identifier;
+
+                // If the target element is a child of a scrollable layer (using -webkit-overflow-scrolling: touch) and:
+                // 1) the user does a fling scroll on the scrollable layer
+                // 2) the user stops the fling scroll with another tap
+                // then the event.target of the last 'touchend' event will be the element that was under the user's finger
+                // when the fling scroll was started, causing FastClick to send a click event to that layer - unless a check
+                // is made to ensure that a parent layer was not scrolled before sending a synthetic click (issue #42).
+                this.updateScrollParent(targetElement);
+            }
+        }
+
+        this.trackingClick = true;
+        this.trackingClickStart = event.timeStamp;
+        this.targetElement = targetElement;
+
+        this.touchStartX = touch.pageX;
+        this.touchStartY = touch.pageY;
+
+        // Prevent phantom clicks on fast double-tap (issue #36)
+        if ((event.timeStamp - this.lastClickTime) < this.tapDelay) {
+            event.preventDefault();
+        }
+
+        return true;
+    };
+
+
+    /**
+     * Based on a touchmove event object, check whether the touch has moved past a boundary since it started.
+     *
+     * @param {Event} event
+     * @returns {boolean}
+     */
+    FastClick.prototype.touchHasMoved = function(event) {
+        var touch = event.changedTouches[0], boundary = this.touchBoundary;
+
+        if (Math.abs(touch.pageX - this.touchStartX) > boundary || Math.abs(touch.pageY - this.touchStartY) > boundary) {
+            return true;
+        }
+
+        return false;
+    };
+
+
+    /**
+     * Update the last position.
+     *
+     * @param {Event} event
+     * @returns {boolean}
+     */
+    FastClick.prototype.onTouchMove = function(event) {
+        if (!this.trackingClick) {
+            return true;
+        }
+
+        // If the touch has moved, cancel the click tracking
+        if (this.targetElement !== this.getTargetElementFromEventTarget(event.target) || this.touchHasMoved(event)) {
+            this.trackingClick = false;
+            this.targetElement = null;
+        }
+
+        return true;
+    };
+
+
+    /**
+     * Attempt to find the labelled control for the given label element.
+     *
+     * @param {EventTarget|HTMLLabelElement} labelElement
+     * @returns {Element|null}
+     */
+    FastClick.prototype.findControl = function(labelElement) {
+
+        // Fast path for newer browsers supporting the HTML5 control attribute
+        if (labelElement.control !== undefined) {
+            return labelElement.control;
+        }
+
+        // All browsers under test that support touch events also support the HTML5 htmlFor attribute
+        if (labelElement.htmlFor) {
+            return document.getElementById(labelElement.htmlFor);
+        }
+
+        // If no for attribute exists, attempt to retrieve the first labellable descendant element
+        // the list of which is defined here: http://www.w3.org/TR/html5/forms.html#category-label
+        return labelElement.querySelector('button, input:not([type=hidden]), keygen, meter, output, progress, select, textarea');
+    };
+
+
+    /**
+     * On touch end, determine whether to send a click event at once.
+     *
+     * @param {Event} event
+     * @returns {boolean}
+     */
+    FastClick.prototype.onTouchEnd = function(event) {
+        var forElement, trackingClickStart, targetTagName, scrollParent, touch, targetElement = this.targetElement;
+
+        if (!this.trackingClick) {
+            return true;
+        }
+
+        // Prevent phantom clicks on fast double-tap (issue #36)
+        if ((event.timeStamp - this.lastClickTime) < this.tapDelay) {
+            this.cancelNextClick = true;
+            return true;
+        }
+
+        if ((event.timeStamp - this.trackingClickStart) > this.tapTimeout) {
+            return true;
+        }
+
+        // Reset to prevent wrong click cancel on input (issue #156).
+        this.cancelNextClick = false;
+
+        this.lastClickTime = event.timeStamp;
+
+        trackingClickStart = this.trackingClickStart;
+        this.trackingClick = false;
+        this.trackingClickStart = 0;
+
+        // On some iOS devices, the targetElement supplied with the event is invalid if the layer
+        // is performing a transition or scroll, and has to be re-detected manually. Note that
+        // for this to function correctly, it must be called *after* the event target is checked!
+        // See issue #57; also filed as rdar://13048589 .
+        if (deviceIsIOSWithBadTarget) {
+            touch = event.changedTouches[0];
+
+            // In certain cases arguments of elementFromPoint can be negative, so prevent setting targetElement to null
+            targetElement = document.elementFromPoint(touch.pageX - window.pageXOffset, touch.pageY - window.pageYOffset) || targetElement;
+            targetElement.fastClickScrollParent = this.targetElement.fastClickScrollParent;
+        }
+
+        targetTagName = targetElement.tagName.toLowerCase();
+        if (targetTagName === 'label') {
+            forElement = this.findControl(targetElement);
+            if (forElement) {
+                this.focus(targetElement);
+                if (deviceIsAndroid) {
+                    return false;
+                }
+
+                targetElement = forElement;
+            }
+        } else if (this.needsFocus(targetElement)) {
+
+            // Case 1: If the touch started a while ago (best guess is 100ms based on tests for issue #36) then focus will be triggered anyway. Return early and unset the target element reference so that the subsequent click will be allowed through.
+            // Case 2: Without this exception for input elements tapped when the document is contained in an iframe, then any inputted text won't be visible even though the value attribute is updated as the user types (issue #37).
+            if ((event.timeStamp - trackingClickStart) > 100 || (deviceIsIOS && window.top !== window && targetTagName === 'input')) {
+                this.targetElement = null;
+                return false;
+            }
+
+            this.focus(targetElement);
+            this.sendClick(targetElement, event);
+
+            // Select elements need the event to go through on iOS 4, otherwise the selector menu won't open.
+            // Also this breaks opening selects when VoiceOver is active on iOS6, iOS7 (and possibly others)
+            if (!deviceIsIOS || targetTagName !== 'select') {
+                this.targetElement = null;
+                event.preventDefault();
+            }
+
+            return false;
+        }
+
+        if (deviceIsIOS && !deviceIsIOS4) {
+
+            // Don't send a synthetic click event if the target element is contained within a parent layer that was scrolled
+            // and this tap is being used to stop the scrolling (usually initiated by a fling - issue #42).
+            scrollParent = targetElement.fastClickScrollParent;
+            if (scrollParent && scrollParent.fastClickLastScrollTop !== scrollParent.scrollTop) {
+                return true;
+            }
+        }
+
+        // Prevent the actual click from going though - unless the target node is marked as requiring
+        // real clicks or if it is in the whitelist in which case only non-programmatic clicks are permitted.
+        if (!this.needsClick(targetElement)) {
+            event.preventDefault();
+            this.sendClick(targetElement, event);
+        }
+
+        return false;
+    };
+
+
+    /**
+     * On touch cancel, stop tracking the click.
+     *
+     * @returns {void}
+     */
+    FastClick.prototype.onTouchCancel = function() {
+        this.trackingClick = false;
+        this.targetElement = null;
+    };
+
+
+    /**
+     * Determine mouse events which should be permitted.
+     *
+     * @param {Event} event
+     * @returns {boolean}
+     */
+    FastClick.prototype.onMouse = function(event) {
+
+        // If a target element was never set (because a touch event was never fired) allow the event
+        if (!this.targetElement) {
+            return true;
+        }
+
+        if (event.forwardedTouchEvent) {
+            return true;
+        }
+
+        // Programmatically generated events targeting a specific element should be permitted
+        if (!event.cancelable) {
+            return true;
+        }
+
+        // Derive and check the target element to see whether the mouse event needs to be permitted;
+        // unless explicitly enabled, prevent non-touch click events from triggering actions,
+        // to prevent ghost/doubleclicks.
+        if (!this.needsClick(this.targetElement) || this.cancelNextClick) {
+
+            // Prevent any user-added listeners declared on FastClick element from being fired.
+            if (event.stopImmediatePropagation) {
+                event.stopImmediatePropagation();
+            } else {
+
+                // Part of the hack for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+                event.propagationStopped = true;
+            }
+
+            // Cancel the event
+            event.stopPropagation();
+            event.preventDefault();
+
+            return false;
+        }
+
+        // If the mouse event is permitted, return true for the action to go through.
+        return true;
+    };
+
+
+    /**
+     * On actual clicks, determine whether this is a touch-generated click, a click action occurring
+     * naturally after a delay after a touch (which needs to be cancelled to avoid duplication), or
+     * an actual click which should be permitted.
+     *
+     * @param {Event} event
+     * @returns {boolean}
+     */
+    FastClick.prototype.onClick = function(event) {
+        var permitted;
+
+        // It's possible for another FastClick-like library delivered with third-party code to fire a click event before FastClick does (issue #44). In that case, set the click-tracking flag back to false and return early. This will cause onTouchEnd to return early.
+        if (this.trackingClick) {
+            this.targetElement = null;
+            this.trackingClick = false;
+            return true;
+        }
+
+        // Very odd behaviour on iOS (issue #18): if a submit element is present inside a form and the user hits enter in the iOS simulator or clicks the Go button on the pop-up OS keyboard the a kind of 'fake' click event will be triggered with the submit-type input element as the target.
+        if (event.target.type === 'submit' && event.detail === 0) {
+            return true;
+        }
+
+        permitted = this.onMouse(event);
+
+        // Only unset targetElement if the click is not permitted. This will ensure that the check for !targetElement in onMouse fails and the browser's click doesn't go through.
+        if (!permitted) {
+            this.targetElement = null;
+        }
+
+        // If clicks are permitted, return true for the action to go through.
+        return permitted;
+    };
+
+
+    /**
+     * Remove all FastClick's event listeners.
+     *
+     * @returns {void}
+     */
+    FastClick.prototype.destroy = function() {
+        var layer = this.layer;
+
+        if (deviceIsAndroid) {
+            layer.removeEventListener('mouseover', this.onMouse, true);
+            layer.removeEventListener('mousedown', this.onMouse, true);
+            layer.removeEventListener('mouseup', this.onMouse, true);
+        }
+
+        layer.removeEventListener('click', this.onClick, true);
+        layer.removeEventListener('touchstart', this.onTouchStart, false);
+        layer.removeEventListener('touchmove', this.onTouchMove, false);
+        layer.removeEventListener('touchend', this.onTouchEnd, false);
+        layer.removeEventListener('touchcancel', this.onTouchCancel, false);
+    };
+
+
+    /**
+     * Check whether FastClick is needed.
+     *
+     * @param {Element} layer The layer to listen on
+     */
+    FastClick.notNeeded = function(layer) {
+        var metaViewport;
+        var chromeVersion;
+        var blackberryVersion;
+        var firefoxVersion;
+
+        // Devices that don't support touch don't need FastClick
+        if (typeof window.ontouchstart === 'undefined') {
+            return true;
+        }
+
+        // Chrome version - zero for other browsers
+        chromeVersion = +(/Chrome\/([0-9]+)/.exec(navigator.userAgent) || [,0])[1];
+
+        if (chromeVersion) {
+
+            if (deviceIsAndroid) {
+                metaViewport = document.querySelector('meta[name=viewport]');
+
+                if (metaViewport) {
+                    // Chrome on Android with user-scalable="no" doesn't need FastClick (issue #89)
+                    if (metaViewport.content.indexOf('user-scalable=no') !== -1) {
+                        return true;
+                    }
+                    // Chrome 32 and above with width=device-width or less don't need FastClick
+                    if (chromeVersion > 31 && document.documentElement.scrollWidth <= window.outerWidth) {
+                        return true;
+                    }
+                }
+
+                // Chrome desktop doesn't need FastClick (issue #15)
+            } else {
+                return true;
+            }
+        }
+
+        if (deviceIsBlackBerry10) {
+            blackberryVersion = navigator.userAgent.match(/Version\/([0-9]*)\.([0-9]*)/);
+
+            // BlackBerry 10.3+ does not require Fastclick library.
+            // https://github.com/ftlabs/fastclick/issues/251
+            if (blackberryVersion[1] >= 10 && blackberryVersion[2] >= 3) {
+                metaViewport = document.querySelector('meta[name=viewport]');
+
+                if (metaViewport) {
+                    // user-scalable=no eliminates click delay.
+                    if (metaViewport.content.indexOf('user-scalable=no') !== -1) {
+                        return true;
+                    }
+                    // width=device-width (or less than device-width) eliminates click delay.
+                    if (document.documentElement.scrollWidth <= window.outerWidth) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // IE10 with -ms-touch-action: none or manipulation, which disables double-tap-to-zoom (issue #97)
+        if (layer.style.msTouchAction === 'none' || layer.style.touchAction === 'manipulation') {
+            return true;
+        }
+
+        // Firefox version - zero for other browsers
+        firefoxVersion = +(/Firefox\/([0-9]+)/.exec(navigator.userAgent) || [,0])[1];
+
+        if (firefoxVersion >= 27) {
+            // Firefox 27+ does not have tap delay if the content is not zoomable - https://bugzilla.mozilla.org/show_bug.cgi?id=922896
+
+            metaViewport = document.querySelector('meta[name=viewport]');
+            if (metaViewport && (metaViewport.content.indexOf('user-scalable=no') !== -1 || document.documentElement.scrollWidth <= window.outerWidth)) {
+                return true;
+            }
+        }
+
+        // IE11: prefixed -ms-touch-action is no longer supported and it's recomended to use non-prefixed version
+        // http://msdn.microsoft.com/en-us/library/windows/apps/Hh767313.aspx
+        if (layer.style.touchAction === 'none' || layer.style.touchAction === 'manipulation') {
+            return true;
+        }
+
+        return false;
+    };
+
+
+    /**
+     * Factory method for creating a FastClick object
+     *
+     * @param {Element} layer The layer to listen on
+     * @param {Object} [options={}] The options to override the defaults
+     */
+    FastClick.attach = function(layer, options) {
+        return new FastClick(layer, options);
+    };
+
+
+    if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+
+        // AMD. Register as an anonymous module.
+        define(function() {
+            return FastClick;
+        });
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = FastClick.attach;
+        module.exports.FastClick = FastClick;
+    } else {
+        window.FastClick = FastClick;
+    }
+}());
+
+/**
+ * InfiniteScroll Plugin
+ */
+!function (window) {
+    "use strict";
+
+    var util = window.YDUI.util;
+
+    function InfiniteScroll (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, InfiniteScroll.DEFAULTS, options || {});
+        this.init();
+    }
+
+    /**
+     * 默认参数
+     */
+    InfiniteScroll.DEFAULTS = {
+        binder: window, // 绑定浏览器滚动事件DOM
+        initLoad: true, // 是否初始化加载第一屏数据
+        pageSize: 0, // 每页请求的数据量
+        loadingHtml: '加载中...', // 加载中提示，支持HTML
+        doneTxt: '没有更多数据了', // 加载完毕提示
+        backposition: false, // 是否从详情页返回列表页重新定位之前位置
+        jumpLink: '', // 跳转详情页链接元素
+        loadListFn: null, // 加载数据方法
+        loadStorageListFn: null // 加载SesstionStorage数据方法
+    };
+
+    /**
+     * 初始化
+     */
+    InfiniteScroll.prototype.init = function () {
+        var _this = this,
+            options = _this.options,
+            _location = window.location;
+
+        if (~~options.pageSize <= 0) {
+            console.error('[YDUI warn]: 需指定pageSize参数【即每页请求数据的长度】');
+            return;
+        }
+
+        // 获取页面唯一键，防止多个页面调用数据错乱
+        var primaryKey = _location.pathname.toUpperCase().replace(/\/?\.?/g, '');
+        if (!primaryKey) {
+            primaryKey = 'YDUI_' + _location.host.toUpperCase().replace(/\/?\.?:?/g, '');
+        }
+
+        // 保存返回页面定位所需参数的键名
+        _this.backParamsKey = primaryKey + '_BACKPARAMS';
+        // 保存列表数据的键名
+        _this.backParamsListKey = primaryKey + '_LIST_';
+
+        // 在列表底部添加一个标记，用其判断是否滚动至底部
+        _this.$element.append(_this.$tag = $('<div class="J_InfiniteScrollTag"></div>'));
+
+        // 初始化赋值列表距离顶部的距离(比如去除导航的高度距离)，用以返回列表定位准确位置
+        _this.listOffsetTop = _this.$element.offset().top;
+
+        _this.initLoadingTip();
+
+        // 是否初始化就需要加载第一屏数据
+        if (options.initLoad) {
+            if (!options.backposition) {
+                _this.loadList();
+            } else {
+                // !util.localStorage.get(_this.backParamsKey) && _this.loadList();
+                !util.sessionStorage.get(_this.backParamsKey) && _this.loadList();
+            }
+        }
+
+        _this.bindScrollEvent();
+
+        if (options.backposition) {
+            _this.loadListFromStorage();
+
+            _this.bindLinkEvent();
+        }
+    };
+
+    /**
+     * 初始化加载中提示
+     */
+    InfiniteScroll.prototype.initLoadingTip = function () {
+        var _this = this;
+
+        _this.$element.append(_this.$loading = $('<div class="list-loading">' + _this.options.loadingHtml + '</div>'));
+    };
+
+    /**
+     * 滚动页面至SesstionStorage储存的坐标
+     */
+    InfiniteScroll.prototype.scrollPosition = function () {
+        var _this = this,
+            options = _this.options,
+            $binder = $(options.binder);
+
+        var backParams = util.sessionStorage.get(_this.backParamsKey);
+
+        // 滚动页面
+        backParams && $binder.stop().animate({scrollTop: backParams.offsetTop}, 0, function () {
+            _this.scrolling = false;
+        });
+
+        options.backposition && _this.bindLinkEvent();
+
+        // 释放页面滚动权限
+        util.pageScroll.unlock();
+
+        // 删除保存坐标页码的存储
+        util.sessionStorage.remove(_this.backParamsKey);
+    };
+
+    /**
+     * 给浏览器绑定滚动事件
+     */
+    InfiniteScroll.prototype.bindScrollEvent = function () {
+        var _this = this,
+            $binder = $(_this.options.binder),
+            isWindow = $binder.get(0) === window,
+            contentHeight = isWindow ? $(window).height() : $binder.height();
+
+        $binder.on('scroll.ydui.infinitescroll', function () {
+
+            if (_this.loading || _this.isDone)return;
+
+            var contentTop = isWindow ? $(window).scrollTop() : $binder.offset().top;
+
+            // 当浏览器滚动到底部时，此时 _this.$tag.offset().top 等于 contentTop + contentHeight
+            if (_this.$tag.offset().top <= contentTop + contentHeight + contentHeight / 10) {
+                _this.loadList();
+            }
+        });
+    };
+
+    /**
+     * 跳转详情页前处理操作
+     * description: 点击跳转前储存当前位置以及页面，之后再跳转
+     */
+    InfiniteScroll.prototype.bindLinkEvent = function () {
+        var _this = this,
+            options = _this.options;
+
+        if (!options.jumpLink) {
+            console.error('[YDUI warn]: 需指定跳转详情页链接元素');
+            return;
+        }
+
+        $(_this.options.binder).on('click.ydui.infinitescroll', _this.options.jumpLink, function (e) {
+            e.preventDefault();
+
+            var $this = $(this),
+                page = $this.data('page');
+
+            if (!page) {
+                console.error('[YDUI warn]: 跳转链接元素需添加属性[data-page="其所在页码"]');
+                return;
+            }
+
+            // 储存top[距离顶部的距离]与page[页码]
+            util.sessionStorage.set(_this.backParamsKey, {
+                offsetTop: $(_this.options.binder).scrollTop() + $this.offset().top - _this.listOffsetTop,
+                page: page
+            });
+
+            location.href = $this.attr('href');
+        });
+    };
+
+    /**
+     * 加载数据
+     */
+    InfiniteScroll.prototype.loadList = function () {
+        var _this = this,
+            options = _this.options;
+
+        _this.loading = true;
+        _this.$loading.show();
+
+        if (typeof options.loadListFn == 'function') {
+
+            // 监听外部获取数据方法，以便获取数据
+            options.loadListFn().done(function (listArr, page) {
+                var len = listArr.length;
+
+                if (~~len <= 0) {
+                    console.error('[YDUI warn]: 需在 resolve() 方法里回传本次获取记录集合');
+                    return;
+                }
+
+                // 当请求的数据小于pageSize[每页请求数据数]，则认为数据加载完毕，提示相应信息
+                if (len < options.pageSize) {
+                    _this.$element.append('<div class="list-donetip">' + options.doneTxt + '</div>');
+                    _this.isDone = true;
+                }
+                _this.$loading.hide();
+                _this.loading = false;
+
+                // 将请求到的数据存入SessionStorage
+                if (options.backposition) {
+                    util.sessionStorage.set(_this.backParamsListKey + page, listArr);
+                }
+            });
+        }
+    };
+
+    /**
+     * 从SessionStorage取出数据
+     */
+    InfiniteScroll.prototype.loadListFromStorage = function () {
+        var _this = this,
+            storage = util.sessionStorage.get(_this.backParamsKey);
+
+        if (!storage)return;
+
+        // 锁定页面禁止滚动
+        util.pageScroll.lock();
+
+        // 总需滚动的页码数
+        var pageTotal = storage.page;
+
+        var listArr = [];
+
+        // 根据页码从Storage获取数据所需数据
+        for (var i = 1; i <= pageTotal; i++) {
+            var _list = util.sessionStorage.get(_this.backParamsListKey + i);
+
+            listArr.push({
+                page: i,
+                list: _list
+            });
+
+            // 判断跳转前数据是否加载完毕
+            if (i == pageTotal && _list.length < _this.options.pageSize) {
+                _this.$element.append('<div class="list-donetip">' + _this.options.doneTxt + '</div>');
+                _this.$loading.hide();
+                _this.loading = false;
+                _this.isDone = true;
+            }
+        }
+
+        // 将数据传出外部方法，直至其通知已插入页面后滚动至相应位置
+        _this.options.loadStorageListFn(listArr, pageTotal + 1).done(function () {
+            _this.scrollPosition();
+        });
+    };
+
+    function Plugin (option) {
+        return this.each(function () {
+            new InfiniteScroll(this, option);
+        });
+    }
+
+    $.fn.infiniteScroll = Plugin;
+
+}(window);
+
+/**
+ * KeyBoard Plugin
+ */
+!function (window) {
+    "use strict";
+
+    var $body = $(window.document.body),
+        isMobile = !!(window.navigator && window.navigator.userAgent || '').match(/AppleWebKit.*Mobile.*/) || 'ontouchstart' in window.document.documentElement,
+        triggerEvent = isMobile ? 'touchstart' : 'click';
+
+    function KeyBoard (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, KeyBoard.DEFAULTS, options || {});
+        this.init();
+    }
+
+    KeyBoard.DEFAULTS = {
+        disorder: false,
+        title: '安全键盘'
+    };
+
+    KeyBoard.prototype.init = function () {
+        var _this = this;
+
+        _this.inputNums = '';
+
+        _this.toggleClass = 'keyboard-show';
+
+        function getDot () {
+            var s = '';
+            for (var i = 0; i < 6; i++) {
+                s += '<li><i></i></li>';
+            }
+            return s;
+        }
+
+        var hd = '' +
+            '<div class="keyboard-head"><strong>输入数字密码</strong></div>' +
+            '<div class="keyboard-error"></div>' +
+            '<ul class="keyboard-password J_FillPwdBox">' + getDot() + '</ul>';
+
+        var ft = '' +
+            '<div class="keyboard-content">' +
+            '   <div class="keyboard-title">' + _this.options.title + '</div>' +
+            '   <ul class="keyboard-numbers"></ul>' +
+            '</div>';
+
+        _this.$element.prepend(hd).append(ft);
+
+        _this.$numsBox = _this.$element.find('.keyboard-numbers');
+
+        _this.$mask = $('<div class="mask-black"></div>');
+    };
+
+    /**
+     * 打开键盘窗口
+     */
+    KeyBoard.prototype.open = function () {
+        var _this = this,
+            $element = _this.$element,
+            $numsBox = _this.$numsBox;
+
+        YDUI.device.isIOS && $('.g-scrollview').addClass('g-fix-ios-overflow-scrolling-bug');
+
+        $element.addClass(_this.toggleClass);
+
+        if (_this.options.disorder || $numsBox.data('loaded-nums') != 1) {
+            $numsBox.data('loaded-nums', 1).html(_this.createNumsHtml());
+        }
+
+        $body.append(_this.$mask);
+
+        _this.bindEvent();
+    };
+
+    /**
+     * 关闭键盘窗口
+     */
+    KeyBoard.prototype.close = function () {
+        var _this = this;
+
+        YDUI.device.isIOS && $('.g-scrollview').removeClass('g-fix-ios-overflow-scrolling-bug');
+
+        _this.$mask.remove();
+        _this.$element.removeClass(_this.toggleClass);
+        _this.unbindEvent();
+
+        _this.inputNums = '';
+        _this.fillPassword();
+
+        _this.clearError();
+    };
+
+    /**
+     * 事件绑定
+     */
+    KeyBoard.prototype.bindEvent = function () {
+        var _this = this,
+            $element = _this.$element;
+
+        _this.$mask.on(triggerEvent + '.ydui.keyboard.mask', function (e) {
+            e.preventDefault();
+            _this.close();
+        });
+
+        $element.on(triggerEvent + '.ydui.keyboard.nums', '.J_Nums', function (e) {
+            if (_this.inputNums.length >= 6)return;
+
+            _this.inputNums = _this.inputNums + $(this).html();
+
+            _this.clearError();
+            _this.fillPassword();
+        });
+
+        // 退格
+        $element.on(triggerEvent + '.ydui.keyboard.backspace', '.J_Backspace', function (e) {
+            e.preventDefault();
+            _this.backspace();
+        });
+
+        // 取消
+        $element.on(triggerEvent + '.ydui.keyboard.cancel', '.J_Cancel', function (e) {
+            e.preventDefault();
+            _this.close();
+        });
+    };
+
+    /**
+     * 解绑事件
+     */
+    KeyBoard.prototype.unbindEvent = function () {
+        this.$element.off(triggerEvent + '.ydui.keyboard');
+        $(window).off('hashchange.ydui.keyboard');
+    };
+
+    /**
+     * 填充密码
+     */
+    KeyBoard.prototype.fillPassword = function () {
+        var _this = this,
+            inputNums = _this.inputNums,
+            length = inputNums.length;
+
+        var $li = _this.$element.find('.J_FillPwdBox').find('li');
+        $li.find('i').hide();
+        $li.filter(':lt(' + length + ')').find('i').css('display', 'block');
+
+        if (length >= 6) {
+            _this.$element.trigger($.Event('done.ydui.keyboard', {
+                password: inputNums
+            }));
+        }
+    };
+
+    /**
+     * 清空错误信息
+     */
+    KeyBoard.prototype.clearError = function () {
+        this.$element.find('.keyboard-error').html('');
+    };
+
+    /**
+     * 提示错误信息
+     * @param mes
+     */
+    KeyBoard.prototype.error = function (mes) {
+        var _this = this;
+        _this.$element.find('.keyboard-error').html(mes);
+
+        _this.inputNums = '';
+        _this.fillPassword();
+    };
+
+    /**
+     * 退格处理
+     */
+    KeyBoard.prototype.backspace = function () {
+        var _this = this;
+
+        var _inputNums = _this.inputNums;
+        if (_inputNums) {
+            _this.inputNums = _inputNums.substr(0, _inputNums.length - 1);
+        }
+
+        _this.fillPassword();
+    };
+
+    /**
+     * 创建键盘HTML
+     * @returns {string}
+     */
+    KeyBoard.prototype.createNumsHtml = function () {
+        var _this = this,
+            nums = _this.createNums();
+
+        _this.options.disorder && _this.upsetOrder(nums);
+
+        var arr = [];
+        $.each(nums, function (k) {
+            if (k % 3 == 0) {
+                if (k >= nums.length - 2) {
+                    arr.push('<li><a href="javascript:;" class="J_Cancel">取消</a>' + nums.slice(k, k + 3).join('') + '<a href="javascript:;" class="J_Backspace"></a></li>');
+                } else {
+                    arr.push('<li>' + nums.slice(k, k + 3).join('') + '</li>');
+                }
+            }
+        });
+
+        return arr.join('');
+    };
+
+    /**
+     * 创建键盘数字
+     * @returns {Array} DOM数组
+     */
+    KeyBoard.prototype.createNums = function () {
+        var _this = this;
+        var disorder = _this.options.disorder;
+
+        if (disorder && _this.cacheNums) {
+            return _this.cacheNums;
+        }
+
+        var strArr = [];
+        for (var i = 1; i <= 10; i++) {
+            strArr.push('<a href="javascript:;" class="J_Nums">' + (i % 10) + '</div>');
+        }
+
+        if (!disorder) {
+            _this.cacheNums = strArr;
+        }
+
+        return strArr;
+    };
+
+    /**
+     * 打乱数组顺序
+     * @param arr 数组
+     * @returns {*}
+     */
+    KeyBoard.prototype.upsetOrder = function (arr) {
+        var floor = Math.floor,
+            random = Math.random,
+            len = arr.length, i, j, temp,
+            n = floor(len / 2) + 1;
+        while (n--) {
+            i = floor(random() * len);
+            j = floor(random() * len);
+            if (i !== j) {
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        return arr;
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+
+            var $this = $(this),
+                keyboard = $this.data('ydui.keyboard');
+
+            if (!keyboard) {
+                $this.data('ydui.keyboard', (keyboard = new KeyBoard(this, option)));
+            }
+
+            if (typeof option == 'string') {
+                keyboard[option] && keyboard[option].apply(keyboard, args);
+            }
+        });
+    }
+
+    $.fn.keyBoard = Plugin;
+
+}(window);
+
+/**
+ * LazyLoad Plugin
+ * @example $(selector).find("img").lazyLoad();
+ */
+!function (window) {
+    "use strict";
+
+    function LazyLoad (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, LazyLoad.DEFAULTS, options || {});
+        this.init();
+    }
+
+    LazyLoad.DEFAULTS = {
+        attr: 'data-url',
+        binder: window,
+        placeholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQIHWN4BQAA7ADrKJeAMwAAAABJRU5ErkJggg=='
+    };
+
+    LazyLoad.prototype.init = function () {
+        var _this = this;
+
+        _this.bindImgEvent();
+
+        _this.loadImg();
+
+        $(_this.options.binder).on('scroll.ydui.lazyload', function () {
+            _this.loadImg();
+        });
+
+        $(window).on('resize.ydui.lazyload', function () {
+            _this.loadImg();
+        });
+    };
+
+    /**
+     * 加载图片
+     */
+    LazyLoad.prototype.loadImg = function () {
+        var _this = this,
+            options = _this.options,
+            $binder = $(options.binder);
+
+        var contentHeight = $binder.height(),
+            contentTop = $binder.get(0) === window ? $(window).scrollTop() : $binder.offset().top;
+
+        _this.$element.each(function () {
+            var $img = $(this);
+
+            var post = $img.offset().top - contentTop,
+                posb = post + $img.height();
+
+            // 判断是否位于可视区域内
+            if ((post >= 0 && post < contentHeight) || (posb > 0 && posb <= contentHeight)) {
+                $img.trigger('appear.ydui.lazyload');
+            }
+        });
+    };
+
+    /**
+     * 给所有图片绑定单次自定义事件
+     */
+    LazyLoad.prototype.bindImgEvent = function () {
+        var _this = this,
+            options = _this.options;
+
+        _this.$element.each(function () {
+            var $img = $(this);
+
+            if ($img.is("img") && !$img.attr("src")) {
+                $img.attr("src", options.placeholder);
+            }
+
+            $img.one("appear.ydui.lazyload", function () {
+                if ($img.is("img")) {
+                    $img.attr("src", $img.attr(options.attr));
+                }
+            });
+        });
+    };
+
+    $.fn.lazyLoad = function (option) {
+        new LazyLoad(this, option);
+    };
+
+}(window);
+
+/**
+ * ProgressBar Plugin
+ * Refer to: https://github.com/kimmobrunfeldt/progressbar.js.git
+ */
+!function (window) {
+    "use strict";
+
+    var doc = window.document,
+        util = window.YDUI.util;
+
+    function Circle (element, options) {
+        this.pathTemplate = 'M 50,50 m 0,-{radius} a {radius},{radius} 0 1 1 0,{2radius} a {radius},{radius} 0 1 1 0,-{2radius}';
+        ProgressBar.apply(this, arguments);
+    }
+
+    Circle.prototype = new ProgressBar();
+
+    Circle.prototype.getPathString = function (widthOfWider) {
+        var _this = this,
+            r = 50 - widthOfWider / 2;
+        return _this.render(_this.pathTemplate, {
+            radius: r,
+            '2radius': r * 2
+        });
+    };
+
+    Circle.prototype.initSvg = function (svg) {
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.style.display = 'block';
+        svg.style.width = '100%';
+    };
+
+    function Line (element, options) {
+        this.pathTemplate = 'M 0,{center} L 100,{center}';
+        ProgressBar.apply(this, arguments);
+    }
+
+    Line.prototype = new ProgressBar();
+
+    Line.prototype.getPathString = function (widthOfWider) {
+        var _this = this;
+        return _this.render(_this.pathTemplate, {
+            center: widthOfWider / 2
+        });
+    };
+
+    Line.prototype.initSvg = function (svg, options) {
+        svg.setAttribute('viewBox', '0 0 100 ' + options.strokeWidth);
+        svg.setAttribute('preserveAspectRatio', 'none');
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+    };
+
+    function ProgressBar (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, ProgressBar.DEFAULTS, options || {});
+    }
+
+    ProgressBar.DEFAULTS = {
+        type: 'circle',
+        strokeWidth: 0,
+        strokeColor: '#E5E5E5',
+        trailWidth: 0,
+        trailColor: '#646464',
+        fill: '',
+        progress: 0,
+        delay: true,
+        binder: window
+    };
+
+    ProgressBar.prototype.set = function (progress) {
+
+        var _this = this,
+            length = _this.trailPath.getTotalLength();
+
+        if (!progress) progress = _this.options.progress;
+        if (progress > 1)progress = 1;
+
+        _this.trailPath.style.strokeDashoffset = length - progress * length;
+    };
+
+    ProgressBar.prototype.appendView = function () {
+        var _this = this,
+            options = _this.options,
+            progress = options.progress,
+            svgView = _this.createSvgView(),
+            $element = _this.$element;
+
+        _this.$binder = options.binder === window || options.binder == 'window' ? $(window) : $(options.binder);
+
+        var path = svgView.trailPath,
+            length = path.getTotalLength();
+
+        path.style.strokeDasharray = length + ' ' + length;
+
+        var $svg = $(svgView.svg);
+        $svg.one('appear.ydui.progressbar', function () {
+            _this.set(progress);
+        });
+        $element.append($svg);
+
+        if (options.delay) {
+            _this.checkInView($svg);
+
+            _this.$binder.on('scroll.ydui.progressbar', function () {
+                _this.checkInView($svg);
+            });
+
+            $(window).on('resize', function () {
+                _this.checkInView($svg);
+            });
+        } else {
+            $svg.trigger('appear.ydui.progressbar');
+        }
+
+        return this;
+    };
+
+    ProgressBar.prototype.checkInView = function ($svg) {
+
+        var _this = this,
+            $binder = _this.$binder,
+            contentHeight = $binder.height(),
+            contentTop = $binder.get(0) === window ? $(window).scrollTop() : $binder.offset().top;
+
+        var post = $svg.offset().top - contentTop,
+            posb = post + $svg.height();
+
+        if ((post >= 0 && post < contentHeight) || (posb > 0 && posb <= contentHeight)) {
+            $svg.trigger('appear.ydui.progressbar');
+        }
+    };
+
+    ProgressBar.prototype.createSvgView = function () {
+        var _this = this,
+            options = _this.options;
+
+        var svg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        _this.initSvg(svg, options);
+
+        var path = _this.createPath(options);
+        svg.appendChild(path);
+
+        var trailPath = null;
+        if (options.trailColor || options.trailWidth) {
+            trailPath = _this.createTrailPath(options);
+            trailPath.style.strokeDashoffset = trailPath.getTotalLength();
+            svg.appendChild(trailPath);
+        }
+
+        _this.svg = svg;
+        _this.trailPath = trailPath;
+
+        return {
+            svg: svg,
+            trailPath: trailPath
+        }
+    };
+
+    ProgressBar.prototype.createTrailPath = function (options) {
+
+        var _this = this;
+
+        if (options.trailWidth == 0) {
+            options.trailWidth = options.strokeWidth;
+        }
+
+        var pathString = _this.getPathString(options.trailWidth);
+
+        return _this.createPathElement(pathString, options.trailColor, options.trailWidth);
+    };
+
+    ProgressBar.prototype.createPath = function (options) {
+        var _this = this,
+            width = options.strokeWidth;
+
+        if (options.trailWidth && options.trailWidth > options.strokeWidth) {
+            width = options.trailWidth;
+        }
+
+        var pathString = _this.getPathString(width);
+        return _this.createPathElement(pathString, options.strokeColor, options.strokeWidth, options.fill);
+    };
+
+    ProgressBar.prototype.createPathElement = function (pathString, color, width, fill) {
+
+        var path = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathString);
+        path.setAttribute('stroke', color);
+        path.setAttribute('stroke-width', width);
+
+        if (fill) {
+            path.setAttribute('fill', fill);
+        } else {
+            path.setAttribute('fill-opacity', '0');
+        }
+
+        return path;
+    };
+
+    ProgressBar.prototype.render = function (template, vars) {
+        var rendered = template;
+
+        for (var key in vars) {
+            if (vars.hasOwnProperty(key)) {
+                var val = vars[key];
+                var regExpString = '\\{' + key + '\\}';
+                var regExp = new RegExp(regExpString, 'g');
+
+                rendered = rendered.replace(regExp, val);
+            }
+        }
+
+        return rendered;
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var $this = $(this),
+                progressbar = $this.data('ydui.progressbar');
+
+            if (!progressbar) {
+                if (option.type == 'line') {
+                    $this.data('ydui.progressbar', (progressbar = new Line(this, option)));
+                } else {
+                    $this.data('ydui.progressbar', (progressbar = new Circle(this, option)));
+                }
+                if (!option || typeof option == 'object') {
+                    progressbar.appendView();
+                }
+            }
+
+            if (typeof option == 'string') {
+                progressbar[option] && progressbar[option].apply(progressbar, args);
+            }
+        });
+    }
+
+    $('[data-ydui-progressbar]').each(function () {
+        var $this = $(this);
+
+        Plugin.call($this, util.parseOptions($this.data('ydui-progressbar')));
+    });
+
+    $.fn.progressBar = Plugin;
+
+}(window);
+
+/**
+ * PullRefresh Plugin
+ */
+!function (window) {
+    "use strict";
+
+    function PullRefresh(element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, PullRefresh.DEFAULTS, options || {});
+        this.init();
+    }
+
+    PullRefresh.DEFAULTS = {
+        loadListFn: null,
+        initLoad: true,
+        distance: 100
+    };
+
+    PullRefresh.prototype.init = function () {
+        var _this = this,
+            touches = _this.touches;
+
+        _this.$dragTip = $('<div class="pullrefresh-dragtip"><span></span></div>');
+
+        _this.$element.after(_this.$dragTip);
+
+        _this.offsetTop = _this.$element.offset().top;
+
+        _this.initTip();
+
+        _this.bindEvent();
+
+        if (_this.options.initLoad) {
+            touches.loading = true;
+
+            typeof _this.options.loadListFn == 'function' && _this.options.loadListFn().done(function () {
+                touches.loading = false;
+            });
+        }
+    };
+
+    PullRefresh.prototype.bindEvent = function () {
+        var _this = this;
+
+        _this.$element.on('touchstart.ydui.pullrefresh', function (e) {
+            _this.onTouchStart(e);
+        }).on('touchmove.ydui.pullrefresh', function (e) {
+            _this.onTouchMove(e);
+        }).on('touchend.ydui.pullrefresh', function (e) {
+            _this.onTouchEnd(e);
+        });
+
+        _this.stopWeixinDrag();
+    };
+
+    PullRefresh.prototype.touches = {
+        loading: false,
+        startClientY: 0,
+        moveOffset: 0,
+        isDraging: false
+    };
+
+    PullRefresh.prototype.stopWeixinDrag = function () {
+        var _this = this;
+        $(document.body).on('touchmove.ydui.pullrefresh', function (event) {
+            _this.touches.isDraging && event.preventDefault();
+        });
+    };
+
+    PullRefresh.prototype.onTouchStart = function (event) {
+        var _this = this;
+
+        if (_this.touches.loading) {
+            event.preventDefault();
+            return;
+        }
+
+        if (_this.$element.offset().top < _this.offsetTop) {
+            return;
+        }
+
+        _this.touches.startClientY = event.originalEvent.touches[0].clientY;
+    };
+
+    PullRefresh.prototype.onTouchMove = function (event) {
+        var _this = this,
+            _touches = event.originalEvent.touches[0];
+
+        if (_this.touches.loading) {
+            event.preventDefault();
+            return;
+        }
+
+        if (_this.touches.startClientY > _touches.clientY || _this.$element.offset().top < _this.offsetTop || _this.touches.loading) {
+            return;
+        }
+
+        _this.touches.isDraging = true;
+
+        var deltaSlide = _touches.clientY - _this.touches.startClientY;
+
+        _this.$dragTip.find('span').css('opacity', deltaSlide / 100);
+
+        if (deltaSlide >= _this.options.distance) {
+            deltaSlide = _this.options.distance;
+        }
+
+        _this.$dragTip.find('span').css('transform', 'rotate(' + deltaSlide / 0.25 + 'deg)');
+
+        _this.touches.moveOffset = deltaSlide;
+
+        _this.moveDragTip(deltaSlide);
+    };
+
+    PullRefresh.prototype.onTouchEnd = function (event) {
+
+        var _this = this,
+            touches = _this.touches;
+
+        if (touches.loading) {
+            event.preventDefault();
+            return;
+        }
+
+        if (_this.$element.offset().top < _this.offsetTop) {
+            return;
+        }
+
+        _this.$dragTip.addClass('pullrefresh-animation-timing');
+
+        if (touches.moveOffset >= _this.options.distance) {
+            _this.moveDragTip(_this.options.distance / 1.5);
+            _this.$dragTip.find('span').addClass('pullrefresh-loading');
+            _this.triggerLoad();
+            return;
+        }
+
+        _this.touches.isDraging = false;
+
+        _this.resetDragTip();
+
+        _this.resetLoading();
+    };
+
+    PullRefresh.prototype.triggerLoad = function () {
+        var _this = this,
+            touches = _this.touches;
+
+        touches.loading = true;
+
+        typeof _this.options.loadListFn == 'function' && _this.options.loadListFn().done(function () {
+            setTimeout(function () {
+                _this.$dragTip.css({'transform': 'translate3d(0px, ' + (_this.options.distance / 1.5) + 'px, 0px) scale(0)'});
+                _this.resetDragTip();
+            }, 200);
+        });
+    };
+
+    PullRefresh.prototype.resetLoading = function () {
+        var _this = this;
+        _this.moveDragTip(0);
+
+        _this.$dragTip.find('span').removeClass('pullrefresh-loading').css({'opacity': 0.5, 'transform': 'rotate(0deg)'});
+    };
+
+    PullRefresh.prototype.resetDragTip = function () {
+        var _this = this,
+            touches = _this.touches;
+
+        setTimeout(function () {
+            touches.isDraging = false;
+            touches.loading = false;
+            touches.moveOffset = 0;
+            _this.moveDragTip(0);
+            _this.resetLoading();
+            _this.$dragTip.removeClass('pullrefresh-animation-timing');
+        }, 150);
+    };
+
+    PullRefresh.prototype.moveDragTip = function (y) {
+        this.$dragTip.css({'transform': 'translate3d(0,' + y + 'px,0) scale(1)'});
+    };
+
+    PullRefresh.prototype.initTip = function () {
+        var _this = this,
+            ls = window.localStorage;
+
+        if (ls.getItem('LIST-PULLREFRESH-TIP') == 'YDUI')return;
+
+        _this.$tip = $('<div class="pullrefresh-draghelp"><div><span>下拉更新</span></div></div>');
+
+        _this.$tip.on('click.ydui.pullrefresh', function () {
+            $(this).remove();
+        });
+
+        _this.$element.after(_this.$tip);
+        ls.setItem('LIST-PULLREFRESH-TIP', 'YDUI');
+
+        setTimeout(function () {
+            _this.$tip.remove();
+        }, 5000);
+    };
+
+    function Plugin(option) {
+        return this.each(function () {
+            var self = this;
+            new PullRefresh(self, option);
+        });
+    }
+
+    $.fn.pullRefresh = Plugin;
+
+}(window);
+
+/**
+ * ScrollTab Plugin
+ */
+!function (window) {
+    "use strict";
+
+    function ScrollTab (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, ScrollTab.DEFAULTS, options || {});
+        this.init();
+    }
+
+    ScrollTab.DEFAULTS = {
+        navItem: '.scrolltab-item',
+        content: '.scrolltab-content',
+        contentItem: '.scrolltab-content-item',
+        initIndex: 0
+    };
+
+    ScrollTab.prototype.init = function () {
+        var _this = this,
+            $element = _this.$element,
+            options = _this.options;
+
+        _this.$navItem = $element.find(options.navItem);
+        _this.$content = $element.find(options.content);
+        _this.$contentItem = $element.find(options.contentItem);
+
+        _this.scrolling = false;
+        _this.contentOffsetTop = _this.$content.offset().top;
+
+        _this.bindEvent();
+
+        _this.movePosition(_this.options.initIndex, false);
+    };
+
+    ScrollTab.prototype.bindEvent = function () {
+        var _this = this;
+
+        _this.$content.on('resize.ydui.scrolltab scroll.ydui.scrolltab', function () {
+            _this.checkInView();
+        });
+
+        _this.$navItem.on('click.ydui.scrolltab', function () {
+            _this.movePosition($(this).index(), true);
+        });
+    };
+
+    ScrollTab.prototype.movePosition = function (index, animate) {
+        var _this = this;
+
+        if (_this.scrolling)return;
+        _this.scrolling = true;
+
+        _this.$navItem.removeClass('crt');
+        _this.$navItem.eq(index).addClass('crt');
+
+        var $item = _this.$contentItem.eq(index);
+        if (!$item[0])return;
+
+        var offset = $item.offset().top;
+
+        var top = offset + _this.$content.scrollTop() - _this.contentOffsetTop + 1;
+
+        _this.$content.stop().animate({scrollTop: top}, animate ? 200 : 0, function () {
+            _this.scrolling = false;
+        });
+    };
+
+    ScrollTab.prototype.checkInView = function () {
+        var _this = this;
+
+        if (_this.scrolling)return;
+
+        if (_this.isScrollTop()) {
+            _this.setClass(0);
+            return;
+        }
+
+        if (_this.isScrollBottom()) {
+            _this.setClass(_this.$navItem.length - 1);
+            return;
+        }
+
+        _this.$contentItem.each(function () {
+            var $this = $(this);
+
+            if ($this.offset().top <= _this.contentOffsetTop) {
+                _this.setClass($this.index());
+            }
+        });
+    };
+
+    ScrollTab.prototype.setClass = function (index) {
+        this.$navItem.removeClass('crt').eq(index).addClass('crt');
+    };
+
+    ScrollTab.prototype.isScrollTop = function () {
+        return this.$content.scrollTop() == 0;
+    };
+
+    ScrollTab.prototype.isScrollBottom = function () {
+        var _this = this;
+
+        return _this.$content.scrollTop() + 3 >= _this.$contentItem.height() * _this.$contentItem.length - _this.$content.height();
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var target = this,
+                $this = $(target),
+                scrollTab = $this.data('ydui.scrolltab');
+
+            if (!scrollTab) {
+                $this.data('ydui.scrolltab', (scrollTab = new ScrollTab(target, option)));
+            }
+
+            if (typeof option == 'string') {
+                scrollTab[option] && scrollTab[option].apply(scrollTab, args);
+            }
+        });
+    }
+
+    $(window).on('load.ydui.scrolltab', function () {
+        $('[data-ydui-scrolltab]').each(function () {
+            var $this = $(this);
+            $this.scrollTab(window.YDUI.util.parseOptions($this.data('ydui-scrolltab')));
+        });
+    });
+
+    $.fn.scrollTab = Plugin;
+
+}(window);
+
+/**
+ * SendCode Plugin
+ */
+!function () {
+    "use strict";
+
+    function SendCode (element, options) {
+        this.$btn = $(element);
+        this.options = $.extend({}, SendCode.DEFAULTS, options || {});
+    }
+
+    SendCode.DEFAULTS = {
+        run: false, // 是否自动倒计时
+        secs: 60, // 倒计时时长（秒）
+        disClass: '', // 禁用按钮样式
+        runStr: '{%s}秒后重新获取', // 倒计时显示文本
+        resetStr: '重新获取验证码' // 倒计时结束后按钮显示文本
+    };
+
+    SendCode.timer = null;
+
+    /**
+     * 开始倒计时
+     */
+    SendCode.prototype.start = function () {
+        var _this = this,
+            options = _this.options,
+            secs = options.secs;
+
+        _this.$btn.html(_this.getStr(secs)).css('pointer-events', 'none').addClass(options.disClass);
+
+        _this.timer = setInterval(function () {
+            secs--;
+            _this.$btn.html(_this.getStr(secs));
+            if (secs <= 0) {
+                _this.resetBtn();
+                clearInterval(_this.timer);
+            }
+        }, 1000);
+    };
+
+    /**
+     * 获取倒计时显示文本
+     * @param secs
+     * @returns {string}
+     */
+    SendCode.prototype.getStr = function (secs) {
+        return this.options.runStr.replace(/\{([^{]*?)%s(.*?)\}/g, secs);
+    };
+
+    /**
+     * 重置按钮
+     */
+    SendCode.prototype.resetBtn = function () {
+        var _this = this,
+            options = _this.options;
+
+        _this.$btn.html(options.resetStr).css('pointer-events', 'auto').removeClass(options.disClass);
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var $this = $(this),
+                sendcode = $this.data('ydui.sendcode');
+
+            if (!sendcode) {
+                $this.data('ydui.sendcode', (sendcode = new SendCode(this, option)));
+                if (typeof option == 'object' && option.run) {
+                    sendcode.start();
+                }
+            }
+            if (typeof option == 'string') {
+                sendcode[option] && sendcode[option].apply(sendcode, args);
+            }
+        });
+    }
+
+    $.fn.sendCode = Plugin;
+}();
+
+/**
+ * Slider Plugin
+ */
+!function (window) {
+    "use strict";
+
+    function Slider (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, Slider.DEFAULTS, options || {});
+        this.init();
+    }
+
+    Slider.DEFAULTS = {
+        speed: 300, // 移动速度
+        autoplay: 3000, // 循环时间
+        lazyLoad: false, // 是否延迟加载图片 data-src=""
+        pagination: '.slider-pagination',
+        wrapperClass: 'slider-wrapper',
+        slideClass: 'slider-item',
+        bulletClass: 'slider-pagination-item',
+        bulletActiveClass: 'slider-pagination-item-active'
+    };
+
+    /**
+     * 初始化
+     */
+    Slider.prototype.init = function () {
+        var _this = this,
+            options = _this.options,
+            $element = _this.$element;
+
+        _this.index = 1;
+        _this.autoPlayTimer = null;
+        _this.$pagination = $element.find(options.pagination);
+        _this.$wrapper = $element.find('.' + options.wrapperClass);
+        _this.itemNums = _this.$wrapper.find('.' + options.slideClass).length;
+
+        options.lazyLoad && _this.loadImage(0);
+
+        _this.createBullet();
+
+        _this.cloneItem().bindEvent();
+    };
+
+    /**
+     * 绑定事件
+     */
+    Slider.prototype.bindEvent = function () {
+        var _this = this,
+            touchEvents = _this.touchEvents();
+
+        _this.$wrapper.find('.' + _this.options.slideClass)
+        .on(touchEvents.start, function (e) {
+            _this.onTouchStart(e);
+        }).on(touchEvents.move, function (e) {
+            _this.onTouchMove(e);
+        }).on(touchEvents.end, function (e) {
+            _this.onTouchEnd(e);
+        });
+
+        $(window).on('resize.ydui.slider', function () {
+            _this.setSlidesSize();
+        });
+
+        ~~_this.options.autoplay > 0 && _this.autoPlay();
+
+        _this.$wrapper.on('click.ydui.slider', function (e) {
+            if (!_this.touches.allowClick) {
+                e.preventDefault();
+            }
+        });
+    };
+
+    /**
+     * 复制第一个和最后一个item
+     * @returns {Slider}
+     */
+    Slider.prototype.cloneItem = function () {
+        var _this = this,
+            $wrapper = _this.$wrapper,
+            $sliderItem = _this.$wrapper.find('.' + _this.options.slideClass),
+            $firstChild = $sliderItem.filter(':first-child').clone(),
+            $lastChild = $sliderItem.filter(':last-child').clone();
+
+        $wrapper.prepend($lastChild);
+        $wrapper.append($firstChild);
+
+        _this.setSlidesSize();
+
+        return _this;
+    };
+
+    /**
+     * 创建点点点
+     */
+    Slider.prototype.createBullet = function () {
+
+        var _this = this;
+
+        if (!_this.$pagination[0])return;
+
+        var initActive = '<span class="' + (_this.options.bulletClass + ' ' + _this.options.bulletActiveClass) + '"></span>';
+
+        _this.$pagination.append(initActive + new Array(_this.itemNums).join('<span class="' + _this.options.bulletClass + '"></span>'));
+    };
+
+    /**
+     * 当前页码标识加高亮
+     */
+    Slider.prototype.activeBullet = function () {
+        var _this = this;
+
+        if (!_this.$pagination[0])return;
+
+        var itemNums = _this.itemNums,
+            index = _this.index % itemNums >= itemNums ? 0 : _this.index % itemNums - 1,
+            bulletActiveClass = _this.options.bulletActiveClass;
+
+        !!_this.$pagination[0] && _this.$pagination.find('.' + _this.options.bulletClass)
+        .removeClass(bulletActiveClass)
+        .eq(index).addClass(bulletActiveClass);
+    };
+
+    /**
+     * 设置item宽度
+     */
+    Slider.prototype.setSlidesSize = function () {
+        var _this = this,
+            _width = _this.$wrapper.width();
+
+        _this.$wrapper.css('transform', 'translate3d(-' + _width + 'px,0,0)');
+        _this.$wrapper.find('.' + _this.options.slideClass).css({width: _width});
+    };
+
+    /**
+     * 自动播放
+     */
+    Slider.prototype.autoPlay = function () {
+        var _this = this;
+
+        _this.autoPlayTimer = setInterval(function () {
+
+            if (_this.index > _this.itemNums) {
+                _this.index = 1;
+                _this.setTranslate(0, -_this.$wrapper.width());
+            }
+
+            _this.setTranslate(_this.options.speed, -(++_this.index * _this.$wrapper.width()));
+
+        }, _this.options.autoplay);
+    };
+
+    /**
+     * 停止播放
+     * @returns {Slider}
+     */
+    Slider.prototype.stopAutoplay = function () {
+        var _this = this;
+        clearInterval(_this.autoPlayTimer);
+        return _this;
+    };
+
+    /**
+     * 延迟加载图片
+     * @param index 索引
+     */
+    Slider.prototype.loadImage = function (index) {
+        var _this = this,
+            $img = _this.$wrapper.find('.' + _this.options.slideClass).eq(index).find('img'),
+            imgsrc = $img.data('src');
+
+        $img.data('load') != 1 && !!imgsrc && $img.attr('src', imgsrc).data('load', 1);
+    };
+
+    /**
+     * 左右滑动Slider
+     * @param speed 移动速度 0：当前是偷偷摸摸的移动啦，生怕给你看见
+     * @param x 横向移动宽度
+     */
+    Slider.prototype.setTranslate = function (speed, x) {
+        var _this = this;
+
+        _this.options.lazyLoad && _this.loadImage(_this.index);
+
+        _this.activeBullet();
+
+        _this.$wrapper.css({
+            'transitionDuration': speed + 'ms',
+            'transform': 'translate3d(' + x + 'px,0,0)'
+        });
+    };
+
+    /**
+     * 处理滑动一些标识
+     */
+    Slider.prototype.touches = {
+        moveTag: 0, // 移动状态(start,move,end)标记
+        startClientX: 0, // 起始拖动坐标
+        moveOffset: 0, // 移动偏移量（左右拖动宽度）
+        touchStartTime: 0, // 开始触摸的时间点
+        isTouchEvent: false, // 是否触摸事件
+        allowClick: false // 用于判断事件为点击还是拖动
+    };
+
+    /**
+     * 开始滑动
+     * @param event
+     */
+    Slider.prototype.onTouchStart = function (event) {
+        if (event.originalEvent.touches)
+            event = event.originalEvent.touches[0];
+
+        var _this = this,
+            touches = _this.touches;
+
+        touches.allowClick = true;
+
+        touches.isTouchEvent = event.type === 'touchstart';
+
+        // 鼠标右键
+        if (!touches.isTouchEvent && 'which' in event && event.which === 3) return;
+
+        if (touches.moveTag == 0) {
+            touches.moveTag = 1;
+
+            // 记录鼠标起始拖动位置
+            touches.startClientX = event.clientX;
+            // 记录开始触摸时间
+            touches.touchStartTime = Date.now();
+
+            var itemNums = _this.itemNums;
+
+            if (_this.index == 0) {
+                _this.index = itemNums;
+                _this.setTranslate(0, -itemNums * _this.$wrapper.width());
+                return;
+            }
+
+            if (_this.index > itemNums) {
+                _this.index = 1;
+                _this.setTranslate(0, -_this.$wrapper.width());
+            }
+        }
+    };
+
+    /**
+     * 滑动中
+     * @param event
+     */
+    Slider.prototype.onTouchMove = function (event) {
+        event.preventDefault();
+
+        if (event.originalEvent.touches)
+            event = event.originalEvent.touches[0];
+
+        var _this = this,
+            touches = _this.touches;
+
+        touches.allowClick = false;
+
+        if (touches.isTouchEvent && event.type === 'mousemove') return;
+
+        // 拖动偏移量
+        var deltaSlide = touches.moveOffset = event.clientX - touches.startClientX;
+
+        if (deltaSlide != 0 && touches.moveTag != 0) {
+
+            if (touches.moveTag == 1) {
+                _this.stopAutoplay();
+                touches.moveTag = 2;
+            }
+            if (touches.moveTag == 2) {
+                _this.setTranslate(0, -_this.index * _this.$wrapper.width() + deltaSlide);
+            }
+        }
+    };
+
+    /**
+     * 滑动后
+     */
+    Slider.prototype.onTouchEnd = function () {
+        var _this = this,
+            speed = _this.options.speed,
+            _width = _this.$wrapper.width(),
+            touches = _this.touches,
+            moveOffset = touches.moveOffset;
+
+        // 释放a链接点击跳转
+        setTimeout(function () {
+            touches.allowClick = true;
+        }, 0);
+
+        // 短暂点击并未拖动
+        if (touches.moveTag == 1) {
+            touches.moveTag = 0;
+        }
+
+        if (touches.moveTag == 2) {
+            touches.moveTag = 0;
+
+            // 计算开始触摸到结束触摸时间，用以计算是否需要滑至下一页
+            var timeDiff = Date.now() - touches.touchStartTime;
+
+            // 拖动时间超过300毫秒或者未拖动超过内容一半
+            if (timeDiff > 300 && Math.abs(moveOffset) <= _this.$wrapper.width() * .5) {
+                // 弹回去
+                _this.setTranslate(speed, -_this.index * _this.$wrapper.width());
+            } else {
+                // --为左移，++为右移
+                _this.setTranslate(speed, -((moveOffset > 0 ? --_this.index : ++_this.index) * _width));
+            }
+            _this.autoPlay();
+        }
+    };
+
+    /**
+     * 当前设备支持的事件
+     * @type {{start, move, end}}
+     */
+    Slider.prototype.touchEvents = function () {
+        var supportTouch = (window.Modernizr && !!window.Modernizr.touch) || (function () {
+                return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+            })();
+
+        return {
+            start: supportTouch ? 'touchstart.ydui.slider' : 'mousedown.ydui.slider',
+            move: supportTouch ? 'touchmove.ydui.slider' : 'mousemove.ydui.slider',
+            end: supportTouch ? 'touchend.ydui.slider' : 'mouseup.ydui.slider'
+        };
+    };
+
+    function Plugin (option) {
+        return this.each(function () {
+
+            var $this = $(this),
+                slider = $this.data('ydui.slider');
+
+            if (!slider) {
+                $this.data('ydui.slider', new Slider(this, option));
+            }
+        });
+    }
+
+    $(window).on('load.ydui.slider', function () {
+        $('[data-ydui-slider]').each(function () {
+            var $this = $(this);
+            $this.slider(window.YDUI.util.parseOptions($this.data('ydui-slider')));
+        });
+    });
+
+    $.fn.slider = Plugin;
+
+}(window);
+
+/**
+ * Spinner Plugin
+ */
+!function (window) {
+    "use strict";
+
+    function Spinner(element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, Spinner.DEFAULTS, options || {});
+        this.init();
+    }
+
+    Spinner.DEFAULTS = {
+        input: '.J_Input',
+        add: '.J_Add',
+        minus: '.J_Del',
+        unit: 1,
+        max: 0,
+        min: -1,
+        longpress: true,
+        callback: null
+    };
+
+    Spinner.prototype.init = function () {
+        var _this = this,
+            options = _this.options;
+
+        _this.$input = $(options.input, _this.$element);
+        _this.$add = $(options.add, _this.$element);
+        _this.$minus = $(options.minus, _this.$element);
+
+        _this.changeParameters();
+
+        _this.checkParameters();
+
+        _this.bindEvent();
+    };
+
+    Spinner.prototype.tapParams = {};
+
+    Spinner.prototype.isNumber = function (val) {
+        //return /^([0]|[1-9]\d*)(\.\d{1,2})?$/.test(val);
+        return /^\d*$/.test(val);
+    };
+
+    Spinner.prototype.FixNumber = function (val) {
+        //return parseFloat(val);
+        return parseInt(val);
+    };
+
+    Spinner.prototype.changeParameters = function () {
+
+        var _this = this,
+            options = _this.options;
+
+        var params = [
+            {param: 'unit', default: 1},
+            {param: 'max', default: 0}
+        ];
+
+        $.each(params, function (k, v) {
+            var _val = options[v.param],
+                _dataVal = _this.$input.data(v.param);
+
+            if (!!_dataVal) {
+                _val = _dataVal;
+                if (!_this.isNumber(_dataVal)) {
+                    _val = options[v.param];
+                    if (typeof _val == 'function') {
+                        _val = _val();
+                    }
+                }
+            } else {
+                if (typeof options[v.param] == 'function') {
+                    var _fnVal = options[v.param]();
+
+                    _val = _fnVal;
+                    if (!_this.isNumber(_fnVal)) {
+                        _val = options[v.param];
+                    }
+                }
+            }
+
+            if (!_this.isNumber(_val)) {
+                _val = v.default;
+            }
+
+            options[v.param] = _this.FixNumber(_val);
+        });
+    };
+
+    Spinner.prototype.checkParameters = function () {
+        var _this = this,
+            options = _this.options,
+            value = _this.$input.val();
+
+        if (value) {
+            _this.setValue(value);
+        } else {
+            if (options.max < options.min && options.max != 0) {
+                options.max = options.min;
+            }
+
+            if (options.min < options.unit && options.min > 0) {
+                options.min = options.unit;
+            }
+            if (options.min % options.unit != 0 && options.min > 0) {
+                options.min = options.min - options.min % options.unit;
+            }
+
+            if (options.max < options.unit && options.max != 0) {
+                options.max = options.unit;
+            }
+            if (options.max % options.unit != 0) {
+                options.max = options.max - options.max % options.unit;
+            }
+            if (options.min < 0) {
+                options.min = options.unit;
+            }
+            _this.setValue(options.min);
+        }
+    };
+
+    Spinner.prototype.calculation = function (type) {
+        var _this = this,
+            options = _this.options,
+            max = options.max,
+            unit = options.unit,
+            min = options.min,
+            $input = _this.$input,
+            val = _this.FixNumber($input.val());
+
+        if (!!$input.attr('readonly') || !!$input.attr('disabled'))return;
+
+        var newval;
+        if (type == 'add') {
+            newval = val + unit;
+            if (max != 0 && newval > max)return;
+        } else {
+            newval = val - unit;
+            if (newval < min)return;
+        }
+
+        _this.setValue(newval);
+
+        options.longpress && _this.longpressHandler(type);
+    };
+
+    Spinner.prototype.longpressHandler = function (type) {
+        var _this = this;
+
+        var currentDate = new Date().getTime() / 1000,
+            intervalTime = currentDate - _this.tapStartTime;
+
+        if (intervalTime < 1) intervalTime = 0.5;
+
+        var secondCount = intervalTime * 10;
+        if (intervalTime == 30) secondCount = 50;
+        if (intervalTime >= 40) secondCount = 100;
+
+        _this.tapParams.timer = setTimeout(function () {
+            _this.calculation(type);
+        }, 1000 / secondCount);
+    };
+
+    Spinner.prototype.setValue = function (val) {
+        var _this = this,
+            options = _this.options,
+            max = options.max,
+            unit = options.unit,
+            min = options.min < 0 ? unit : options.min;
+
+        if (!/^(([1-9]\d*)|0)$/.test(val)) val = max;
+
+        if (val > max && max != 0) val = max;
+
+        if (val % unit > 0) {
+            val = val - val % unit + unit;
+            if (val > max && max != 0) val -= unit;
+        }
+
+        if (val < min) val = min - min % unit;
+
+        _this.$input.val(val);
+
+        typeof options.callback == 'function' && options.callback(val, _this.$input);
+    };
+
+    Spinner.prototype.bindEvent = function () {
+        var _this = this,
+            options = _this.options,
+            isMobile = YDUI.device.isMobile,
+            mousedownEvent = 'mousedown.ydui.spinner',
+            mouseupEvent = 'mouseup.ydui.spinner';
+
+        if (isMobile) {
+            mousedownEvent = 'touchstart.ydui.spinner';
+            mouseupEvent = 'touchend.ydui.spinner';
+        }
+
+        _this.$add.on(mousedownEvent, function (e) {
+            if (options.longpress) {
+                e.preventDefault();
+                e.stopPropagation();
+                _this.tapStartTime = new Date().getTime() / 1000;
+
+                _this.$add.on(mouseupEvent, function () {
+                    _this.clearTapTimer();
+                });
+            }
+
+            _this.calculation('add');
+        });
+
+        _this.$minus.on(mousedownEvent, function (e) {
+            if (options.longpress) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                _this.tapStartTime = new Date().getTime() / 1000;
+
+                _this.$minus.on(mouseupEvent, function () {
+                    _this.clearTapTimer();
+                });
+            }
+
+            _this.calculation('minus');
+        });
+
+        _this.$input.on('change.ydui.spinner', function () {
+            _this.setValue($(this).val());
+        }).on('keydown', function (event) {
+            if (event.keyCode == 13) {
+                _this.setValue($(this).val());
+                return false;
+            }
+        });
+    };
+
+    Spinner.prototype.clearTapTimer = function () {
+        var _this = this;
+        clearTimeout(_this.tapParams.timer);
+    };
+
+    function Plugin(option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var $this = $(this),
+                spinner = $this.data('ydui.spinner');
+
+            if (!spinner) {
+                $this.data('ydui.spinner', (spinner = new Spinner(this, option)));
+            }
+
+            if (typeof option == 'string') {
+                spinner[option] && spinner[option].apply(spinner, args);
+            }
+        });
+    }
+
+    $(window).on('load.ydui.spinner', function () {
+        $('[data-ydui-spinner]').each(function () {
+            var $this = $(this);
+            $this.spinner(window.YDUI.util.parseOptions($this.data('ydui-spinner')));
+        });
+    });
+
+    $.fn.spinner = Plugin;
+}(window);
+
+/**
+ * Tab Plugin
+ */
+!function (window) {
+    "use strict";
+
+    function Tab (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, Tab.DEFAULTS, options || {});
+        this.init();
+        this.bindEvent();
+        this.transitioning = false;
+    }
+
+    // 150ms 为切换动画执行时间
+    Tab.TRANSITION_DURATION = 150;
+
+    Tab.DEFAULTS = {
+        nav: '.tab-nav-item',
+        panel: '.tab-panel-item',
+        activeClass: 'tab-active'
+    };
+
+    Tab.prototype.init = function () {
+        var _this = this,
+            $element = _this.$element;
+
+        _this.$nav = $element.find(_this.options.nav);
+        _this.$panel = $element.find(_this.options.panel);
+    };
+
+    /**
+     * 給选项卡导航绑定点击事件
+     */
+    Tab.prototype.bindEvent = function () {
+        var _this = this;
+        _this.$nav.each(function (e) {
+            $(this).on('click.ydui.tab', function () {
+                _this.open(e);
+            });
+        });
+    };
+
+    /**
+     * 打开选项卡
+     * @param index 当前导航索引
+     */
+    Tab.prototype.open = function (index) {
+        var _this = this;
+
+        index = typeof index == 'number' ? index : _this.$nav.filter(index).index();
+
+        var $curNav = _this.$nav.eq(index);
+
+        // 如果切换动画进行时或者当前二次点击 禁止重复操作
+        if (_this.transitioning || $curNav.hasClass(_this.options.activeClass))return;
+
+        _this.transitioning = true;
+
+        // 打开选项卡时绑定自定义事件
+        $curNav.trigger($.Event('open.ydui.tab', {
+            index: index
+        }));
+
+        // 给tab导航添加选中样式
+        _this.active($curNav, _this.$nav);
+
+        // 给tab内容添加选中样式
+        _this.active(_this.$panel.eq(index), _this.$panel, function () {
+            // 打开选项卡后绑定自定义事件
+            $curNav.trigger({
+                type: 'opened.ydui.tab',
+                index: index
+            });
+            _this.transitioning = false;
+        });
+    };
+
+    /**
+     * 添加选中样式
+     * @param $element 当前需要添加选中样式的对象
+     * @param $container 当前对象的同级所有对象
+     * @param callback 回调
+     */
+    Tab.prototype.active = function ($element, $container, callback) {
+        var _this = this,
+            activeClass = _this.options.activeClass;
+
+        var $avtive = $container.filter('.' + activeClass);
+
+        function next () {
+            typeof callback == 'function' && callback();
+        }
+
+        // 动画执行完毕后回调
+        $element.one('webkitTransitionEnd', next).emulateTransitionEnd(Tab.TRANSITION_DURATION);
+
+        $avtive.removeClass(activeClass);
+        $element.addClass(activeClass);
+    };
+
+    function Plugin (option) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        return this.each(function () {
+            var target = this,
+                $this = $(target),
+                tab = $this.data('ydui.tab');
+
+            if (!tab) {
+                $this.data('ydui.tab', (tab = new Tab(target, option)));
+            }
+
+            if (typeof option == 'string') {
+                tab[option] && tab[option].apply(tab, args);
+            }
+        });
+    }
+
+    $(window).on('load.ydui.tab', function () {
+        $('[data-ydui-tab]').each(function () {
+            var $this = $(this);
+            $this.tab(window.YDUI.util.parseOptions($this.data('ydui-tab')));
+        });
+    });
+
+    $.fn.tab = Plugin;
+
+}(window);
+
+/**
+ * ydui.util
+ */
+!function (window) {
+    "use strict";
+
+    var util = window.YDUI.util = window.YDUI.util || {},
+        doc = window.document;
+
+    /**
+     * 日期格式化
+     * @param format 日期格式 {%d天}{%h时}{%m分}{%s秒}{%f毫秒}
+     * @param time 单位 毫秒
+     * @returns {string}
+     */
+    util.timestampTotime = function (format, time) {
+        var t = {},
+            floor = Math.floor;
+
+        t.f = time % 1000;
+        time = floor(time / 1000);
+        t.s = time % 60;
+        time = floor(time / 60);
+        t.m = time % 60;
+        time = floor(time / 60);
+        t.h = time % 24;
+        t.d = floor(time / 24);
+
+        var ment = function (a) {
+            if (a <= 0) {
+                return '';
+            }
+            return '$1' + (a < 10 ? '0' + a : a) + '$2';
+        };
+
+        format = format.replace(/\{([^{]*?)%d(.*?)\}/g, ment(t.d));
+        format = format.replace(/\{([^{]*?)%h(.*?)\}/g, ment(t.h));
+        format = format.replace(/\{([^{]*?)%m(.*?)\}/g, ment(t.m));
+        format = format.replace(/\{([^{]*?)%s(.*?)\}/g, ment(t.s));
+        format = format.replace(/\{([^{]*?)%f(.*?)\}/g, ment(t.f));
+
+        return format;
+    };
+
+    /**
+     * js倒计时
+     * @param format 时间格式 {%d}天{%h}时{%m}分{%s}秒{%f}毫秒
+     * @param time 结束时间时间戳 毫秒
+     * @param speed 速度
+     * @param callback ret 倒计时结束回调函数 ret 时间字符 ；ret == '' 则倒计时结束
+     * DEMO: YDUI.util.countdown('{%d天}{%h时}{%m分}{%s秒}{%f毫秒}', Date.parse(new Date()) + 60000, 1000, function(ret){ console.log(ret); });
+     */
+    util.countdown = function (format, time, speed, callback) {
+        var that = this;
+        var timer = setInterval(function () {
+            var l_time = time - new Date().getTime();
+            if (l_time > 0) {
+                callback(that.timestampTotime(format, l_time));
+            } else {
+                clearInterval(timer);
+                typeof callback == 'function' && callback('');
+            }
+        }, speed);
+    };
+
+    /**
+     * js 加减乘除
+     * @param arg1 数值1
+     * @param op 操作符string 【+ - * /】
+     * @param arg2 数值2
+     * @returns {Object} arg1 与 arg2运算的精确结果
+     */
+    util.calc = function (arg1, op, arg2) {
+        var ra = 1, rb = 1, m;
+
+        try {
+            ra = arg1.toString().split('.')[1].length;
+        } catch (e) {
+        }
+        try {
+            rb = arg2.toString().split('.')[1].length;
+        } catch (e) {
+        }
+        m = Math.pow(10, Math.max(ra, rb));
+
+        switch (op) {
+            case '+':
+            case '-':
+                arg1 = Math.round(arg1 * m);
+                arg2 = Math.round(arg2 * m);
+                break;
+            case '*':
+                ra = Math.pow(10, ra);
+                rb = Math.pow(10, rb);
+                m = ra * rb;
+                arg1 = Math.round(arg1 * ra);
+                arg2 = Math.round(arg2 * rb);
+                break;
+            case '/':
+                arg1 = Math.round(arg1 * m);
+                arg2 = Math.round(arg2 * m);
+                m = 1;
+                break;
+        }
+        try {
+            var result = eval('(' + '(' + arg1 + ')' + op + '(' + arg2 + ')' + ')/' + m);
+        } catch (e) {
+        }
+        return result;
+    };
+
+    /**
+     * 读取图片文件 并返回图片的DataUrl
+     * @param obj
+     * @param callback
+     */
+    util.getImgBase64 = function (obj, callback) {
+        var that = this, dataimg = '', file = obj.files[0];
+        if (!file)return;
+        if (!/image\/\w+/.test(file.type)) {
+            that.tipMes('请上传图片文件', 'error');
+            return;
+        }
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            dataimg = this.result;
+            typeof callback === 'function' && callback(dataimg);
+        };
+    };
+
+    /**
+     * 获取地址栏参数
+     * @param name
+     * @returns {*}
+     */
+    util.getQueryString = function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"),
+            r = window.location.search.substr(1).match(reg),
+            qs = '';
+        if (r != null)qs = decodeURIComponent(r[2]);
+        return qs;
+    };
+
+    /**
+     * Cookie
+     * @type {{get, set}}
+     */
+    util.cookie = function () {
+        return {
+            /**
+             * 获取 Cookie
+             * @param  {String} name
+             * @return {String}
+             */
+            get: function (name) {
+                var m = doc.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
+                return (m && m[1]) ? decodeURIComponent(m[1]) : '';
+            },
+            /**
+             * 设置 Cookie
+             * @param {String}  name 名称
+             * @param {String}  val 值
+             * @param {Number} expires 单位（秒）
+             * @param {String}  domain 域
+             * @param {String}  path 所在的目录
+             * @param {Boolean} secure 跨协议传递
+             */
+            set: function (name, val, expires, domain, path, secure) {
+                var text = String(encodeURIComponent(val)),
+                    date = expires;
+
+                // 从当前时间开始，多少小时后过期
+                if (typeof date === 'number') {
+                    date = new Date();
+                    date.setTime(date.getTime() + expires * 1000);
+                }
+
+                date instanceof Date && (text += '; expires=' + date.toUTCString());
+
+                !!domain && (text += '; domain=' + domain);
+
+                text += '; path=' + (path || '/');
+
+                secure && (text += '; secure');
+
+                doc.cookie = name + '=' + text;
+            }
+        }
+    }();
+
+}(window);

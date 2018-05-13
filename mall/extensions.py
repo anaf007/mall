@@ -20,7 +20,7 @@ debug_toolbar = DebugToolbarExtension()
 ckeditor = CKEditor()
 wechat = Wechat()
 
-login_manager.session_protection ='strong'
+login_manager.session_protection ='basic'
 login_manager.login_view = 'user.autologin'
 login_manager.login_message = ""
 login_manager.refresh_view = 'auth.autologin'

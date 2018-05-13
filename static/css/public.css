@@ -1,0 +1,57 @@
+.m-tabbar{
+    padding: 0
+}
+.g-scrollview {
+    height: auto;
+}
+.operation {
+    margin-left: 12px;
+    width: 100%;
+}
+.totalprice {
+    float: left;
+    line-height: 50px;
+    font-size: 18px;
+}
+.goBuyBtn {
+    -webkit-appearance: none;
+    border-radius: 0px;
+    cursor: pointer;
+    float: right;
+    background: #eb0672;
+    line-height: 50px;
+    font-size: 18px;
+    color: #fff;
+    padding: 0 5%;
+    border: none;
+}
+.main_add{
+    margin: 0px 2px;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: url('../images/add_icon.png') no-repeat;
+    background-size: 21px auto;
+    float: left;
+    cursor: pointer;
+}
+.operationBox {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    background: #333;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    z-index: 1111;
+}
+
+.ShopDetailsLink{position: absolute;margin-top: -20px; z-index: 99999; width: 60px; height: 60px; text-align: center; float: left; display: block; line-height: 20px; border-radius: 50%; font-size: 13px; color: #fff; background: #f0c632 url(../images/ico_shopcart.png) no-repeat center; background-size: 40%;}
+.goodsListTitle{ overflow: hidden; padding: 15px 0;font-size: 16px; font-weight: 700; background: #fff; color: #333; margin-bottom: 3px;}
+.goodsListTitle .nametit{ float: left; margin-left: 15px; padding-left: 10px; border-left: 5px solid #ce9544;line-height: 20px;}
+.jiage{ float: right; margin-right: 15px; font-size: 14px;line-height: 20px;}
+.control-num{ float: right; overflow: hidden; zoom: 1;}
+.minus{ margin-left: 2px; display: inline-block; width: 23px; height: 23px; background: url(../images/minus_icon.png) no-repeat -0px -0px; background-size: 22px auto; float: left; cursor: pointer;}
+.count{ color: #000; float: left; width: 30px; line-height: 22px; text-align: center; border: none;}
+
+        

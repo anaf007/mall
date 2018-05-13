@@ -1,4 +1,4 @@
-{%extends 'public/base.html'%}
+{%extends 'store/base.html'%}
 {% block title %}订单确认{% endblock %}
 {% block body %}
 
@@ -7,192 +7,191 @@
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 <input type="hidden" name="note" >
 
-<div class="confirm-order">
+<!-- <div class="confirm-order"> -->
 	<div class="top-adrees">
 	{%if user_address%}
 		<input type="hidden" name="user_address" value="{{user_address.id}}" >
 		<div class="fl">
-			<p><span>{{user_address.name}}</span>{{user_address.phone}}</p>
-			<div class="adr"><img src="{{url_for('static',filename='images/adrees.png')}}" /> {{user_address.address}} </div>
+			<p><i class='icon-ucenter-outline'></i><span>{{user_address.name}}</span><i class="icon-phone2"></i>{{user_address.phone}}</p>
+			<div class="adr"><i class="icon-location"></i> {{user_address.address}} </div>
 		</div>
 	{%else%}
 
 	<div class="fl">
 			<p ><h1><a href="{{url_for('user.add_user_address')}}" style="color:#000000;">添加收货地址</a></h1></p>
 		</div>
-
-
 	
 	{%endif%}
 	<!-- 这里收货人信息添加更改等 -->
 	</div>
-<link rel="stylesheet" href="{{url_for('static',filename='ydui/css/ydui.css')}}" />
-	<section class="g-scrollview">
+
+    <section class="g-scrollview" >
+    <div class="m-cell demo-small-pitch">
+    
+        <div class="cell-item">
+            <div class="cell-left">{{buys_car[0][8]}}</div>
+            <div class="cell-right">{{buys_car[0][9]}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">{{buys_car[0][10]}}</div>
+            <div class="cell-right"></div>
+        </div>
+
+        <div class="cell-item">
+            <div class="cell-left">配送方式</div>
+            <div class="cell-right">暂只支持货到付款</div>
+        </div>
+
+        <div class="cell-item">
+            <div class="cell-left">配送费(满{{buys_car[0][6]}}元免配送费)</div>
+            <div class="cell-right">
+            {%if count_price < buys_car[0][6]%}
+                {{buys_car[0][5]}}
+            {%else%}
+                0元
+            {%endif%}</div>
+        </div>
+
+    </div>
+
+    </section>
+
+
+
+	<section class="g-scrollview" style='margin-bottom: 50px;'>
 
         <article class="m-list list-theme4">
+            {%for i in buys_car%}
             <a href="javascript:;" class="list-item">
                 <div class="list-img">
-                    <img src="http://img1.shikee.com/try/2016/06/19/09430120929215230041.jpg_180x180.jpg" data-url="http://img1.shikee.com/try/2016/06/19/09430120929215230041.jpg_180x180.jpg">
+                    <img src="{{url_for('public.get_image',filename=i[7])}}">
                 </div>
                 <div class="list-mes">
-                    <h3 class="list-title">2016夏天新款男士短袖t恤青少年韩版修身印花圆领半袖男装衣服潮</h3>
+                    <h3 class="list-title">{{i[3]}}</h3>
                     <div class="list-mes-item">
                         <div>
-                            <span class="list-price"><em>¥</em>34.7</span>
-                            <span class="list-del-price">¥45.65</span>
+                            <span class="list-price"><em>¥</em>{{i[4]}}</span>
+                            <!-- <span class="list-price-price"></span> -->
                         </div>
-                        <div>right</div>
+                        <div>x{{i[1]}}</div>
                     </div>
                 </div>
             </a>
-            <a href="javascript:;" class="list-item">
-                <div class="list-img">
-                    <img src="http://img1.shikee.com/try/2016/06/21/10172020923917672923.jpg_180x180.jpg" data-url="http://img1.shikee.com/try/2016/06/21/10172020923917672923.jpg_180x180.jpg">
-                </div>
-                <div class="list-mes">
-                    <h3 class="list-title">骆驼男装2016夏装男士短袖T恤 圆领衣服 印花男装体恤 半袖打底衫</h3>
-                    <div class="list-mes-item">
-                        <div>
-                            <span class="list-price"><em>¥</em>34.7</span>
-                            <span class="list-del-price">¥45.65</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="list-item">
-                <div class="list-img">
-                    <img src="http://img1.shikee.com/try/2016/06/23/15395220917905380014.jpg_180x180.jpg" data-url="http://img1.shikee.com/try/2016/06/23/15395220917905380014.jpg_180x180.jpg">
-                </div>
-                <div class="list-mes">
-                    <h3 class="list-title">条纹短袖T恤男士韩版衣服大码潮流男装夏季圆领体恤2016新款半袖</h3>
-                    <div class="list-mes-item">
-                        <div>
-                            <span class="list-price"><em>¥</em>34.7</span>
-                            <span class="list-del-price">¥45.65</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="list-item">
-                <div class="list-img">
-                    <img src="http://img1.shikee.com/try/2016/06/25/14244120933639105658.jpg_180x180.jpg" data-url="http://img1.shikee.com/try/2016/06/25/14244120933639105658.jpg_180x180.jpg">
-                </div>
-                <div class="list-mes">
-                    <h3 class="list-title">夏季青少年衣服男生潮牌t恤 男士 夏秋学生 日系棉短袖半袖男小衫</h3>
-                    <div class="list-mes-item">
-                        <div>
-                            <span class="list-price"><em>¥</em>34.7</span>
-                            <span class="list-del-price">¥45.65</span>
-                        </div>
-                        <div>right</div>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="list-item">
-                <div class="list-img">
-                    <img src="http://img1.shikee.com/try/2016/06/26/12365720933909085511.jpg_180x180.jpg" data-url="http://img1.shikee.com/try/2016/06/26/12365720933909085511.jpg_180x180.jpg">
-                </div>
-                <div class="list-mes">
-                    <h3 class="list-title">2016夏装新款时尚潮流短袖T恤男纯棉V领日系青少年韩版夏季上衣服</h3>
-                    <div class="list-mes-item">
-                        <div>
-                            <span class="list-price"><em>¥</em>34.7</span>
-                            <span class="list-del-price">¥45.65</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="list-item">
-                <div class="list-img">
-                    <img src="http://img1.shikee.com/try/2016/06/23/14381920926024616259.jpg_180x180.jpg" data-url="http://img1.shikee.com/try/2016/06/23/14381920926024616259.jpg_180x180.jpg">
-                </div>
-                <div class="list-mes">
-                    <h3 class="list-title">男装衣服男夏t恤 男士短袖t恤圆领夏季潮牌宽松原宿风半截袖男</h3>
-                    <div class="list-mes-item">
-                        <div>
-                            <span class="list-price"><em>¥</em>34.7</span>
-                            <span class="list-del-price">¥45.65</span>
-                        </div>
-                        <div>right</div>
-                    </div>
-                </div>
-            </a>
+
+            {%endfor%}
+
+            
+            
         </article>
 
     </section>
 
     
-	<ul class="order-list">
-		{%for i in buys_car%}
-		<li>
-			<div class="choice">
-				<input type="checkbox" checked="checked">
-				<!-- <span class="on"></span>  -->
-				</div>
-			<div class="prduct">
-				<div class="picbox">
-				<img src="{{url_for('public.get_image',filename=i[7])}}" style="border:0px">
-				</div>
-				<dl>
-					<dt>{{i[3]}}</dt>
-					<dd><span style='color:red'>{{i[4]}}￥</span>X{{i[1]}}</dd>
-				</dl>
 
-			</div>
-		</li>
-		{%endfor%}
-		
-	</ul>
-</div>
-<!--底部-->
-<div class="operationBox">
-<div style="background-color:#cccccc;color:black;padding-left: 12px;">
-	{%if count_price < buys_car[0][6]%}
-	<h3>暂只支持货到付款,未满{{buys_car[0][6]}}元，加{{buys_car[0][5]}}元配送费。</h3>
-	{%else%}
-	<h3>暂只支持货到付款,已满{{buys_car[0][6]}}元，免配送费。</h3>
-	{%endif%}
-</div>
-	<div class="operation">
-		<div class="totalprice">合计：<b>￥
+    
+<!-- </div> -->
 
-		{%if count_price < buys_car[0][6]%}
+<footer class="m-tabbar tabbar-fixed operationBox">
+    <div class="operation">
+        <div class="totalprice">共计：<b>￥
+        {%if count_price < buys_car[0][6]%}
 
-		{{count_price+buys_car[0][5]}}
-		{%else%}
-		{{count_price}}
-		{%endif%}
+        {{count_price+buys_car[0][5]}}
+        {%else%}
+        {{count_price}}
+        {%endif%}</b>(含配送费)</div>
+        <a class="goBuyBtn" href="#" onclick="submit_form()">提交订单<i></i></a>
+    </div>
 
-		</b></div>
-		<a class="goBuyBtn" href="#" onclick="submit_form()">提交订单</a>
-	</div>
-</div>
+</footer>
+
+
 
 </form>
 <script>
-	//选择 
-	$('.choice>span').click(function() {
-		if($(this).hasClass('on')) {
-			$(this).removeClass('on').prev().attr('checked', false);
-		} else {
-			$(this).addClass('on').prev().attr('checked', true);
-		}
-		
-	});
 	function submit_form(){
 		document.getElementById('form').submit();
 	}
 </script>
-
 <style type="text/css">
-.operationBox{
-	position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 49;
+.m-cell{margin-bottom: .10rem;}
+.cell-left{white-space:normal;}
+.g-scrollview:after {
+    display: block;
+    height: 0.12rem;
 }
-	
+.m-tabbar{padding: 0}
+.operationBox {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    background: #333;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    z-index: 1111;
+}
+.tabbar-fixed{
+    background: #333;
+}
+.operation {
+    margin-left: 12px;
+    width: 100%;
+}
+.totalprice {
+    float: left;
+    line-height: 50px;
+    font-size: 18px;
+}
+.goBuyBtn {
+    -webkit-appearance: none;
+    border-radius: 0px;
+    cursor: pointer;
+    float: right;
+    background: #eb0672;
+    line-height: 50px;
+    font-size: 18px;
+    color: #fff;
+    padding: 0 5%;
+    border: none;
+}
+
+.top-adrees {
+    padding: 15px;
+    /*padding-top: 21px;*/
+    margin-bottom: 5px;
+    color: #333;
+    background: #fff url({{url_for('static',filename='images/border.png')}}) repeat-x top;
+    overflow: hidden;
+}
+.fl {
+    float: left;
+}
+.top-adrees p {
+    font-size: 16px;
+    line-height: 30px;
+}
+.adr {
+    font-size: 16px;
+    line-height: 35px;
+}
+.adr img {
+    vertical-align: top;
+    width: 30px;
+    float: left;
+}
+.top-adrees p span {
+    margin: 0px 35px 0 3px;
+}
+i{font-size: 22px;color: #0fbce6}
+.list-price-self{
+    padding-left: .06rem;
+    font-size: .2rem;
+    margin-left: .02rem;
+    color: #8C8C8C;
+}
 </style>
+
 {% endblock %}
 
 		

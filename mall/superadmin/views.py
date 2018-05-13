@@ -15,7 +15,8 @@ import os
 @blueprint.route('/')
 @templated()
 def home():
-	return dict()
+    print(current_app.config['WECHAT_APPID'])
+    return dict()
 
 
 @blueprint.route('/all_version')

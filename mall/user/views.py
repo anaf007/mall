@@ -29,8 +29,12 @@ def members():
 @templated()
 @login_required
 def my_buys_car():
-	buys_car = BuysCar.query.filter_by(users=current_user).all()
-	return dict(buys_car=buys_car)
+	buys_car = BuysCar.query\
+		.with_entities(BuysCar,Goods)\
+		.join(Goods,Goods.id==BuysCar.goods_id)\
+		.filter(BuysCar.users==current_user).all()
+	seller_info = buys_car[0][1].seller
+	return dict(buys_car=buys_car,seller=seller_info)
 
 
 #显示我的订单

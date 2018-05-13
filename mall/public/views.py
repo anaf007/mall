@@ -182,11 +182,13 @@ def submit_order():
 		.with_entities(\
 			BuysCar.id,BuysCar.count,\
 			Goods.id,Goods.title,Goods.original_price,\
-			Seller.freight,Seller.max_price_no_freight,Goods.main_photo)\
+			Seller.freight,Seller.max_price_no_freight,Goods.main_photo,Seller.name,Seller.contact,Seller.note)\
 		.join(Goods,Goods.id==BuysCar.goods_id)\
 		.join(Seller,Seller.id==Goods.sellers_id)\
 		.filter(BuysCar.users==current_user)\
 		.all()
+
+	# print(buys_car[0][10])
 
 	#如果购物车为空
 	if not buys_car:

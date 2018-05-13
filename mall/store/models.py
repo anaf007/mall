@@ -96,7 +96,7 @@ class Goods(SurrogatePK, Model):
 
 	__tablename__ = 'goodsed'
 
-	#店铺分类
+	#所属店铺
 	sellers_id = reference_col('sellers')
 	#产品分类
 	category_id = reference_col('categorys')
