@@ -33,7 +33,10 @@ def my_buys_car():
 		.with_entities(BuysCar,Goods)\
 		.join(Goods,Goods.id==BuysCar.goods_id)\
 		.filter(BuysCar.users==current_user).all()
-	seller_info = buys_car[0][1].seller
+	if buys_car:
+		seller_info = buys_car[0][1].seller
+	else:
+		seller_info = []
 	return dict(buys_car=buys_car,seller=seller_info)
 
 

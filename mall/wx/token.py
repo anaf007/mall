@@ -35,24 +35,6 @@ def createmenu():
                 "url":'%s'%url_for('user.my_order',_external=True)
             },
         ]},\
-
-        # {"type":"view","name":"用户服务","sub_button":[
-        #     {
-        #         "type":"view",
-        #         "name":"平台简介",
-        #         "url":'%s'%url_for('public.introduction',_external=True)
-        #     },
-        #     {
-        #         "type":"view",
-        #         "name":"使用介绍",
-        #         "url":'%s'%url_for('public.use',_external=True)
-        #     },
-        #     {
-        #         "type":"view",
-        #         "name":"服务条款",
-        #         "url":'%s'%url_for('public.terms_of_service',_external=True)
-        #     },
-        # ]},\
         
     ]})
 
