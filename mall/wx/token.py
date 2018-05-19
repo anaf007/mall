@@ -32,7 +32,7 @@ def createmenu():
             {
                 "type":"view",
                 "name":"收货地址",
-                "url":'%s'%url_for('user.my_order',_external=True)
+                "url":'%s'%url_for('user.my_address',_external=True)
             },
         ]},\
         

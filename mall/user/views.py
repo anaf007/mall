@@ -127,6 +127,15 @@ def add_user_address_post():
 
 	return redirect(url_for('public.submit_order'))
 
+@blueprint.route('my_address')
+@templated()
+@login_required
+def my_address():
+	address = UserAddress.query.filter_by(users=current_user).all()
+
+	return dict(address=address)
+
+
 
 #自动注册 
 # @blueprint.route('/autoregister')
