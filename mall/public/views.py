@@ -169,8 +169,6 @@ def logout():
 
 
 
-
-
 #购物车提交订单
 @blueprint.route('/submit_order')
 @templated()
@@ -420,4 +418,23 @@ def get_image(filename=''):
     return send_from_directory(path, filename)
 
 
+#平台简介
+@blueprint.route('/introduction')
+@templated()
+def introduction():
+	return dict()
+
+
+#使用介绍
+@blueprint.route('/use')
+@templated()
+def use():
+	return dict()
+
+
+#服务条款
+@blueprint.route('/terms_of_service')
+@templated()
+def terms_of_service():
+	return dict()
 

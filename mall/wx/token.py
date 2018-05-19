@@ -18,18 +18,41 @@ def createmenu():
     wechat.menu.create({"button":[
         {"type":"view","name":"买买买","url":'%s'%url_for('public.home',_external=True)},\
 
-        {"type":"view","name":"用户服务","sub_button":[
+        {"type":"view","name":"我的","sub_button":[
             {
                 "type":"view",
-                "name":"我的订单",
+                "name":"购物车",
+                "url":'%s'%url_for('user.my_buys_car',_external=True)
+            },
+            {
+                "type":"view",
+                "name":"订单",
                 "url":'%s'%url_for('user.my_order',_external=True)
             },
             {
                 "type":"view",
-                "name":"我的地址",
+                "name":"收货地址",
                 "url":'%s'%url_for('user.my_order',_external=True)
             },
         ]},\
+
+        # {"type":"view","name":"用户服务","sub_button":[
+        #     {
+        #         "type":"view",
+        #         "name":"平台简介",
+        #         "url":'%s'%url_for('public.introduction',_external=True)
+        #     },
+        #     {
+        #         "type":"view",
+        #         "name":"使用介绍",
+        #         "url":'%s'%url_for('public.use',_external=True)
+        #     },
+        #     {
+        #         "type":"view",
+        #         "name":"服务条款",
+        #         "url":'%s'%url_for('public.terms_of_service',_external=True)
+        #     },
+        # ]},\
         
     ]})
 
@@ -38,14 +61,12 @@ def createmenu():
 @blueprint.route('/token',methods=['GET'])
 @wechat_required
 def token_get():
-    print('ok')
     signature = request.args.get('signature','')
     timestamp = request.args.get('timestamp','')
     nonce = request.args.get('nonce','')
     echostr = request.args.get('echostr','')
     token = current_app.config['MALL_WECHAT_TOKEN']
     sortlist = [token, timestamp, nonce]
-    print(token)
     sortlist.sort()
     sha1 = hashlib.sha1()
     map(sha1.update, sortlist)
@@ -106,13 +127,13 @@ def token_post():
         msg.event
     except Exception as e:
         logger.info(str(e))
-        return TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
+        return TextReply(content=u'欢迎关注 隔壁小卖部', message=msg)
 
     #关注事件
     if msg.event == 'subscribe':
         createmenu()
         user = autoregister(msg.source)
-        reply = TextReply(content=u'欢迎关注。O(∩_∩)O哈！', message=msg)
+        reply = TextReply(content=u'欢迎关注 隔壁小卖部', message=msg)
     #扫描二维码关注事件?20180510变成了scan,之前是subscribe_scan
     #scan为带场景值 subscribe_scan为普通的扫码关注
     if msg.event == 'scan' or msg.event == 'subscribe_scan':   #?

@@ -65,7 +65,12 @@ function addFly(event) {
                     		
 					            <a href="javascript:;" class="list-item">
 					                <div class="list-img">
-					                    <img src="{{url_for('public.get_image',filename=j[0][0].main_photo)}}">
+                                        {%if j[0][0].main_photo%}
+                                        <img src="{{url_for('public.get_image',filename=j[0][0].main_photo)}}">
+                                        {%else%}
+                                        <img src="{{url_for('static',filename='images/icon24.png')}}">
+
+                                        {%endif%}
 					                </div>
 					                <div class="list-mes">
 					                    <h3 class="list-title">{{j[0][0].title}}</h3>
