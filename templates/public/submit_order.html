@@ -101,9 +101,11 @@
         {{count_price}}
         {%endif%}</b>(含配送费)</div>
         {%if not user_address%}
-            <a class="goBuyBtn" href="{{url_for('user.add_user_address')}}">添加地址<i></i></a>
-        {%endif%}
+            <a class="goBuyBtn" href="{{url_for('user.add_user_address')}}">添加收货地址<i></i></a>
+        {%else%}
         <a class="goBuyBtn" href="#" onclick="submit_form()">提交订单<i></i></a>
+        {%endif%}
+        
     </div>
 
 </footer>
