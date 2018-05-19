@@ -18,7 +18,7 @@
 	{%else%}
 
 	<div class="fl">
-			<p ><h1><a href="{{url_for('user.add_user_address')}}" style="color:#000000;">添加收货地址</a></h1></p>
+			<h1><a href="{{url_for('user.add_user_address')}}" style="color:#000000;">添加收货地址</a></p>
 		</div>
 	
 	{%endif%}
@@ -100,6 +100,9 @@
         {%else%}
         {{count_price}}
         {%endif%}</b>(含配送费)</div>
+        {%if not user_address%}
+            <a class="goBuyBtn" href="{{url_for('user.add_user_address')}}">添加地址<i></i></a>
+        {%endif%}
         <a class="goBuyBtn" href="#" onclick="submit_form()">提交订单<i></i></a>
     </div>
 
