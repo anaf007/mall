@@ -10,7 +10,7 @@ import time,random
 from mall.user.models import User
 from mall.public.models import BuysCar,UserOrder,UserAddress
 from mall.store.models import Sale,Goods,Seller
-from mall.utils import templated
+from mall.utils import templated,flash_errors
 from .forms import AddUserAddressForm
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
