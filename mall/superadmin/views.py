@@ -9,6 +9,7 @@ from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename
 from . import blueprint
 from .forms import AddCategoryForm,AddBaseProductForm
 from mall.decorators import admin_required
+from mall.user.models  import Permission
 
 import datetime as dt
 import os
@@ -18,16 +19,25 @@ import os
 # @login_required
 # @admin_required
 def home():
+    if not current_user.is_authenticated:
+        return redirect(url_for('user.user_login',next=request.endpoint))
+    
+    if not current_user.can(Permission.ADMINISTER):
+        abort(401)
     return dict()
 
 
 @blueprint.route('/all_version')
 @templated()
+@login_required
+@admin_required
 def all_version():
 	return dict(version=SystemVersion.query.order_by(desc('id')).all())
 
 
 @blueprint.route('/add_version',methods=['POST'])
+@login_required
+@admin_required
 def add_version_post():
 	SystemVersion.create(
 		number=request.form.get('number',' '),
@@ -42,6 +52,8 @@ def add_version_post():
 #分类
 @blueprint.route('/category')
 @templated()
+@login_required
+@admin_required
 def category():
 	return dict(categorys=Category.query.order_by('sort').all())
 
@@ -49,11 +61,15 @@ def category():
 #分类
 @blueprint.route('/add_category')
 @templated()
+@login_required
+@admin_required
 def add_category():
 	return dict(form=AddCategoryForm())
 
 
 @blueprint.route('/add_category',methods=["POST"])
+@login_required
+@admin_required
 def add_category_post():
 	form=AddCategoryForm(request.form)
 	if form.validate_on_submit():
@@ -79,6 +95,8 @@ def add_category_post():
 @blueprint.route('/base_products/<int:page>')
 @blueprint.route('/base_products')
 @templated()
+@login_required
+@admin_required
 def base_products(page=1):
     pagination = BaseProducts.query.paginate(page,20,error_out=False)
     return dict(pagination=pagination,base_product=pagination.items)
@@ -87,12 +105,16 @@ def base_products(page=1):
 #添加商品基础数据
 @blueprint.route('/add_base_product')
 @templated()
+@login_required
+@admin_required
 def add_base_product():
 
 	return dict(form=AddBaseProductForm())
 
 
 @blueprint.route('/add_base_product',methods=['POST'])
+@login_required
+@admin_required
 def add_base_product_post():
     form=AddBaseProductForm()
     if form.validate_on_submit():
@@ -130,7 +152,8 @@ def add_base_product_post():
 
 # 删除基础数据
 @blueprint.route('/delete_base_product/<int:id>')
-# @login_required
+@login_required
+@admin_required
 def delete_base_product(id=0):
     base_product = BaseProducts.query.get_or_404(id)
     base_product.delete()

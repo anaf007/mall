@@ -105,6 +105,28 @@ def token_post():
             reply = TextReply(content=textreply_str, message=msg)
             return reply
 
+        #修改用户名
+        if event_str == 'un':
+            user = User.query.filter_by(wechat_id=msg.source).first() 
+            user.update(username=leave_id)
+            reply=TextReply(content='用户名已修改。', message=msg)
+            return reply
+
+        #修改密码
+        if event_str == 'pd':
+            user = User.query.filter_by(wechat_id=msg.source).first() 
+            user.set_password(password=leave_id)
+            db.session.add(user)
+            db.session.commit()
+            reply=TextReply(content=u'密码已修改。', message=msg)
+            return reply
+
+        if event_str == '后台':
+            redirect_url = url_for('superadmin.index',_external=True)
+            textreply_str = f'<a href="{redirect_url}">点击进入后台主页。</a>'
+            reply = TextReply(content=textreply_str, message=msg)
+            return reply
+
     try:
         msg.event
     except Exception as e:

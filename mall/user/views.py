@@ -198,4 +198,25 @@ def autologin(name=''):
 		user = autoregister()
 
 	return redirect(request.args.get('next') or url_for('public.home'))
+
+
+
+@blueprint.route('/user_login')
+@templated()
+def user_login():
+	return dict(next=request.args.get('next'))
+
+
+@blueprint.route('/user_login',methods=['POST'])
+def user_login_post():
+	username = request.form.get('username','0')
+	password = request.form.get('password','0')
+	user = User.query.filter_by(username=username).first()
+	
+	if user and  user.check_password(password):
+		login_user(user,True)
+		return redirect(url_for(request.args.get('next')) or url_for('public.home'))
+	else:
+		flash('信息输入错误，没有该用户。')
+		return redirect(url_for('.user_login',next=request.endpoint))
 		

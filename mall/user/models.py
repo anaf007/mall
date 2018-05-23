@@ -35,9 +35,11 @@ class Role(SurrogatePK, Model):
     @staticmethod
     def insert_roles():
         roles = {
+            'User':(0,True),
             'ADMIN': (0xffff, False) #管理员
         }
         for r in roles:
+            print(r)
             role = Role.query.filter_by(name=r).first()
             if role is None:
                 role = Role(name=r)
@@ -125,6 +127,10 @@ class User(UserMixin, SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<User({username!r})>'.format(username=self.username)
+
+    def can(self, permissions):
+        return self.roles is not None and \
+            (self.roles.permissions & permissions) == permissions
 
 
 
