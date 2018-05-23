@@ -26,6 +26,13 @@ def home():
         abort(401)
     return dict()
 
+@blueprint.route('/index')
+@templated('superadmin/home.html')
+@login_required
+@admin_required
+def index(): 
+    return  dict()
+
 
 @blueprint.route('/all_version')
 @templated()
