@@ -105,7 +105,7 @@ def add_category_post():
 @login_required
 @admin_required
 def base_products(page=1):
-    pagination = BaseProducts.query.paginate(page,20,error_out=False)
+    pagination = BaseProducts.query.order_by(desc('id')).paginate(page,20,error_out=False)
     return dict(pagination=pagination,base_product=pagination.items)
 
 
@@ -166,4 +166,18 @@ def delete_base_product(id=0):
     base_product.delete()
     flash('删除完成','success')
     return redirect(url_for('.base_products'))
+
+
+@blueprint.route('/all_users/<page:id>')
+@blueprint.route('/all_users')
+@login_required
+@admin_required
+def all_users(page=1):
+    pagination = User.query.order_by(desc('id')).paginate(page,20,error_out=False)
+    return dict(all_users=paginate.items,pagination=pagination)
+
+
+
+
+
 
