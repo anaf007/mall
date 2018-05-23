@@ -168,7 +168,8 @@ def delete_base_product(id=0):
     return redirect(url_for('.base_products'))
 
 
-@blueprint.route('/all_users/<page:id>')
+#所有用户
+@blueprint.route('/all_users/<int:page>')
 @blueprint.route('/all_users')
 @login_required
 @admin_required
