@@ -171,6 +171,7 @@ def delete_base_product(id=0):
 #所有用户
 @blueprint.route('/all_users/<int:page>')
 @blueprint.route('/all_users')
+@templated()
 @login_required
 @admin_required
 def all_users(page=1):
