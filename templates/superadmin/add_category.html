@@ -1,29 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>add_category</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
-</div>
-{%endfor%}
-	add_category添加分类 <br>
-	<form action="" method="post">
-		{{ form.hidden_tag() }}
-         {{ form.name.label }} {{ form.name() }} <br>	
-         {{ form.ico.label }} {{ form.ico() }}<br>	
-         {{ form.sort.label }} {{ form.sort() }}<br>	
-         {{ form.active.label }} {{ form.active() }}<br>
-         {{ form.pid.label }} {{ form.pid() }}<br>       
+{%extends 'superadmin/bt_base.html'%}
 
-         <input type="submit" value="tijiao">
-	</form>	
-</body>
-</html>
+{% block title %}添加分类{% endblock %}
+{% block body %}
+
+<form role="form" action="" method="post">
+
+{{ form.hidden_tag() }}
+
+<div class="form-group">
+  {{ form.name.label()}} 
+   {{ form.name(class="form-control") }} 
+</div>
+
+<div class="form-group">
+  {{ form.ico.label()}} 
+   {{ form.ico(class="form-control") }} 
+</div>
+
+<div class="form-group">
+  {{ form.sort.label()}} 
+   {{ form.sort(class="form-control") }} 
+</div>
+
+<div class="form-group">
+  {{ form.active.label()}} 
+   {{ form.active(class="form-control") }} 
+</div>
+
+
+
+<div class="form-group">
+  {{ form.pid.label()}} 
+   {{ form.pid(class="form-control") }} 
+</div>
+
+
+
+
+
+<div class="form-group">       
+<input type="submit" value="提交" class="btn btn-primary btn-lg btn-block">
+</div>
+
+
+</form>
+
+         
+
+{%endblock%}
+  

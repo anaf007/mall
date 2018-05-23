@@ -1,23 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
-</div>
-{%endfor%}
-	superadmin  home <br>
-	<a href="{{url_for('superadmin.all_version')}}">版本</a>
-	<a href="{{url_for('superadmin.store_home')}}">店铺</a>
-    <a href="{{url_for('superadmin.category')}}">商品栏目分类</a>
-	<a href="{{url_for('superadmin.base_products')}}">商品基础数据</a>
-</body>
-</html>
+
+{%extends 'superadmin/bt_base.html'%}
+
+{% block title %}后台主页{% endblock %}
+{% block body %}
+
+
+后台主页
+{%endblock%}
+
+

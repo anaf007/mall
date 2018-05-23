@@ -1,26 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
-{%for message in get_flashed_messages()%}
-        
-<div class="ui-tooltips ui-tooltips-guide">
-    <div class="ui-tooltips-cnt ui-border-b">
-        <i></i>
-        {{message}}
-    </div>
-</div>
-{%endfor%}
 
-	superadmin/store/home.html所有店铺 <br>	
-{%for i in all_seller%}
-店铺名称：{{i.name}},创建时间：{{i.created_at}},是否启用:{{i.enable}},
-{%if not i.enable%}
-<a href="{{url_for('superadmin.change_store_enable',id=i.id)}}">启用</a>
-{%endif%}
-{%endfor%}
-</body>
-</html>
+{%extends 'superadmin/bt_base.html'%}
+
+{% block title %}门店列表{% endblock %}
+{% block body %}
+<div class="table-responsive">
+
+<table class="table table-bordered table-hover table-striped">
+  <thead>
+    <tr class="warning">
+      <th>ID</th>
+      <th>User_id</th>
+      <th>店铺名称</th>
+      <th>地址</th>
+      <th>状态</th>
+      <th>激活</th>
+      <th>启用</th>
+      <th>备注</th>
+      <th>联系方式</th>
+      <th>创建时间</th>
+      <th>日订单</th>
+      <th>日金额</th>
+      <th>最大仓库</th>
+      <th>最大货位</th>
+      <th>最大商品数</th>
+      <th>运费</th>
+      <th>免运费</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%for i in all_seller%}
+    <tr>
+      <td>{{i.id}}</td>
+      <td>{{i.user_id}}</td>
+      <td>{{i.name}}</td>
+      <td>{{i.address}}</td>
+      <td>{{i.status}}</td>
+      <td>{{i.active}}</td>
+      <td>{%if i.enable%}已启用
+      {%else%}<a href="{{url_for('superadmin.change_store_enable',id=i.id)}}">启用</a>
+      {%endif%}</td>
+      <td>{{i.note}}</td>
+      <td>{{i.contact}}</td>
+      <td>{{i.created_at}}</td>
+      <td>{{i.max_order}}</td>
+      <td>{{i.max_price}}</td>
+      <td>{{i.max_warehouse}}</td>
+      <td>{{i.max_goods_location}}</td>
+      <td>{{i.max_goods_count}}</td>
+      <td>{{i.freight}}</td>
+      <td>{{i.max_price_no_freight}}</td>
+    </tr>
+    {%endfor%}
+    
+  </tbody>
+</table>
+</div>
+
+
+
+<ul class="pagination pagination-lg">
+<li {% if not pagination.has_prev %} class="disabled"{%endif%}><a href="{% if pagination.has_prev %}{{ url_for('superadmin.store_home',
+page = pagination.page - 1) }}{% else %}#{% endif %}">上一页</a></li>
+<li {% if not pagination.has_next %} class="disabled"{% endif %}><a href="{% if pagination.has_next %}{{ url_for('superadmin.store_home',
+page = pagination.page + 1) }}{% else %}#{% endif %}">下一页</a></li>
+</ul>
+
+{%endblock%}
+ 

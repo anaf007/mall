@@ -7,12 +7,14 @@ from . import blueprint
 from mall.utils import templated
 from ..store.models import Seller
 
+
+@blueprint.route('/store/<int:page>')
 @blueprint.route('/store')
 @templated('superadmin/store/home.html')
 # @login_required
-def store_home():
-	all_seller = Seller.query.order_by(desc('id')).all()
-	return dict(all_seller=all_seller)
+def store_home(page=1):
+	pagination = Seller.query.order_by(desc('id')).paginate(page,20,error_out=False)
+	return dict(pagination=pagination,all_seller=pagination.items)
 
 
 @blueprint.route('/change_store_enable/<int:id>')
@@ -20,5 +22,10 @@ def store_home():
 def change_store_enable(id=0):
 	seller = Seller.query.get_or_404(id)
 	seller.update(enable=True)
-	flash('店铺"%s"已启用。'%seller.name)
+	flash('店铺"%s"已启用。'%seller.name,'success')
 	return redirect(url_for('superadmin.store_home'))
+
+
+
+
+

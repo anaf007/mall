@@ -3,8 +3,10 @@
 from flask import Flask, render_template
 
 from mall import commands, public, user, superadmin, store, wx
-from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, ckeditor, wechat
+from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, ckeditor, wechat, api_manager
 from mall.settings import ProdConfig
+
+
 
 
 def create_app(config_object=ProdConfig):
@@ -20,6 +22,8 @@ def create_app(config_object=ProdConfig):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
+
+
     return app
 
 
@@ -34,6 +38,7 @@ def register_extensions(app):
     ckeditor.init_app(app)
     migrate.init_app(app, db)
     wechat.init_app(app)
+    api_manager.init_app(app)
     return None
 
 

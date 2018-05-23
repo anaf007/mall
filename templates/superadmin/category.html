@@ -1,18 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>category</title>
-</head>
-<body>
-	category商品分类 <br>
-	<a href="{{url_for('superadmin.add_category')}}">添加分类</a>	
-	<br>
-	{%for i in categorys%}
-	{%if i.parent_id%}
-	┗
-	{%endif%}
-	id:{{i.id}}，名称：{{i.name}}，排序{{i.sort}},下级：{{i.children}} <br>
-	{%endfor%}
-</body>
-</html>
+
+{%extends 'superadmin/bt_base.html'%}
+
+{% block title %}商品分类{% endblock %}
+{% block body %}
+
+<button type="button" class="btn btn-primary" style="margin-bottom:10px;" onclick="javascript:window.location.href='{{url_for('superadmin.add_category')}}'">添加分类</button>
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-hover table-striped">
+  <thead>
+    <tr class="warning">
+      <th>ID</th>
+      <th>分类名称</th>
+      <th>排序</th>
+      <th>状态</th>
+      <th>启用</th>
+      <th>ico</th>
+      <th>pid</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%for i in categorys%}
+    <tr>
+      <td>{{i.id}}</td>
+      <td>{{i.name}}</td>
+      <td>{{i.sort}}</td>
+      <td>{{i.status}}</td>
+      <td>{{i.active}}</td>
+      <td>{{i.ico}}</td>
+      <td>{%if parent_id%}
+      {{i.parent_id}}
+      {%else%}
+      顶级栏目
+      {%endif%}</td>
+    </tr>
+    {%endfor%}
+    
+  </tbody>
+</table>
+</div>
+{%endblock%}
+

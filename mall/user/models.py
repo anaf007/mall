@@ -8,12 +8,21 @@ from mall.database import Column, Model, SurrogatePK, db, reference_col, relatio
 from mall.extensions import bcrypt
 
 
+
+#权限常量
+class Permission:
+    ADMINISTER = 0x8000  #管理员权限
+
+
 class Role(SurrogatePK, Model):
     """A role for a user."""
 
     __tablename__ = 'roles'
     name = Column(db.String(80), unique=True, nullable=False)
-    user_id = reference_col('users', nullable=True)
+    permissions = db.Column(db.Integer)
+    default = db.Column(db.Boolean, default=False, index=True)
+
+    user = relationship('User', backref='roles')
     
     def __init__(self, name, **kwargs):
         """Create instance."""
@@ -22,6 +31,20 @@ class Role(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<Role({name})>'.format(name=self.name)
+
+    @staticmethod
+    def insert_roles():
+        roles = {
+            'ADMIN': (0xffff, False) #管理员
+        }
+        for r in roles:
+            role = Role.query.filter_by(name=r).first()
+            if role is None:
+                role = Role(name=r)
+            role.permissions = roles[r][0]
+            role.default = roles[r][1]
+            db.session.add(role)
+        db.session.commit()
 
 
 class User(UserMixin, SurrogatePK, Model):
@@ -46,8 +69,11 @@ class User(UserMixin, SurrogatePK, Model):
 
     wechat_id = Column(db.String(100)) 
 
+    role_id = reference_col('roles', nullable=True)
+    
 
-    role = relationship('Role', backref='roles')
+
+    
     #店铺一对一
     seller_id = relationship('Seller', backref='users',uselist='False',lazy='select')
     #用户收货地址
@@ -91,6 +117,10 @@ class User(UserMixin, SurrogatePK, Model):
     def full_name(self):
         """Full user name."""
         return '{0} {1}'.format(self.first_name, self.last_name)
+
+    def can(self, permissions):
+        return self.roles is not None and \
+            (self.roles.permissions & permissions) == permissions
 
     def __repr__(self):
         """Represent instance as a unique string."""

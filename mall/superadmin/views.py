@@ -2,20 +2,22 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,current_app
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
-from flask_login import current_user
+from flask_login import current_user,login_required
 
 from .models import SystemVersion,Category,BaseProducts
 from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename
 from . import blueprint
 from .forms import AddCategoryForm,AddBaseProductForm
+from mall.decorators import admin_required
 
 import datetime as dt
 import os
 
 @blueprint.route('/')
 @templated()
+# @login_required
+# @admin_required
 def home():
-    print(current_app.config['WECHAT_APPID'])
     return dict()
 
 
@@ -42,6 +44,7 @@ def add_version_post():
 @templated()
 def category():
 	return dict(categorys=Category.query.order_by('sort').all())
+
 
 #分类
 @blueprint.route('/add_category')
@@ -73,11 +76,12 @@ def add_category_post():
 
 
 #商品基础数据
+@blueprint.route('/base_products/<int:page>')
 @blueprint.route('/base_products')
 @templated()
-def base_products():
-	base_product = BaseProducts.query.all()
-	return dict(base_product=base_product)
+def base_products(page=1):
+    pagination = BaseProducts.query.paginate(page,20,error_out=False)
+    return dict(pagination=pagination,base_product=pagination.items)
 
 
 #添加商品基础数据
@@ -95,11 +99,11 @@ def add_base_product_post():
         f = request.files['image']
         filename = secure_filename(gen_rnd_filename() + "." + f.filename.split('.')[-1])
         if not filename:
-            flash(u'请选择图片','error')
-            return redirect(url_for('.home'))
+            flash(u'请选择图片','danger')
+            return redirect(url_for('.add_base_product'))
         if not allowed_file(f.filename):
-            flash(u'图文件名或格式错误。','error')
-            return redirect(url_for('.home'))
+            flash(u'图文件名或格式错误。','danger')
+            return redirect(url_for('.add_base_product'))
 
         dataetime = dt.datetime.today().strftime('%Y%m%d')
         file_dir = 'superadmin/%s/base_products/%s/'%(current_user.id,dataetime)
@@ -119,6 +123,17 @@ def add_base_product_post():
             attach_value=form.attach_value.data,
             main_photo = file_dir+filename,        	
         )
-        flash('ok')
-    return redirect(url_for('superadmin.home'))
+        flash('添加成功','success')
+    flash('数据校验失败。','danger')
+    return redirect(url_for('superadmin.add_base_product'))
+
+
+# 删除基础数据
+@blueprint.route('/delete_base_product/<int:id>')
+# @login_required
+def delete_base_product(id=0):
+    base_product = BaseProducts.query.get_or_404(id)
+    base_product.delete()
+    flash('删除完成','success')
+    return redirect(url_for('.base_products'))
 

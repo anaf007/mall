@@ -132,7 +132,6 @@ def add_user_address_post():
 @login_required
 def my_address():
 	address = UserAddress.query.filter_by(users=current_user).all()
-
 	return dict(address=address)
 
 

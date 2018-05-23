@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="renderer" content="webkit">
+
+<title>{% block title %}后台管理{% endblock %}</title>
+
+<link rel="stylesheet" href="{{url_for('static',filename='ydui/css/ydui.css')}}" />
+<link rel="stylesheet" href="{{url_for('static',filename='layui/css/layui.css')}}" />
+<!-- 侧边栏 -->
+<link rel="stylesheet" href="{{url_for('static',filename='css/style2.css')}}" />
+
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.2.4.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static',filename='ydui/js/ydui.js')}}"></script>
+
+<script type="text/javascript" src="{{url_for('static',filename='ydui/js/ydui.flexible.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static',filename='layui/layui.js')}}"></script>
+
+
+</head>
+
+<body>
+{%include 'superadmin/nav.html'%}
+
+
+
+
+{%for message in get_flashed_messages()%}
+        
+<blockquote class="layui-elem-quote layui-quote-nm">{{message}}</blockquote>
+{%endfor%}
+
+
+{% block body %}
+
+
+
+{% endblock %}
+<style type="text/css">
+  .site-tree-mobile {
+    display: block!important;
+    position: fixed;
+    z-index: 1000111;
+    bottom: 15px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 2px;
+    text-align: center;
+    background-color: rgba(0,0,0,.7);
+    color: #fff;
+}
+.layui-table-view{margin-top: 0px;}
+</style>
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+    var isLateralNavAnimating = false;
+    //o打开或关闭导航菜单
+    $('.cd-nav-trigger').on('click', function(event) {
+        event.preventDefault();
+        //若动画正在进行，则停止 
+        if (!isLateralNavAnimating) {
+            if ($(this).parents('.csstransitions').length > 0)
+                isLateralNavAnimating = true;
+
+            $('body').toggleClass('navigation-is-open');
+            $('.cd-navigation-wrapper').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function() {
+                //动画结束
+                isLateralNavAnimating = false;
+            });
+        }
+    });
+});
+</script>
+</body>
+</html>

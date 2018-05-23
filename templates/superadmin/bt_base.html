@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="renderer" content="webkit">
+
+<title>{% block title %}后台管理{% endblock %}</title>
+
+<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}" />
+
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.2.4.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+
+
+</head>
+
+<body>
+{%include 'superadmin/nav.html'%}
+
+
+
+
+
+
+<div class="container">
+
+{%for category,message in get_flashed_messages(with_categories=true)%}
+
+<div class="alert alert-{{category}}">{{message}}</div>
+
+{%endfor%}
+
+{% block body %}
+
+
+
+{% endblock %}
+
+</div>
+
+
+</body>
+</html>
