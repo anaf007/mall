@@ -9,7 +9,7 @@ from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename
 from . import blueprint
 from .forms import AddCategoryForm,AddBaseProductForm
 from mall.decorators import admin_required
-from mall.user.models  import Permission
+from mall.user.models  import Permission,User
 
 import datetime as dt
 import os
