@@ -113,14 +113,14 @@ def token_post():
         #修改用户名
         if event_str == 'un':
             user = User.query.filter_by(wechat_id=msg.source).first() 
-            user.update(username=leave_id)
+            user.update(username=str_id)
             reply=TextReply(content='用户名已修改。', message=msg)
             return reply
 
         #修改密码
         if event_str == 'pd':
             user = User.query.filter_by(wechat_id=msg.source).first() 
-            user.set_password(password=leave_id)
+            user.set_password(password=str_id)
             db.session.add(user)
             db.session.commit()
             reply=TextReply(content=u'密码已修改。', message=msg)
