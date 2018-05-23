@@ -5,7 +5,7 @@ from flask_wechatpy import wechat_required
 from wechatpy.replies import TextReply,ArticlesReply,create_reply,ImageReply
 
 from . import blueprint
-from mall.extensions import csrf_protect,wechat
+from mall.extensions import csrf_protect,wechat,db
 
 from mall.public.models import UserOrder,Follow
 from mall.store.models import Seller
