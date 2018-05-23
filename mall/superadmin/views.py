@@ -175,7 +175,7 @@ def delete_base_product(id=0):
 @admin_required
 def all_users(page=1):
     pagination = User.query.order_by(desc('id')).paginate(page,20,error_out=False)
-    return dict(all_users=paginate.items,pagination=pagination)
+    return dict(all_users=pagination.items,pagination=pagination)
 
 
 
