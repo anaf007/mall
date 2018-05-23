@@ -12,7 +12,7 @@ api_manager.create_api(Category,
     url_prefix='/api/v1/superadmin',
     include_columns=['id','name','ico','sort','status','active'],
     results_per_page=20,
-    code=0,
+    # code=0,
 )
 
 api_manager.create_api(BaseProducts,
@@ -31,7 +31,7 @@ api_manager.create_api(BaseProducts,
         'unit',
     ],
     results_per_page=20,
-    code=0,
+    # code=0,
 )
 
 api_manager.create_api(Seller,
@@ -57,7 +57,7 @@ api_manager.create_api(Seller,
         'max_price_no_freight',
     ],
     results_per_page=20,
-    code=0,
+    # code=0,
 )
 
    
