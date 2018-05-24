@@ -69,15 +69,11 @@ def token_post():
     msg = request.wechat_msg
     reply = ''
 
-    print(msg.type)
 
     if msg.type == 'text':
 
         event_str = msg.content[0:2]
         str_id = msg.content[2:]
-
-        print(event_str)
-        print(str_id)
 
         #店家显示订单详情
         if event_str == 'so':

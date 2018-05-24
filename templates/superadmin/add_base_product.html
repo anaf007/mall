@@ -15,7 +15,7 @@
   {{ form.title.label()}} 
    {{ form.title(class="form-control") }} 
 </div>
-
+<div id="word"></div>
 <div class="form-group">
   {{ form.original_price.label()}} 
    {{ form.original_price(class="form-control") }} 
@@ -71,7 +71,51 @@
 
 </form>
 
-         
+     
 
+<script type="text/javascript">
+  $('#title').keyup(function(){
+        var keywords = $(this).val();
+        if (keywords=='') { $('#word').hide(); return };
+
+        $.ajax({
+
+            url: "{{url_for('store.get_base_product',_external=True)}}?wd="+keywords,
+            dataType: 'json',
+            jsonp: 'cb', //回调函数的参数名(键值)key
+            // jsonpCallback: 'fun', //回调函数名(值) value
+            beforeSend:function(){
+                $('#word').append('<div>正在加载。。。</div>');
+            },
+            success:function(data){
+                $('#word').empty().show();
+                $.each(data.cb, function(){
+                    $('#word').append('<div class="click_work">'+ this.id+'|'+this.title +'</div>');
+                });
+            },
+            error:function(){
+                $('#word').empty().show();
+                $('#word').append('<div class="click_work">Fail "' + keywords + '"</div>');
+            }
+        })
+    })
+  $(document).on('click','.click_work',function(){
+    $('#word').hide();
+  });
+</script>    
+<style type="text/css">
+    
+    #word{
+        position: absolute;
+        z-index: 99;
+        width: 100%;
+        height: auto;
+        background-color: white;
+        border: black solid 1px;
+        display: none;
+        line-height: 40px;
+    }
+
+</style>
 {%endblock%}
   

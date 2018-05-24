@@ -47,8 +47,9 @@
 }
 
 .ShopDetailsLink{position: absolute;margin-top: -20px; z-index: 99999; width: 60px; height: 60px; text-align: center; float: left; display: block; line-height: 20px; border-radius: 50%; font-size: 13px; color: #fff; background: #f0c632 url(../images/ico_shopcart.png) no-repeat center; background-size: 40%;}
-.goodsListTitle{ overflow: hidden; padding: 15px 0;font-size: 16px; font-weight: 700; background: #fff; color: #333; margin-bottom: 3px;}
-.goodsListTitle .nametit{ float: left; margin-left: 15px; padding-left: 10px; border-left: 5px solid #ce9544;line-height: 20px;}
+.goodsListTitle{ overflow: hidden; padding: 5px 0;font-size: 16px; font-weight: 700; background: #fff; color: #333; margin-bottom: 3px;position: relative;}
+.goodsListTitle_search{ overflow: hidden; font-size: 16px; font-weight: 700; background: #fff; color: #333; margin-bottom: 3px;position: relative;}
+.goodsListTitle .nametit{ float: left;margin-left: 5px; padding-left: 5px; font-size: 16px;border-left: 5px solid #ce9544;line-height: 30px;}
 .jiage{ float: right; margin-right: 15px; font-size: 14px;line-height: 20px;}
 .control-num{ float: right; overflow: hidden; zoom: 1;}
 .minus{ margin-left: 2px; display: inline-block; width: 23px; height: 23px; background: url(../images/minus_icon.png) no-repeat -0px -0px; background-size: 22px auto; float: left; cursor: pointer;}

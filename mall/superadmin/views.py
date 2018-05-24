@@ -153,7 +153,8 @@ def add_base_product_post():
             main_photo = file_dir+filename,        	
         )
         flash('添加成功','success')
-    flash('数据校验失败。','danger')
+    else:
+        flash('数据校验失败。','danger')
     return redirect(url_for('superadmin.add_base_product'))
 
 

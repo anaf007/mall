@@ -60,6 +60,7 @@ def show_store(seller_id=0):
     goodsed_dic = {}
     seller_name =  goodsed[0][2].name
     seller_phone=  goodsed[0][2].contact
+    seller_id=  goodsed[0][2].id
 
     #排序  按照商品类别排序
     for i in goodsed:
@@ -84,7 +85,7 @@ def show_store(seller_id=0):
     	.filter(User.id==current_user.id)\
     	.all()
 
-    return dict(seller=[seller_name,seller_phone],goods=goodseds,buys_car=buys_car)
+    return dict(seller=[seller_name,seller_phone,seller_id],goods=goodseds,buys_car=buys_car)
 
 
 #添加购物车    $ajax

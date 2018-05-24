@@ -3,6 +3,7 @@
 {% block body %}
 
 <link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}" />
+<!-- <link rel="stylesheet" href="{{url_for('static',filename='ydui/css/ydui.css')}}" /> -->
 
 
 
@@ -30,10 +31,16 @@ function addFly(event) {
 
 
 
-<div class="goodsListTitle">
-    <div class="nametit">{{seller[0]}}</div>
-    <div class="jiage">{{seller[1]}} </div>
+<div class="goodsListTitle" id="goodsListTitle">
+    <div class="nametit">{{seller[0]}}[{{seller[1]}}]</div>
+    <div class="jiage"><img src="{{url_for('static',filename='images/search.png')}}" width="30" height="30" id="search_img"></div>
 </div>
+
+<div class="cell-item goodsListTitle_search" style="display:none;" id="goodsListTitle_search">
+    
+<div class="cell-right cell-arrow "><img src="{{url_for('static',filename='images/search.png')}}" width="30" height="30"><input type="text" class="cell-input" placeholder="请输入要搜索的商品名称" id="search_title"></div>
+</div>
+<div id="word"></div>
 
 <section class="g-flexview">
 	<section class="g-scrollview">
@@ -63,7 +70,7 @@ function addFly(event) {
 					        <article class="m-list list-theme4">
                     			{%for  j in v[1]%}
                     		
-					            <a href="javascript:;" class="list-item">
+					            <a href="javascript:;" class="list-item" id="p{{j[0][0].id}}">
 					                <div class="list-img">
                                         {%if j[0][0].main_photo%}
                                         <img src="{{url_for('public.get_image',filename=j[0][0].main_photo)}}">
@@ -201,9 +208,59 @@ function addFly(event) {
 		});
 	  
 	});
-	document.getElementById('')
+
+    // #点击搜索图片
+    $("#search_img").click(function(){
+        document.getElementById('goodsListTitle').style.display = 'none';
+        document.getElementById('goodsListTitle_search').style.display = 'block';
+        document.getElementById('search_title').focus()
+
+    });
+
+    $('#search_title').keyup(function(){
+        var keywords = $(this).val();
+        if (keywords=='') { $('#word').hide(); return };
+
+        $.ajax({
+
+            url: "{{url_for('public.get_store_product',_external=True)}}?wd="+keywords+'|'+{{seller[2]}},
+            dataType: 'json',
+            jsonp: 'cb', //回调函数的参数名(键值)key
+            // jsonpCallback: 'fun', //回调函数名(值) value
+            beforeSend:function(){
+                $('#word').append('<div>正在加载。。。</div>');
+            },
+            success:function(data){
+                $('#word').empty().show();
+                $.each(data.cb, function(){
+                    $('#word').append('<a class="click_work" href="#p'+this.id+'"><div style="width:100%;">'+this.title +'</div></a>');
+                });
+            },
+            error:function(){
+                $('#word').empty().show();
+                $('#word').append('<div class="click_work">Fail "' + keywords + '"</div>');
+            }
+        })
+    })
+  $(document).on('click','.click_work',function(){
+    $('#word').hide();
+    document.getElementById('goodsListTitle').style.display = 'block';
+        document.getElementById('goodsListTitle_search').style.display = 'none';
+    $('#search_title').val('');
+  });
+	
 </script>
 <style type="text/css">
 .scrolltab-nav{z-index: 0;}
+#word{
+        position: absolute;
+        z-index: 99;
+        width: 100%;
+        height: auto;
+        background-color: white;
+        border: black solid 1px;
+        display: none;
+        line-height: 40px;
+    }
 </style>
 {% endblock %}
