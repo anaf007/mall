@@ -2,7 +2,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
 
-from mall import commands, public, user, superadmin, store, wx
+from mall import commands, public, user, superadmin, store, wx, auth
 from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, ckeditor, wechat, api_manager
 from mall.settings import ProdConfig
 
@@ -49,6 +49,7 @@ def register_blueprints(app):
     app.register_blueprint(superadmin.views.blueprint)
     app.register_blueprint(store.views.blueprint)
     app.register_blueprint(wx.blueprint)
+    app.register_blueprint(auth.blueprint)
     return None
 
 

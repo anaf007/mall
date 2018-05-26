@@ -4,6 +4,7 @@ from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from flask_login import current_user,login_required
 
+from log import logger
 from .models import SystemVersion,Category,BaseProducts
 from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename
 from . import blueprint
@@ -16,14 +17,19 @@ import os
 
 @blueprint.route('/')
 @templated()
-# @login_required
-# @admin_required
 def home():
+    
     if not current_user.is_authenticated:
-        return redirect(url_for('user.user_login',next=request.endpoint))
+        return redirect(url_for('auth.user_login',next=request.endpoint))
     
     if not current_user.can(Permission.ADMINISTER):
         abort(401)
+
+    # logger.debug('----')
+    # logger.info('----')
+    # logger.error('----')
+    # logger.warning('----')
+
     return dict()
 
 @blueprint.route('/index')

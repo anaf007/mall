@@ -38,6 +38,17 @@
 </style>
 
 <div class="qiehuan-con">
+
+{%for message in get_flashed_messages()%}
+        
+<div class="ui-tooltips ui-tooltips-guide">
+    <div class="ui-tooltips-cnt ui-border-b">
+        <i></i>
+        {{message}}
+    </div>
+</div>
+{%endfor%}
+
 	<!-- <div class="wddd_tab"> -->
 		<!-- <p> -->
 			<!-- <a class="active_on" href="javasript:;">全部</a> -->
@@ -51,7 +62,8 @@
 		<ul class="wddd_con">
 			{%for i in order%}
 			
-			<li><a href="{{url_for('user.show_my_order',id=i[0])}}">
+			<li>
+				<a href="{{url_for('user.show_my_order',id=i[0])}}">
 				<div class="dhm">订单号：<b>{{i[1]}}</b></div>
 				<div class="wddd-total">
 					<div class="wddd-total-tit"><b>共{{i[5]}}件商品 </b> <b>合计：￥{{i[3]}}</b>

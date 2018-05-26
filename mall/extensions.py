@@ -12,6 +12,8 @@ from flask_ckeditor import CKEditor
 
 from flask_restless import APIManager
 
+from concurrent.futures import ThreadPoolExecutor
+
 bcrypt = Bcrypt()
 csrf_protect = CSRFProtect()
 login_manager = LoginManager()
@@ -21,11 +23,12 @@ cache = Cache()
 debug_toolbar = DebugToolbarExtension()
 ckeditor = CKEditor()
 wechat = Wechat()
+executor = ThreadPoolExecutor()
 
 api_manager = APIManager(flask_sqlalchemy_db=db)
 
 
 login_manager.session_protection ='basic'
-login_manager.login_view = 'user.autologin'
+login_manager.login_view = 'auth.autologin'
 login_manager.login_message = ""
 login_manager.refresh_view = 'auth.autologin'

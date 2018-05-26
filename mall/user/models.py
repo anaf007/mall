@@ -128,9 +128,10 @@ class User(UserMixin, SurrogatePK, Model):
         """Represent instance as a unique string."""
         return '<User({username!r})>'.format(username=self.username)
 
-    def can(self, permissions):
-        return self.roles is not None and \
-            (self.roles.permissions & permissions) == permissions
+
+    #更新最后访问时间 每次请求都会更新 是否占用资源
+    def ping(self):
+        self.update(last_time=dt.datetime.now())
 
 
 

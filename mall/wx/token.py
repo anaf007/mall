@@ -10,7 +10,7 @@ from mall.extensions import csrf_protect,wechat,db
 from mall.public.models import UserOrder,Follow
 from mall.store.models import Seller
 from mall.user.models import User
-from mall.user.views import autoregister
+from mall.auth.views import autoregister
 from log import logger
 
 

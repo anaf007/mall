@@ -6,7 +6,8 @@ from sqlalchemy import desc
 
 from collections import OrderedDict
 
-from mall.extensions import login_manager,db
+
+from mall.extensions import login_manager,db,executor
 from mall.user.forms import RegisterForm
 from mall.user.models import User
 from mall.superadmin.models import Category
@@ -14,7 +15,8 @@ from mall.store.models import Seller,Goods,Inventory,GoodsAllocation,Sale
 from mall.utils import flash_errors,templated
 from .models import Follow,BuysCar,UserAddress,UserOrder
 from ..extensions import wechat
-from  . import blueprint
+from . import blueprint
+from .fck import back_submit_order
 
 import random,time,os,sys
 
@@ -159,17 +161,6 @@ def show_goods(id=0):
 	return dict(goods=goods)
 
 
-
-@blueprint.route('/logout/')
-@login_required
-def logout():
-    """Logout."""
-    logout_user()
-    flash('You are logged out.', 'info')
-    return redirect(url_for('public.home'))
-
-
-
 #购物车提交订单
 @blueprint.route('/submit_order')
 @templated()
@@ -192,7 +183,7 @@ def submit_order():
 	#如果购物车为空
 	if not buys_car:
 		flash('购物车中无货，不能提交订单。')
-		return redirect(url_for('public.home'))
+		abort(401)
 
 	#收货地址信息：
 	user_address = UserAddress.query.filter_by(users=current_user).filter_by(state=1).first()
@@ -215,7 +206,9 @@ def confirm_order():
 	减去商家库存数量
 	删除购物车
 	"""
-	user_address = UserAddress.query.get(request.form.get('user_address',0))
+
+	user_address = request.form.get('user_address',0)
+	user_address = UserAddress.query.get(user_address)
 	if not user_address:
 		flash('您未添加收货地址，请填写填写收货地址。')
 		abort(401)
@@ -232,7 +225,8 @@ def confirm_order():
 		.filter(BuysCar.users==current_user)\
 		.all()
 	if not buys_car:
-		return redirect(url_for('public.home'))
+		flash('您的购物车没有东西')
+		abort(401)
 
 
 	#检查是否有不同商家商品
@@ -257,18 +251,18 @@ def confirm_order():
 	
 	#获取购物车里商品库存数, 根据货位排序扣除库存的
 	all_goods = Inventory.query\
+		.with_entities(Inventory,GoodsAllocation)\
 		.filter(Inventory.goods_id.in_(all_goodsed_id))\
 		.join(GoodsAllocation,GoodsAllocation.id==Inventory.goods_allocation_id)\
 		.order_by(GoodsAllocation.sort)\
 		.all()
 
-
 	goodsed_dic = {}
 	for i in all_goods:
-		if goodsed_dic.__contains__(str(i.goods_id)):
-			goodsed_dic[str(i.goods_id)].append(i)
+		if goodsed_dic.__contains__(str(i[0].goods_id)):
+			goodsed_dic[str(i[0].goods_id)].append(i)
 		else:
-			goodsed_dic[str(i.goods_id)] = [i]	
+			goodsed_dic[str(i[0].goods_id)] = [i]	
 	
 	
 	for i in buys_car:
@@ -276,130 +270,26 @@ def confirm_order():
 		try:
 			for j in goodsed_dic[str(i[2])]:
 				#库存数减去购物车数量
-				if j.count - count >= 0:
+				if j[0].count - count >= 0:
 					break;
-				if j.count - count < 0:
-					count = count - j.count
+				if j[0].count - count < 0:
+					count = count - j[0].count
 			else:
 				abort(Response('店家该商品 "%s" 库存不足'%i[3]))
 
-		except:
+		except Exception as e :
 			abort(Response('店家该商品 "%s  "库存不足'%i[3]))
 			
 	#end检查商家是否足够库存
+	print('start')
+	#后台订单操作
 
-	#出库单号
-	choice_str = 'ABCDEFGHJKLNMPQRSTUVWSXYZ'
-	str_time =  time.time()
-	number_str = 'T'
-	number_str += str(int(int(str_time)*1.301))
-	for i in range(4):
-		number_str += random.choice(choice_str)
+	args_list = [buys_car,goodsed_dic,seller,current_user.id,user_address,request.form.get('note','')]
 
-	#出库单
-	user_order = UserOrder()
-	user_order.user_id = current_user.id
-	# user_order.receive = user_address.id
-	user_order.receive_name = user_address.name
-	user_order.receive_phone = user_address.phone
-	user_order.receive_address = user_address.address
-	user_order.number = number_str
-	user_order.note = request.form.get('note','')
-	user_order.seller_id = buys_car[0][5]
-
-	#暂时提交 否则没有id值
-	db.session.add(user_order)
-
-	count_price = 0
-	goods_number = 0
-
-	# 减去库存   #buys_car 购物车   goodsed_dic 货位商品
-	for i in buys_car:
-		count = i.count
-		for j in goodsed_dic[str(i[2])]:
-
-			#销售的商品记录
-			sale = Sale()
-			sale.seller_id = seller
-
-			sale.goods_id = i[2]
-
-			sale.goods_title = i[3]
-			sale.original_price = i[4]
-			sale.special_price = i[10]
-			sale.main_photo = i[9]
-
-			sale.count = i[1]
-			sale.residue_count = seller
-			sale.user_order = user_order
-			sale.seller_id = i[5]
-			#如果库存数量大于购物车数量
-			if j.count - count >= 0:
-				#出售记录表
-				sale.residue_count = j.count - count
-				sale.goods_allocation_name = j.goods_allocation.name
-				
-				#更新库存
-				j.count = j.count - count
-				db.session.add(j)
-				break;
-
-			#如果库存数量少于购物车数量
-			if j.count - count < 0:
-				sale.residue_count = 0
-				sale.goods_allocation_name = j.goods_allocation.name
-				count = count - j.count
-				
-				#删除库存
-				db.session.delete(j)
-
-			db.session.add(sale)
-
-		#计算总价 1数量  4销售价格
-		count_price += i[1]*i[4]
-		#商品种类数量
-		goods_number += 1
-
-	#7运费  8最低配送额
-	if count_price < buys_car[0][8]:
-		count_price += buys_car[0][7]
-		user_order.freight = buys_car[0][7]
-	else:
-		user_order.freight = 0
-
-	user_order.pay_price = count_price
-	user_order.goods_number = goods_number
-
-	db.session.add(user_order)
-
-	# end减去库存
-
-	try:
-		db.session.commit()
-		flash('订单提交成功','success')
-
-		# 删除购物车
-		for i in BuysCar.query.filter_by(users=current_user).all():
-			db.session.delete(i)
-		db.session.commit()
-		#end删除购物车
-
-		#微信客服消息
-		try:
-			seller = Seller.query\
-				.with_entities(Seller,User)\
-				.join(User,User.id==Seller.user_id)\
-				.filter(Seller.id==buys_car[0][5])\
-				.first()
-			teacher_wechat = seller[1].wechat_id
-			msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
-			wechat.message.send_text(teacher_wechat,msg_title)
-		except Exception as e:
-			pass
-
-	except Exception as err:
-		db.session.rollback()
-		return str(err)
+	# executor.submit(back_submit_order,current_app._get_current_object(),,,,.id,,)
+	executor.submit(back_submit_order,current_app._get_current_object(),args_list,db)
+	print('end')
+	flash('订单已提交','success')
 
 	return redirect(url_for('user.my_order'))
 
