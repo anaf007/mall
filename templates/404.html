@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>404</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width" />
+<title>页面错误404</title>
+
+<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}" />
+    <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+
 </head>
+
 <body>
-	404
+<div class="container">
+
+  
+<div class="panel panel-danger text-center">
+    <div class="panel-heading">
+        <h1 class="panel-title">
+            页面错误
+        </h1>
+    </div>
+    <div class="panel-body">
+        <h1>操作错误，无法找到该页面结果。</h1>   
+    </div>
+</div>
+
+<a href="javascript:history.back(-1)" class="btn btn-primary btn-lg btn-block">返回上一页</a>
+<a href="{{url_for('public.home')}}" class="btn btn-warning btn-lg btn-block">返回主页</a>
+
+
+
+</div>
+
+
+
+
 </body>
 </html>

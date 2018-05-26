@@ -281,14 +281,12 @@ def confirm_order():
 			abort(Response('店家该商品 "%s  "库存不足'%i[3]))
 			
 	#end检查商家是否足够库存
-	print('start')
 	#后台订单操作
 
 	args_list = [buys_car,goodsed_dic,seller,current_user.id,user_address,request.form.get('note','')]
 
 	# executor.submit(back_submit_order,current_app._get_current_object(),,,,.id,,)
 	executor.submit(back_submit_order,current_app._get_current_object(),args_list,db)
-	print('end')
 	flash('订单已提交','success')
 
 	return redirect(url_for('user.my_order'))
@@ -328,4 +326,42 @@ def use():
 @templated()
 def terms_of_service():
 	return dict()
+
+
+
+#再来一单 获取最近的几单订单列表
+@blueprint.route('/again')
+@templated()
+@login_required
+def again():
+
+    user_order = UserOrder.query\
+        .filter(UserOrder.users_buy==current_user)\
+        .order_by(desc(UserOrder.id))\
+        .limit(3).all()
+        
+    return dict(order=user_order)
+
+
+#确认再来一单
+@blueprint.route('/confirm_again/<int:id>')
+@templated()
+@login_required
+def confirm_again(id=0):
+    #根据订单获得订单销售的商品 添加到购物车
+    sale = Sale.query\
+        .with_entities(Sale)\
+        .join(UserOrder,UserOrder.id==Sale.UserOrder_id)\
+        .filter(UserOrder.id==id)\
+        .all()
+
+    #添加到购物车
+    for i in sale:
+        db.session.add(BuysCar(user_id=current_user.id,goods_id=i.goods_id,count=i.count))
+    db.session.commit()
+
+    red_url = url_for('.submit_order')
+    return redirect(red_url)
+
+
 

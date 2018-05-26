@@ -17,6 +17,7 @@ from log import logger
 def createmenu():
     wechat.menu.create({"button":[
         {"type":"view","name":"买买买","url":'%s'%url_for('public.home',_external=True)},\
+        {"type":"view","name":"再来一单","url":'%s'%url_for('public.again',_external=True)},\
 
         {"type":"view","name":"我的","sub_button":[
             {

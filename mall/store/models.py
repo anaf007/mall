@@ -169,7 +169,7 @@ class Sale(SurrogatePK,Model):
 	#商品 2018-04-30修改不外键商品表否则更改价格以往的都会更改。
 	# goods_id = reference_col('goodsed')
 	#商品名称
-	goods_id = Column(db.Integer()) 
+	goods_id = Column(db.Integer())    #不做外键    出售记录只做快照浏览
 	goods_title = Column(db.String(100)) 
 	#销售价
 	original_price = Column(db.Numeric(precision=10,scale=2,\
