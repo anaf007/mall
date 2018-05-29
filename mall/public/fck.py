@@ -85,7 +85,7 @@ def back_submit_order(cap=[],args_list=[],db=[]):
                     count = i.count
                     for j in args_list[1][str(i[2])]:
 
-                        print(j)
+                        # print(j)
 
                         #销售的商品记录
                         sale = Sale()
@@ -174,16 +174,16 @@ def back_submit_order(cap=[],args_list=[],db=[]):
                     msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
                     wechat.message.send_text(teacher_wechat,msg_title)
                 except Exception as e:
-                    logger.info('用户提交订单 无法微信通知商家 ')
+                    logger.info(f'用户提交订单 无法微信通知商家 {e}')
 
             except Exception as err:
-                logger.error('用户提交订单db提交 删除购物车 错误')
+                logger.error(f'用户提交订单db提交 删除购物车 错误{err}')
                 db.session.rollback()
 
 
 
     except Exception as e:
-        logger.info('用户提交订单 后端异步错误')
+        logger.info(f'用户提交订单 后端异步错误 {e}')
 
 
 
