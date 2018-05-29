@@ -33,11 +33,14 @@ def autoregister(wechat_id=''):
 
     user = []
 
-    if not wechat_id:
-        wechat_id = session.get('wechat_user_id','')
+    print(wechat_id)
+
+    if wechat_id:
         user = User.query.filter_by(wechat_id=wechat_id).first()
     else:
-        users = [] 
+        wechat_id = session.get('wechat_user_id','')
+        user = User.query.filter_by(wechat_id=wechat_id).first()
+        
     if user:
         login_user(user,True)
         return user 

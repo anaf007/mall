@@ -135,6 +135,8 @@ def token_post():
         logger.info(str(e))
         return TextReply(content=u'欢迎关注 隔壁小卖部', message=msg)
 
+    print(msg.event)
+
     #关注事件
     if msg.event == 'subscribe':
         createmenu()

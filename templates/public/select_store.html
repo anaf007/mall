@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>店铺选择</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}" />
+    <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='js/jquery-1.9.1.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='js/jquery.fly.min')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+</head>
+<body>
+
+<div class="container">
+
+<div class="row">
+    &nbsp;
+</div>
+
+    
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">
+                您已关注多个店铺,请选择
+            </h1>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                {%for i in follow%}
+
+                <a href="{{url_for('public.show_store',seller_id=i[1].id)}}" class="list-group-item">
+                    <h4 class="list-group-item-heading">
+                        {{i[1].name}}[{{i[1].contact}}]
+                    </h4>
+                    <p class="list-group-item-text">
+                       {{i[1].address}}
+                    </p>
+                </a>
+                {%endfor%}
+
+                
+
+
+            </ul>
+
+        </div>
+    </div>
+
+
+
+    
+
+</div>
+
+
+
+
+
+</body>
+</html>

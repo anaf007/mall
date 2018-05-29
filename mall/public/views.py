@@ -35,10 +35,16 @@ def load_user(user_id):
 def home():
     """Home page."""
 
-    follow = Follow.query.filter_by(users=current_user).all()
+    follow = Follow.query\
+        .with_entities(Follow,Seller)\
+        .join(Seller,Seller.id==Follow.seller_id)\
+        .filter(Follow.users==current_user)\
+        .all()
     len_follow = len(follow)
     if len_follow == 1:
-    	return redirect(url_for('.show_store',seller_id=follow[0].seller_id))
+    	return redirect(url_for('.show_store',seller_id=follow[0][0].seller_id))
+    if len_follow > 1:
+        return render_template('public/select_store.html',follow=follow)
     # if len_follow<1:
     # 	flash('您还未关注店铺。')
     return dict(follow=follow)
@@ -58,6 +64,10 @@ def show_store(seller_id=0):
         .filter(Seller.id==seller_id)\
         .order_by(Category.sort)\
         .all()
+
+    if not goodsed:
+        flash('店铺未开张')
+        abort(401)
 
     goodsed_dic = {}
     seller_name =  goodsed[0][2].name

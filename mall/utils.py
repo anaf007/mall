@@ -4,7 +4,7 @@ from flask import flash, request, render_template, current_app
 from functools import wraps
 
 from PIL import Image
-import PIL,os,time,random,hashlib,random
+import os,random,random
 
 import datetime as dt
 
@@ -57,7 +57,7 @@ def create_thumbnail(f,base_width,file_dir,filename):
         img = Image.open(thumbnail_f)
         w_percent = (base_width / float(img.size[0]))
         h_size = int((float(img.size[1]) * float(w_percent)))
-        img = img.resize((base_width, h_size), PIL.Image.ANTIALIAS)
+        img = img.resize((base_width, h_size), Image.ANTIALIAS)
 
         if not os.path.isdir(current_app.config['THUMBNAIL_FOLDER']+file_dir):
             os.makedirs(current_app.config['THUMBNAIL_FOLDER']+file_dir)
