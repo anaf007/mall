@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_wechatpy import Wechat
 from flask_ckeditor import CKEditor
-
+from flask_mail import Mail
 from flask_restless import APIManager
 
 from concurrent.futures import ThreadPoolExecutor
@@ -23,6 +23,7 @@ cache = Cache()
 debug_toolbar = DebugToolbarExtension()
 ckeditor = CKEditor()
 wechat = Wechat()
+mail = Mail()
 executor = ThreadPoolExecutor()
 
 api_manager = APIManager(flask_sqlalchemy_db=db)

@@ -6,6 +6,7 @@ from flask_mail import Message
 
 from PIL import Image
 import os,random,random
+from mall.extensions import mail
 
 import datetime as dt
 

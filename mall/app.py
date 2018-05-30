@@ -3,7 +3,8 @@
 from flask import Flask, render_template
 
 from mall import commands, public, user, superadmin, store, wx, auth
-from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, ckeditor, wechat, api_manager
+from mall.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, \
+    login_manager, migrate, ckeditor, wechat, api_manager,mail
 from mall.settings import ProdConfig
 
 
@@ -39,6 +40,7 @@ def register_extensions(app):
     migrate.init_app(app, db)
     wechat.init_app(app)
     api_manager.init_app(app)
+    mail.init_app(app)
     return None
 
 
