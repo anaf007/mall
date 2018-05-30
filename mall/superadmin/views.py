@@ -44,9 +44,10 @@ def home():
 @login_required
 @admin_required
 def index(): 
-    executor.submit(send_email,f'id:{current_user.id}已登录后台')
+    # executor.submit(send_email,f'id:{current_user.id}已登录后台')
     try:
-        send_email(f'id:{current_user.id}已登录后台')
+        send_email(f'111')
+        # send_email(f'id:{current_user.id}已登录后台')
     except Exception as e:
         print(str(e))
     
