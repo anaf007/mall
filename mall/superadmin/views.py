@@ -4,9 +4,10 @@ from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from flask_login import current_user,login_required
 
+from mall.extensions import executor
 from log import logger
 from .models import SystemVersion,Category,BaseProducts
-from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename
+from mall.utils import templated,flash_errors,allowed_file,gen_rnd_filename,send_email
 from . import blueprint
 from .forms import AddCategoryForm,AddBaseProductForm
 from mall.decorators import admin_required
@@ -30,7 +31,7 @@ def home():
     # logger.error('----')
     # logger.warning('----')
 
-    send_email(f'id:{current_user.id}已登录后台')
+    executor.submit(send_email,f'id:{current_user.id}已登录后台')
 
     return dict()
 
