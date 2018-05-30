@@ -46,7 +46,7 @@ def home():
 def index(): 
     executor.submit(send_email,f'id:{current_user.id}已登录后台')
     
-    
+    send_email(f'id:{current_user.id}已登录后台')
     return  dict()
 
 
