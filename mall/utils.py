@@ -2,6 +2,7 @@
 """Helper utilities and decorators."""
 from flask import flash, request, render_template, current_app
 from functools import wraps
+from flask_mail import Message
 
 from PIL import Image
 import os,random,random
@@ -67,6 +68,11 @@ def create_thumbnail(f,base_width,file_dir,filename):
     except:
         return False
 
+
+def send_email(body):
+    msg = Message(subject='公众号隔壁小超市错误邮件提醒%s'%dt.datetime.now().strftime('%Y%m%d%H%M%S'),sender=current_app.config['MAIL_USERNAME'],recipients=[current_app.config['MAIL_RECIPIENTS_NAME']])
+    msg.html = body
+    mail.send(msg)
 
 
 

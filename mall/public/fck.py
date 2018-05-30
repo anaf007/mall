@@ -3,6 +3,7 @@ from flask import request,url_for,current_app,send_from_directory,\
 from werkzeug.utils import secure_filename
 from flask_login import current_user
 from mall.extensions import ckeditor,csrf_protect,wechat
+from mall.utils import send_email
 from log import logger
 
 from .models import UserOrder,BuysCar
@@ -72,7 +73,8 @@ def back_submit_order(cap=[],args_list=[],db=[]):
                 db.session.add(user_order)
 
             except Exception as e:
-                logger.error('用户提交订单，创建出库单错误。')
+                send_email(f'用户提交订单，创建出库单错误。{e}')
+                logger.error(f'用户提交订单，创建出库单错误。{e}')
 
             count_price = 0
             goods_number = 0
@@ -136,6 +138,7 @@ def back_submit_order(cap=[],args_list=[],db=[]):
 
             except Exception as e:
                 logger.error('用户提交订单库存相减错误。')
+                send_email(f'用户提交订单库存相减错误。{e}')
             
 
 
@@ -174,16 +177,19 @@ def back_submit_order(cap=[],args_list=[],db=[]):
                     msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
                     wechat.message.send_text(teacher_wechat,msg_title)
                 except Exception as e:
+                    send_email(f'用户提交订单 无法微信通知商家{e}')
                     logger.info(f'用户提交订单 无法微信通知商家 {e}')
 
-            except Exception as err:
-                logger.error(f'用户提交订单db提交 删除购物车 错误{err}')
+            except Exception as e:
+                logger.error(f'用户提交订单db提交 删除购物车 错误{e}')
+                send_email(f'用户提交订单db提交 删除购物车{e}')
                 db.session.rollback()
 
 
 
     except Exception as e:
         logger.info(f'用户提交订单 后端异步错误 {e}')
+        send_email(f'用户提交订单 后端异步错误{e}')
 
 
 

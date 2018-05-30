@@ -55,6 +55,16 @@ class Config(object):
 
     # CKEDITOR_FILE_BROWSER_URL = 'data/ckeditor/uploads/'
 
+    MAIL_SERVER = 'smtp.qq.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or '123'
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or '123'
+    MAIL_RECIPIENTS_NAME = os.environ.get('MAIL_RECIPIENTS_NAME') or '123'  
+    MAIL_DEBUG = False
+
+    SUPERADMIN_NAME = 'admin'
+
      
 
 

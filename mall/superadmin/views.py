@@ -30,6 +30,8 @@ def home():
     # logger.error('----')
     # logger.warning('----')
 
+    send_email(f'id:{current_user.id}已登录后台')
+
     return dict()
 
 @blueprint.route('/index')

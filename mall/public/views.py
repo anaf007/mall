@@ -18,7 +18,7 @@ from ..extensions import wechat
 from . import blueprint
 from .fck import back_submit_order
 
-import random,time,os,sys
+import random,os,sys
 
 
 
