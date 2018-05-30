@@ -32,7 +32,11 @@ def home():
     # logger.warning('----')
 
     executor.submit(send_email,f'id:{current_user.id}已登录后台')
-
+    try:
+        send_email(f'id:{current_user.id}已登录后台')
+    except Exception as e:
+        print(str(e))
+    
     return dict()
 
 @blueprint.route('/index')
