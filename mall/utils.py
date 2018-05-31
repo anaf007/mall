@@ -71,7 +71,9 @@ def create_thumbnail(f,base_width,file_dir,filename):
 
 
 def send_email(body):
-    msg = Message(subject='隔壁小超市错误提醒%s'%str(dt.datetime.now().strftime('%Y%m%d%H%M%S')),sender=current_app.config['MAIL_USERNAME'],recipients=[current_app.config['MAIL_RECIPIENTS_NAME']])
+    msg = Message(subject='隔壁小超市错误提醒%s'%str(dt.datetime.now().strftime('%Y%m%d%H%M%S'))\
+        ,sender=os.environ.get('MAIL_USERNAME')\
+        ,recipients=[os.environ.get('MAIL_RECIPIENTS_NAME')])
     msg.html = body
     mail.send(msg)
 
