@@ -10,7 +10,7 @@ from mall.public.models import UserOrder
 
 # import json,simplejson
 import simplejson as json
-import datetime
+import datetime,time
 
 
 
@@ -94,7 +94,8 @@ def get_operating_json():
 
     #本周
     start_weekday = datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
-    end_weekday = datetime.date.today()
+    # end_weekday = datetime.date.today()
+    end_weekday = datetime.datetime.now()  
     weekday_order = UserOrder.query.filter_by(seller_id=current_user.seller_id[0].id).filter(UserOrder.buy_time.between(start_weekday,end_weekday)).all()
 
     #本月
