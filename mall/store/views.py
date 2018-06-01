@@ -1047,6 +1047,7 @@ def setting_store(id=0):
     form.note.data  = seller.note
     form.freight.data  = seller.freight
     form.max_price_no_freight.data  = seller.max_price_no_freight
+    form.email.data  = seller.email
 
     return dict(form=form,id=seller.id)
 
@@ -1069,6 +1070,8 @@ def setting_store_post(id=0):
             note = form.note.data,
             freight = form.freight.data,
             max_price_no_freight = form.max_price_no_freight.data,
+            email = form.email.data,
+
         )
         flash('更新完成')
 

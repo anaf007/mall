@@ -165,20 +165,22 @@ def back_submit_order(cap=[],args_list=[],db=[]):
                 db.session.commit()
                 #end删除购物车
 
+                seller = Seller.query\
+                    .with_entities(Seller,User)\
+                    .join(User,User.id==Seller.user_id)\
+                    .filter(Seller.id==args_list[0][0][5])\
+                    .first()
+
+
                 #微信客服消息
                 try:
-                    seller = Seller.query\
-                        .with_entities(Seller,User)\
-                        .join(User,User.id==Seller.user_id)\
-                        .filter(Seller.id==args_list[0][0][5])\
-                        .first()
-
                     teacher_wechat = seller[1].wechat_id
                     msg_title = '您有新的销售信息，回复"so%s"查看订单信息。'%user_order.id
                     wechat.message.send_text(teacher_wechat,msg_title)
                 except Exception as e:
-                    send_email(f'用户提交订单 无法微信通知商家{e}')
-                    logger.info(f'用户提交订单 无法微信通知商家 {e}')
+                    if seller[0].email:
+                        send_email('你有新的销售订单，请进入公众号隔壁小超市查看。',seller[0].email)
+                    # logger.info(f'用户提交订单 无法微信通知商家 {e}')
 
             except Exception as e:
                 logger.error(f'用户提交订单db提交 删除购物车 错误{e}')

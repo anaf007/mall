@@ -81,6 +81,7 @@ class SettingStroeForm(FlaskForm):
 	note = StringField(u'店铺备注')
 	freight = StringField(u'运费')
 	max_price_no_freight = StringField(u'满额免运费')
+	email = StringField(u'邮箱')
 
 
 

@@ -70,10 +70,10 @@ def create_thumbnail(f,base_width,file_dir,filename):
         return False
 
 
-def send_email(body):
-    msg = Message(subject='隔壁小超市错误提醒%s'%str(dt.datetime.now().strftime('%Y%m%d%H%M%S'))\
+def send_email(body,recipients=os.environ.get('MAIL_RECIPIENTS_NAME')):
+    msg = Message(subject='公众号隔壁小超市邮箱通知%s'%str(dt.datetime.now().strftime('%Y%m%d%H%M%S'))\
         ,sender=os.environ.get('MAIL_USERNAME')\
-        ,recipients=[os.environ.get('MAIL_RECIPIENTS_NAME')])
+        ,recipients=[recipients])
     msg.html = body
     mail.send(msg)
 

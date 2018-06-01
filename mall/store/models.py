@@ -50,6 +50,9 @@ class Seller(SurrogatePK, Model):
 	max_goods_count = Column(db.Integer,default=20)
 	#level等级
 	level = Column(db.String(20),default=u'免费会员')
+	
+	email  = Column(db.String(100),index=True,unique=True) 
+    
 
 
 	#运费
@@ -61,6 +64,8 @@ class Seller(SurrogatePK, Model):
 
 	#店铺横幅
 	seller_banner_id = relationship('SellerBanner', backref='seller')
+	#店铺记录
+	seller_msg_id = relationship('SellerMsg', backref='seller')
 	#仓库
 	warehouse_id = relationship('Warehouse', backref='seller')
 
@@ -88,6 +93,22 @@ class SellerBanner(SurrogatePK, Model):
 	active = Column(db.Boolean(),default=True)
 	#创建时间
 	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
+
+
+#店铺记录
+class SellerMsg(SurrogatePK,Model):
+	__tablename__ = 'seller_msg'
+
+	sellers_id = reference_col('sellers')
+
+	#创建时间
+	created_at = Column(db.DateTime, nullable=False, default=dt.datetime.now)
+	#状态是否已读
+	state = Column(db.Boolean(),default=False)
+	#内容
+	content = Column(db.UnicodeText)
+
+
 
 
 
