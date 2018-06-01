@@ -809,7 +809,7 @@ def guanzhu(id=0):
 @templated()
 @login_required
 def sell(id=0):
-	buy_users = UserOrder.query.filter_by(seller=current_user.seller_id[0]).order_by(desc('id')).all()
+	buy_users = UserOrder.query.filter_by(seller=current_user.seller_id[0]).order_by(desc('id')).limit(30).all()
 	return dict(buy_users=buy_users)
 
 
