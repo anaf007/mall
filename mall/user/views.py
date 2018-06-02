@@ -52,6 +52,7 @@ def my_order():
 		)\
 		.filter_by(users_buy=current_user)\
 		.order_by(desc(UserOrder.id))\
+		.limit(50)\
 		.all()
 	return dict(order=user_order)
 

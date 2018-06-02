@@ -818,7 +818,7 @@ def sell(id=0):
 @templated()
 @login_required
 def show_stock():
-	all_stock = Receipt.query.filter_by(users=current_user).order_by(desc(Receipt.id)).all()
+	all_stock = Receipt.query.filter_by(users=current_user).order_by(desc(Receipt.id)).limit(30).all()
 
 	return dict(all_stock=all_stock)
 
