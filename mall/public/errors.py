@@ -10,7 +10,7 @@ from mall.extensions import executor
 def internal_server_error(e):
     logger.error(e)
     executor.submit(send_email,f'500错误{e}')
-	return render_template('500.html'), 500
+    return render_template('500.html'), 500
 
 @blueprint.errorhandler(404)
 def page_not_found(e):
