@@ -4,6 +4,9 @@ from flask_wechatpy import oauth
 from mall.extensions import db
 import time,random
 from flask_login import login_required,login_user,current_user,logout_user
+from mall.utils import send_email
+from log import logger
+from mall.extensions import executor
 
 from mall.user.models import User
 
