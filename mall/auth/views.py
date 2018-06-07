@@ -61,23 +61,28 @@ def autoregister(wechat_id=''):
 @blueprint.route('/autologin')
 @oauth(scope='snsapi_base')
 def autologin(name=''):
-    if name:
-        user = User.query.filter_by(username=name).first()
-        login_user(user,True) if user else abort(404)
+    try:
+    
+        if name:
+            user = User.query.filter_by(username=name).first()
+            login_user(user,True) if user else abort(404)
+            return redirect(request.args.get('next') or url_for('public.home'))
+
+        wechat_id = session.get('wechat_user_id','')
+        if wechat_id:
+            user = User.query.filter_by(wechat_id=wechat_id).first()
+        else: 
+            user = []
+        if user :
+            login_user(user,True)
+        else:
+            user = autoregister()
+
         return redirect(request.args.get('next') or url_for('public.home'))
 
-    wechat_id = session.get('wechat_user_id','')
-    if wechat_id:
-        user = User.query.filter_by(wechat_id=wechat_id).first()
-    else: 
-        user = []
-    if user :
-        login_user(user,True)
-    else:
-        user = autoregister()
-
-    return redirect(request.args.get('next') or url_for('public.home'))
-
+    except Exception as e:
+        flash(f'登录错误：{e}')
+        abort(401)
 
 
 

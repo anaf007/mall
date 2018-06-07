@@ -13,8 +13,16 @@ class Config(object):
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    SQLALCHEMY_TRACK_MODIFICATIONS = True   #跟踪 默认True
+
+    '''
+    多少秒后自动回收连接。这对 MySQL 是必要的， 
+    它默认移除闲置多于 8 小时的连接。注意如果 使用了 MySQL ， 
+    Flask-SQLALchemy 自动设定 这个值为 2 小时。
+    '''
+    SQLALCHEMY_POOL_RECYCLE = 9000
+ 
     #ckeditor config
     CKEDITOR_WIDTH = 500
     CKEDITOR_HEIGHT = 300
