@@ -65,7 +65,6 @@ def autoregister(wechat_id=''):
 @oauth(scope='snsapi_base')
 def autologin(name=''):
     try:
-        raise 1
         if name:
             user = User.query.filter_by(username=name).first()
             login_user(user,True) if user else abort(404)
