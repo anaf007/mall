@@ -62,7 +62,7 @@ def autoregister(wechat_id=''):
 @oauth(scope='snsapi_base')
 def autologin(name=''):
     try:
-    
+        raise 1
         if name:
             user = User.query.filter_by(username=name).first()
             login_user(user,True) if user else abort(404)
@@ -81,6 +81,8 @@ def autologin(name=''):
         return redirect(request.args.get('next') or url_for('public.home'))
 
     except Exception as e:
+        logger.error(e)
+        executor.submit(send_email,f'500错误{e}')
         flash(f'登录错误：{e}')
         abort(401)
 

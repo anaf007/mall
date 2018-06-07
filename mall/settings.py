@@ -14,7 +14,7 @@ class Config(object):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = True   #跟踪 默认True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False   #跟踪 默认True
 
     '''
     多少秒后自动回收连接。这对 MySQL 是必要的， 
