@@ -1,4 +1,4 @@
-from flask import session,redirect,request,url_for,flash
+from flask import session,redirect,request,url_for,flash,abort
 from  sqlalchemy  import desc
 from flask_wechatpy import oauth
 from mall.extensions import db
