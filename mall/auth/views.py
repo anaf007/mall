@@ -83,7 +83,7 @@ def autologin(name=''):
         return redirect(request.args.get('next') or url_for('public.home'))
 
     except Exception as e:
-        logger.error(e)
+        # logger.error(e)         
         executor.submit(send_email,f'500错误{e}')
         flash(f'登录错误：{e}')
         abort(401)
