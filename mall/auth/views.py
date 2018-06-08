@@ -36,8 +36,6 @@ def autoregister(wechat_id=''):
 
     user = []
 
-    print(wechat_id)
-
     if wechat_id:
         user = User.query.filter_by(wechat_id=wechat_id).first()
     else:
