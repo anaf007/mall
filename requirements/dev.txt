@@ -56,5 +56,5 @@ text-unidecode==1.2
 waitress==1.1.0
 WebOb==1.7.4
 WebTest==2.0.29
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 WTForms==2.1
